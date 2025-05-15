@@ -27,7 +27,7 @@ export default function Typing() {
                 onInput={(e) => setText(e.currentTarget.textContent || "")}
                 className="w-full min-h-40 outline-none caret-transparent px-2 py-4"
                 id="typing-area"
-            ></div>
+            >{text}</div>
 
             {/* Custom caret */}
             <div className="absolute top-4 left-2 w-1 h-12 bg-blue-950"></div>

@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 import Header from "./_components/Header"
 import Typing from "./_components/TypingArea";
 import Keyboard from "./_components/Keyboard";
