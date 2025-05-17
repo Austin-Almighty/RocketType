@@ -1,10 +1,10 @@
-"use client"; // required in Next.js App Router for client-side code
+"use client"; 
 
 import { useEffect } from "react";
 
 export default function KeyboardListener() {
   useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
+    function handleKeyPress(e: KeyboardEvent) {
       let key = e.key.toLowerCase(); // normalize casing
       if (key === " ") key = "space"; // handle special characters manually
       if (key === "enter") key = "enter"; // optionally handle other keys
