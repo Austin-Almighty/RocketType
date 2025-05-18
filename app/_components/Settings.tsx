@@ -1,4 +1,4 @@
-import { ChangeEventHandler, ToggleEvent } from "react";
+import { ChangeEventHandler } from "react";
 
 export default function Settings({onChange}:{onChange:ChangeEventHandler<HTMLInputElement>}) {
   return (

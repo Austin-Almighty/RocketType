@@ -1,12 +1,12 @@
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
-export default function StartScreen({onStart}: { onStart: Function}) {
+export default function StartScreen({onStart}: { onStart: () => void}) {
 
 
     useEffect(() => {
         function handleStart(e: KeyboardEvent) {
-            let keypress = e.key;
+            const keypress = e.key;
             if (keypress === " ") {
                 onStart();
             }
@@ -16,7 +16,7 @@ export default function StartScreen({onStart}: { onStart: Function}) {
         return () => {
         document.removeEventListener("keypress", handleStart);
         };
-    }, [])
+    }, [onStart])
     return (
         <div className="w-full h-full flex items-center justify-center">
             {/* <img src="scroll.svg" width={80} className="animate-pulse fill-blue-950 animate-"/> */}

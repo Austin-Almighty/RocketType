@@ -4,10 +4,10 @@ import Typing from "./TypingArea"
 
 
 export default function App() {
-    const [reset, setReset] = useState(false);
+    // const [reset, setReset] = useState(false);
     return (
       <div className="w-3/4 mx-auto absolute top-[30vh]">
-        <Clock start={100} />
+        <Clock start={30} />
         <Typing />
         <svg
           width="70px"

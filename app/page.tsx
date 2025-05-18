@@ -5,7 +5,7 @@ import StartScreen from "./_components/StartScreen";
 import App from "./_components/App";
 import Keyboard from "./_components/Keyboard";
 import Settings from "./_components/Settings";
-import { GameContext } from "./_lib/gameContext";
+// import { GameContext } from "./_lib/gameContext";
 
 import WpmCounter from "./_components/WpmCounter";
 
