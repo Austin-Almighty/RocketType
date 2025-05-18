@@ -4,6 +4,8 @@ import Header from "./_components/Header"
 import StartScreen from "./_components/StartScreen";
 import App from "./_components/App";
 import Keyboard from "./_components/Keyboard";
+import Settings from "./_components/Settings";
+import { GameContext } from "./_lib/gameContext";
 
 import WpmCounter from "./_components/WpmCounter";
 
@@ -11,16 +13,15 @@ import WpmCounter from "./_components/WpmCounter";
 export default function Home() {
 
   const [start, setStart] = useState(false);
+  const [showKeyboard, setShowKeyboard] = useState(true);
 
-  function startTyping() {
-    setStart(prev => prev!)
-  }
   
   return (
-    <div className="bg-amber-100 min-h-screen flex flex-col items-center w-scree">
-      <Header />
+    <div className="bg-amber-100 min-h-screen flex flex-col items-center w-screen">
+      <Header onStart={()=>setStart(false)}/>
+      <Settings onChange={()=>setShowKeyboard(!showKeyboard)}/>
       {start && <App />}
-      {start && <Keyboard />}
+      {showKeyboard && <Keyboard />}
       {start && <WpmCounter />}
       {! start && <StartScreen onStart={()=>setStart(true)}/>}
     </div>

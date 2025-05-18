@@ -14,3 +14,26 @@
 .pressed {
   @apply scale-110 bg-blue-700;
 }
+
+.correct {
+  @apply text-indigo-500;
+}
+
+.incorrect {
+  @apply text-red-400;
+}
+
+.current {
+  position: relative;
+}
+
+.current::before {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 1em;
+  background: #1e3a8a; /* Tailwind's blue-950 */
+  pointer-events: none;
+}
+
+
