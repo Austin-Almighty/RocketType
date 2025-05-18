@@ -15,7 +15,7 @@ export default function App( {onStart}: {onStart: MouseEventHandler}) {
           height="70px"
           viewBox="0 0 24 24"
           fill="none"
-          className="w-full hover:animate-spin cursor-pointer"
+          className="w-fit cursor-pointer hover:animate-spin absolute translate-x-[-50%] left-[50%]"
           xmlns="http://www.w3.org/2000/svg"
           onClick={onStart}
         >
