@@ -1,9 +1,10 @@
 
+import { MouseEventHandler } from "react";
 import { Clock } from "./Clock"
 import Typing from "./TypingArea"
 
 
-export default function App( {onStart}: {OnStart: () => void} ) {
+export default function App( {onStart}: {onStart: MouseEventHandler}) {
     // const [reset, setReset] = useState(false);
     return (
       <div className="w-3/4 mx-auto absolute top-[30vh]">
