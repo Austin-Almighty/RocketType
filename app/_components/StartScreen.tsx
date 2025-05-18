@@ -8,13 +8,15 @@ export default function StartScreen({onStart}: { onStart: () => void}) {
         function handleStart(e: KeyboardEvent) {
             const keypress = e.key;
             if (keypress === " ") {
+                e.preventDefault();        // Prevent space from reaching textarea
+                e.stopPropagation();    
                 onStart();
             }
         }
-         document.addEventListener("keypress", handleStart);
+         document.addEventListener("keydown", handleStart);
 
         return () => {
-        document.removeEventListener("keypress", handleStart);
+        document.removeEventListener("keydown", handleStart);
         };
     }, [onStart])
     return (

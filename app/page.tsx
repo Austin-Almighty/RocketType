@@ -20,7 +20,7 @@ export default function Home() {
     <div className="bg-amber-100 min-h-screen flex flex-col items-center w-screen">
       <Header onStart={()=>setStart(false)}/>
       <Settings onChange={()=>setShowKeyboard(!showKeyboard)}/>
-      {start && <App />}
+      {start && <App onStart={()=>setStart(false)}/>}
       {showKeyboard && <Keyboard />}
       {start && <WpmCounter />}
       {! start && <StartScreen onStart={()=>setStart(true)}/>}

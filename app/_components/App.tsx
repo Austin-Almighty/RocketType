@@ -3,7 +3,7 @@ import { Clock } from "./Clock"
 import Typing from "./TypingArea"
 
 
-export default function App() {
+export default function App( {onStart}: {OnStart: () => void} ) {
     // const [reset, setReset] = useState(false);
     return (
       <div className="w-3/4 mx-auto absolute top-[30vh]">
@@ -14,8 +14,9 @@ export default function App() {
           height="70px"
           viewBox="0 0 24 24"
           fill="none"
-          className="w-full"
+          className="w-full hover:animate-spin cursor-pointer"
           xmlns="http://www.w3.org/2000/svg"
+          onClick={onStart}
         >
           <circle cx="12" cy="12" r="10" stroke="#1C274C" stroke-width="1.5" />
           <path
