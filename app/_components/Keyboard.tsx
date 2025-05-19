@@ -39,7 +39,7 @@ export default function Keyboard() {
         <kbd className="kbd bg-blue-950" id="/">/</kbd>
       </div>
       <div className="my-1 flex w-full justify-center">
-        <kbd className="kbd bg-blue-950" id="space">_______________</kbd>
+        <kbd className="kbd bg-blue-950 w-40" id="space"></kbd>
       </div>
     </div>
  
