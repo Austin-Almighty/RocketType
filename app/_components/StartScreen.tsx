@@ -22,7 +22,7 @@ export default function StartScreen({onStart}: { onStart: () => void}) {
     return (
         <div className="w-full h-full flex items-center justify-center">
             {/* <img src="scroll.svg" width={80} className="animate-pulse fill-blue-950 animate-"/> */}
-            <svg className="absolute top-[40vh]" version="1.1" id="designs" xmlns="http://www.w3.org/2000/svg" width="80px" height="80px" viewBox="0 0 32 32">
+            <svg className="absolute top-[40vh] animate-bounce" version="1.1" id="designs" xmlns="http://www.w3.org/2000/svg" width="80px" height="80px" viewBox="0 0 32 32">
                 <path className="fill-blue-950 animate-pulse" d="M29.98,8.875c-0.079-0.388-0.181-0.774-0.299-1.152c-0.112-0.367-0.266-0.718-0.411-1.073
                     c-0.172-0.424-0.351-0.824-0.606-1.206c-0.253-0.378-0.531-0.743-0.793-1.117c-0.1-0.144-0.223-0.247-0.375-0.317
                     c-0.02-0.015-0.033-0.037-0.055-0.05c-0.031-0.018-0.065-0.027-0.098-0.041c-0.012-0.334-0.226-0.656-0.565-0.739
