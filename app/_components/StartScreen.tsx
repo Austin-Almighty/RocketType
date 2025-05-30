@@ -1,24 +1,37 @@
 
-import { useEffect } from "react"
+import { useEffect } from "react";
+import { useGameContext } from "../_lib/gameContext";
 
 export default function StartScreen({onStart}: { onStart: () => void}) {
+    const { gameMode, setGameMode } = useGameContext();
 
-
+    //monitor the press space to start function
     useEffect(() => {
-        function handleStart(e: KeyboardEvent) {
-            const keypress = e.key;
-            if (keypress === " ") {
-                e.preventDefault();        // Prevent space from reaching textarea
-                e.stopPropagation();    
-                onStart();
-            }
-        }
-         document.addEventListener("keydown", handleStart);
+      if (!gameMode.start) return;
 
-        return () => {
+      function handleStart(e: KeyboardEvent) {
+        if (e.key === " ") {
+          e.preventDefault();
+          e.stopPropagation();
+          setGameMode(prev => ({
+            ...prev,
+            start: true,
+          }));
+          onStart();
+        }
+      }
+
+      document.addEventListener("keydown", handleStart);
+      return () => {
         document.removeEventListener("keydown", handleStart);
-        };
-    }, [onStart])
+       
+      };
+    }, [gameMode.start, setGameMode, onStart]);
+
+
+  
+
+
     return (
         <div className="w-full h-full flex items-center justify-center">
             {/* <img src="scroll.svg" width={80} className="animate-pulse fill-blue-950 animate-"/> */}
@@ -82,7 +95,7 @@ export default function StartScreen({onStart}: { onStart: () => void}) {
                     c0.536,0,1.071,0.037,1.607,0.041c0.484,0.004,0.969-0.008,1.453-0.01c0.48-0.002,0.959-0.008,1.438-0.029
                     c0.139-0.006,0.278-0.009,0.419-0.009c0.248,0,0.498,0.01,0.743,0.032C18.483,16.356,18.721,16.461,18.864,16.706z"/>
             </svg>
-            <h2 className="text-blue-950 text-3xl text-center absolute top-[50vh] animate-pulse">Press Space to Start</h2>
+            <h2 className="text-blue-950 text-3xl text-center absolute top-[50vh] animate-pulse">{!(gameMode.mode && gameMode.time && gameMode.words) ? "Select your settings" : "Press Space to Start"}</h2>
         </div>
     )
 }

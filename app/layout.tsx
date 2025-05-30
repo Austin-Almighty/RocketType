@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { unstable_ViewTransition } from "react";
+import { GameProvider } from "./_lib/gameContext";
+
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -17,8 +20,12 @@ import "./globals.css";
 //   subsets: ["latin"],
 // });
 
-const roboto = Roboto({
-  variable: "--font-roboto",
+// const roboto = Roboto({
+//   variable: "--font-roboto",
+//   subsets: ["latin"],
+// });
+const JetBrainsMono = JetBrains_Mono({
+  variable: "--font-JetBrains",
   subsets: ["latin"],
 });
 
@@ -35,8 +42,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={roboto.className}>
-      <body>{children}</body>
+    <html lang="en" className={JetBrainsMono.className}>
+      <body>
+        <GameProvider>
+           <unstable_ViewTransition>{children}</unstable_ViewTransition>
+        </GameProvider>
+      </body>
     </html>
   );
 }

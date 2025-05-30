@@ -4,7 +4,7 @@ import KeyboardListener from "../_lib/keypressLightup";
 export default function Keyboard() {
     KeyboardListener();
   return (
-    <div className="absolute top-[80vh]">
+    <div className="absolute top-[80vh] text-white">
       <div className="my-1 flex w-full justify-center gap-2">
         <kbd className="kbd bg-blue-950" id="q">q</kbd>
         <kbd className="kbd bg-blue-950" id="w">w</kbd>

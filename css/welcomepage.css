@@ -1,0 +1,41 @@
+#logo path {
+    fill: transparent;
+    stroke: #172554;
+    stroke-width: 0.2;
+    stroke-dasharray: 270;
+    stroke-dashoffset: 270;
+    animation: logoText 4s ease-in-out 1 forwards;
+}
+
+#star {
+    animation: starfall 1.5s ease-in-out 1 forwards;
+    animation-delay: 3s;
+    opacity: 0;
+}
+
+@keyframes logoText {
+    0% {
+        stroke-dashoffset: 270;
+    }
+
+    80% {
+        fill: transparent;
+    }
+
+    100% {
+        stroke-dashoffset: 0;
+        fill: #172554;
+    }
+}
+
+@keyframes starfall {
+    0% {
+        transform: scale(0.5) translate(-100vw, -100vh) rotate(-90deg);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1) translate(0, 0) rotate(0deg);
+        opacity: 1;
+    }
+}
