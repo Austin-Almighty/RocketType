@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useEffect } from "react";
+import { useEffect } from "react";
 import { useGameContext } from "../_lib/gameContext";
 
 
