@@ -47,7 +47,7 @@ export default function App({ onStart }: { onStart: MouseEventHandler }) {
       }))
       router.push("/result");
     }
-  }, [elapsedSeconds, gameMode.time, router]);
+  }, [elapsedSeconds, gameMode.time, router, setGameMode]);
 
   // Only update keyCount on keydown
   useEffect(() => {
@@ -95,6 +95,8 @@ export default function App({ onStart }: { onStart: MouseEventHandler }) {
           setWpm={setWpm}
           setRaw={setRaw}
           instantRaw={instantRaw}
+          wpm={wpm}
+          raw={raw}
         />
       </div>
       <div className="w-3/4 mx-auto absolute top-[30vh]">

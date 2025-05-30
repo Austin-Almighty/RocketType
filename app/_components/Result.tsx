@@ -11,9 +11,6 @@ import { useEffect } from "react";
 export default function Result() {
     const router = useRouter();
     const { trackBySecond } = useGameContext();
-    if (trackBySecond.length === 0) {
-        return null;
-    }
 
     useEffect(() => {
       if (trackBySecond.length === 0) {
@@ -21,6 +18,11 @@ export default function Result() {
       }
     }, [trackBySecond, router]);
 
+    if (trackBySecond.length === 0) {
+        return null;
+    }
+
+    
     let accuracy = "0.0";
     const latest = trackBySecond[trackBySecond.length - 1];
     if (latest && latest.keyCount > 0) {

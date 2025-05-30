@@ -8,13 +8,15 @@ type WpmProps = {
     setWpm: React.Dispatch<React.SetStateAction<number>>,
     setRaw: React.Dispatch<React.SetStateAction<number>>,
     instantRaw: number | null
+    wpm:number,
+    raw:number
 }
 
-export default function WpmCounter({mistakes, keyCount, elapsedSeconds, setWpm, setRaw, instantRaw}: WpmProps) {
+export default function WpmCounter({mistakes, keyCount, elapsedSeconds, setWpm, setRaw, instantRaw, wpm, raw}: WpmProps) {
     // Calculate RAW WPM (words = keyCount/5, per minute)
     const minutes = elapsedSeconds / 60;
-    let raw = 0;
-    let wpm = 0;
+
+
     if (minutes > 0) {
         raw = Math.floor((keyCount / 5) / minutes);
         wpm = Math.floor((keyCount - mistakes) / 5 / minutes);

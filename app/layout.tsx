@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { unstable_ViewTransition } from "react";
+// import { unstable_ViewTransition } from "react";
 import { GameProvider } from "./_lib/gameContext";
 
 
@@ -45,7 +45,7 @@ export default function RootLayout({
     <html lang="en" className={JetBrainsMono.className}>
       <body>
         <GameProvider>
-           <unstable_ViewTransition>{children}</unstable_ViewTransition>
+           {children}
         </GameProvider>
       </body>
     </html>

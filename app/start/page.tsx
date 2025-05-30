@@ -17,14 +17,14 @@ import { useGameContext } from "../_lib/gameContext";
 export default function Home() {
   const [start, setStart] = useState(false);
   const [showKeyboard, setShowKeyboard] = useState(true);
-  const [login, setLogin] = useState(false);
+  // const [login, setLogin] = useState(false);
   const { setTrackBySecond } = useGameContext();
 
   function renderContent() {
    
-    if (login) {
-      return <LoginRegister />;
-    }
+    // if (login) {
+    //   return <LoginRegister />;
+    // }
 
     if (start) {
       return <App onStart={() => setStart(false)} />;

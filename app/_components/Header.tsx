@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 
 export default function Header() {
   const router = useRouter()
-  function handleClickLogo(e: React.MouseEvent<HTMLAnchorElement>) {
+  function handleClickLogo() {
     router.push("/start")
   }
   return (
