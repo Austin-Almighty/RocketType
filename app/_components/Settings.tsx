@@ -2,11 +2,7 @@ import { ChangeEventHandler, useEffect } from "react";
 import { useGameContext } from "../_lib/gameContext";
 
 
-export default function Settings({
-  onChange,
-}: {
-  onChange: ChangeEventHandler<HTMLInputElement>;
-}) {
+export default function Settings() {
  
   const { gameMode, setGameMode } = useGameContext();
   function handleModeChange(mode: "Strict" | "Time Attack" | "Zen") {

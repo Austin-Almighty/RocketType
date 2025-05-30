@@ -4,8 +4,8 @@ import Header from "../_components/Header"
 import StartScreen from "../_components/StartScreen";
 import App from "../_components/App";
 import Settings from "../_components/Settings";
-import Keyboard from "../_components/Keyboard";
-import LoginRegister from "../_components/LoginRegister";
+// import Keyboard from "../_components/Keyboard";
+// import LoginRegister from "../_components/LoginRegister";
 
 
 import { useGameContext } from "../_lib/gameContext";
@@ -16,7 +16,7 @@ import { useGameContext } from "../_lib/gameContext";
 
 export default function Home() {
   const [start, setStart] = useState(false);
-  const [showKeyboard, setShowKeyboard] = useState(true);
+  // const [showKeyboard, setShowKeyboard] = useState(true);
   // const [login, setLogin] = useState(false);
   const { setTrackBySecond } = useGameContext();
 
@@ -33,8 +33,8 @@ export default function Home() {
     // For the "not started" state
     return (
       <>
-        <Settings onChange={() => setShowKeyboard(!showKeyboard)} />
-        {showKeyboard && <Keyboard />}
+        <Settings />
+        {/* {showKeyboard && <Keyboard />} */}
         <StartScreen onStart={() => {
           setTrackBySecond([]);
           setStart(true);

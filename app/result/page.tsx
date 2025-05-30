@@ -1,6 +1,6 @@
 import Header from "../_components/Header"
 import Result from "../_components/Result"
-import { GameProvider } from "../_lib/gameContext"
+// import { GameProvider } from "../_lib/gameContext"
 
 export default function ResultPage() {
     return(
