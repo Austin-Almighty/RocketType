@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Header from "../_components/Header"
 import StartScreen from "../_components/StartScreen";
 import App from "../_components/App";
