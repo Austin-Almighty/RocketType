@@ -1,3 +1,4 @@
+"use client";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../_lib/Firebase";
 
@@ -24,30 +25,42 @@ export default function LoginRegister() {
 
 
   return (
-    <>
+    <div className="w-full flex items-center justify-center">
       <div className="flex space-x-40">
-        <div id="register">
+        <div id="register" className="h-32">
           <fieldset className="fieldset bg-currentColor border-base-300 rounded-box w-xs border p-4">
             <legend className="fieldset-legend text-blue-950">Register</legend>
 
             <label className="label text-blue-950">Email</label>
             <input
               type="email"
-              className="input bg-accent-content"
+              className="input bg-white"
+              placeholder="Email"
+            />
+            <label className="label text-blue-950">Confirm Email</label>
+            <input
+              type="email"
+              className="input bg-white"
               placeholder="Email"
             />
 
             <label className="label text-blue-950">Password</label>
             <input
               type="password"
-              className="input bg-accent-content"
+              className="input bg-white"
+              placeholder="Password"
+            />
+            <label className="label text-blue-950">Confirm Password</label>
+            <input
+              type="password"
+              className="input bg-white"
               placeholder="Password"
             />
 
             <button className="btn btn-neutral mt-4">Sign up</button>
           </fieldset>
         </div>
-        <div id="login">
+        <div id="login" className="h-32">
           <fieldset className="fieldset bg-currentColor border-base-300 rounded-box w-xs border p-4">
             <legend className="fieldset-legend text-blue-950">Login</legend>
 
@@ -101,13 +114,13 @@ export default function LoginRegister() {
             </button>
             <div className="divider divider-primary text-blue-950">OR</div>
             <label className="label text-blue-950">Email</label>
-            <input type="email" className="input bg-accent-content" placeholder="Email"></input>
+            <input type="email" className="input bg-white" placeholder="Email"></input>
             <label className="label text-blue-950">Password</label>
-            <input type="password" className="input bg-accent-content" placeholder="Password"></input>
+            <input type="password" className="input bg-white" placeholder="Password"></input>
             <button className="btn btn-neutral mt-4">Login</button>
           </fieldset>
         </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -1,43 +1,63 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useGameContext } from "../_lib/gameContext";
 
-
 export default function Settings() {
- 
+
   const { gameMode, setGameMode } = useGameContext();
+
+  const modeDropdownRef = useRef<HTMLDetailsElement>(null);
   function handleModeChange(mode: "Strict" | "Time Attack" | "Zen") {
-    setGameMode(prev => ({...prev, mode}))
+    setGameMode((prev) => ({ ...prev, mode }));
+    modeDropdownRef.current?.removeAttribute('open')
   }
 
+  const timeDropdownRef = useRef<HTMLDetailsElement>(null);
   function handleTimeChange(time: number) {
-    setGameMode(prev => ({ ...prev, time }));
+    setGameMode((prev) => ({ ...prev, time }));
+    timeDropdownRef.current?.removeAttribute("open")
   }
+
+  const wordDropdownRef = useRef<HTMLDetailsElement>(null);
 
   function handleWordsChange(words: "1k" | "5k" | "10k") {
-    setGameMode(prev => ({ ...prev, words }));
+    setGameMode((prev) => ({ ...prev, words }));
+    wordDropdownRef.current?.removeAttribute("open")
   }
 
+
   useEffect(() => {
-  if (!(gameMode.mode && gameMode.time && gameMode.words)) return;
-  if (gameMode.start) return;
-  setGameMode(prev => ({
-    ...prev,
-    start: true,
-  }));
-}, [gameMode.mode, gameMode.time, gameMode.words, gameMode.start, setGameMode]);
-
-
-
-
-
-
-  
+    if (!(gameMode.mode && gameMode.time && gameMode.words)) return;
+    if (gameMode.start) return;
+    setGameMode((prev) => ({
+      ...prev,
+      start: true,
+    }));
+  }, [
+    gameMode.mode,
+    gameMode.time,
+    gameMode.words,
+    gameMode.start,
+    setGameMode,
+  ]);
 
   return (
     <div className="flex justify-center w-screen h-fit items-center">
       <ul className="menu menu-horizontal w-fit mx-auto">
-        <li className={`${!(gameMode.mode && gameMode.time && gameMode.words) ? "tooltip tooltip-open" : ""}`} data-tip="Use the drop-down menu">
-          <div className={`hover:scale-110 bg-transparent pointer-events-none ${!(gameMode.mode && gameMode.time && gameMode.words) ? "animate-ping" : ""}`}>
+        <li
+          className={`${
+            !(gameMode.mode && gameMode.time && gameMode.words)
+              ? "tooltip tooltip-open"
+              : ""
+          }`}
+          data-tip="Use the drop-down menu"
+        >
+          <div
+            className={`hover:scale-110 bg-transparent pointer-events-none ${
+              !(gameMode.mode && gameMode.time && gameMode.words)
+                ? "animate-ping"
+                : ""
+            }`}
+          >
             <svg
               className="h-7 w-7 active:bg-transparent focus:bg-transparent"
               viewBox="0 0 24 24"
@@ -53,7 +73,7 @@ export default function Settings() {
             </svg>
           </div>
         </li>
-        <li className="w-32">
+        {/* <li className="w-32">
           <button className="btn bg-transparent border-0 shadow-none text-blue-950 w-full" popoverTarget="popover-1" style={{ anchorName: "--anchor-1" }  as React.CSSProperties }>
             {gameMode.mode===undefined ? "Mode": gameMode.mode}
           </button> 
@@ -83,8 +103,85 @@ export default function Settings() {
             <li className="text-blue-950 flex justify-center"><a className="block w-full text-center" onClick={()=>handleWordsChange("5k")}>5k</a></li>
             <li className="text-blue-950 flex justify-center"><a className="block w-full text-center" onClick={()=>handleWordsChange("10k")}>10k</a></li>
           </ul>
+        </li> */}
+        <li>
+          <details className="dropdown" ref={modeDropdownRef}>
+            <summary className="btn m-1 bg-transparent border-0 shadow-none text-blue-950 w-34">
+              {gameMode.mode === undefined ? "Mode" : gameMode.mode}
+            </summary>
+            <ul className="menu dropdown-content bg-transparent text-blue-950 shadow-none">
+              <li className="text-blue-950 flex justify-center">
+                <a
+                  className="block w-full text-center"
+                  onClick={() => handleModeChange("Time Attack")}
+                >
+                  Time Attack
+                </a>
+              </li>
+              <li className="text-blue-950 flex justify-center">
+                <a
+                  className="block w-full text-center"
+                  onClick={() => handleModeChange("Strict")}
+                >
+                  Strict
+                </a>
+              </li>
+              <li className="text-blue-950">
+                <a
+                  className="block w-full text-center"
+                  onClick={() => handleModeChange("Zen")}
+                >
+                  Zen
+                </a>
+              </li>
+            </ul>
+          </details>
         </li>
-        
+        <li>
+          <details className="dropdown relative" ref={timeDropdownRef}>
+            <summary className="btn m-1 bg-transparent border-0 shadow-none text-blue-950 w-34">
+              {gameMode.time === undefined ? "Time" : `${gameMode.time}s`}
+            </summary>
+            <ul className="menu dropdown-content bg-transparent text-blue-950 shadow-none absolute left-1/2 -translate-x-1/2">
+              <li className="text-blue-950 flex justify-center">
+                <a
+                  className="block w-full text-center"
+                  onClick={() => handleTimeChange(15)}
+                >
+                  15
+                </a>
+              </li>
+              <li className="text-blue-950 flex justify-center">
+                <a
+                  className="block w-full text-center"
+                  onClick={() => handleTimeChange(30)}
+                >
+                  30
+                </a>
+              </li>
+              <li className="text-blue-950 flex justify-center">
+                <a
+                  className="block w-full text-center"
+                  onClick={() => handleTimeChange(60)}
+                >
+                  60
+                </a>
+              </li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details className="dropdown" ref={wordDropdownRef}>
+            <summary className="btn m-1 bg-transparent border-0 shadow-none text-blue-950 w-34">
+              {gameMode.words===undefined ? "Words": gameMode.words}
+            </summary>
+            <ul className="menu dropdown-content bg-transparent text-blue-950 shadow-none absolute left-1/2 -translate-x-1/2">
+              <li className="text-blue-950 flex justify-center"><a className="block w-full text-center" onClick={()=>handleWordsChange("1k")}>1k</a></li>
+              <li className="text-blue-950 flex justify-center"><a className="block w-full text-center" onClick={()=>handleWordsChange("5k")}>5k</a></li>
+              <li className="text-blue-950 flex justify-center"><a className="block w-full text-center" onClick={()=>handleWordsChange("10k")}>10k</a></li>
+            </ul>
+          </details>
+        </li>
       </ul>
     </div>
   );

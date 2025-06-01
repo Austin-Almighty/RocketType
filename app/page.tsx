@@ -10,7 +10,7 @@ export default function WelcomePage() {
   const router = useRouter();
   useEffect(()=>{
     function directToApp() {
-      router.push("/start")
+      router.push("/app")
     }
     document.addEventListener("click", directToApp);
     document.addEventListener('keypress', directToApp)
@@ -22,7 +22,7 @@ export default function WelcomePage() {
 
   useEffect(() => {
   const timer = setTimeout(() => {
-    router.push("/start");
+    router.push("/app");
   }, 6000); 
 
 

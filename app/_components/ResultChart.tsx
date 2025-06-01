@@ -71,7 +71,7 @@ export default function ResultChart({trackBySecond}:ResultProp) {
 
   return (
     
-      <Card className="h-full bg-transparent border-none shadow-none">
+      <Card className="h-full bg-transparent border-none shadow-none text-blue-950">
         <CardHeader>
           <CardTitle>Test Results</CardTitle>
           <CardDescription>{`${month}/${date}`}</CardDescription>

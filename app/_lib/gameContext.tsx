@@ -21,6 +21,7 @@ type GameContextType = {
     setGameMode: React.Dispatch<React.SetStateAction<GameMode>>;
     trackBySecond: TrackRecord[];
     setTrackBySecond: React.Dispatch<React.SetStateAction<TrackRecord[]>>;
+    resetGame: ()=>void;
 };
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -35,8 +36,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
     const [trackBySecond, setTrackBySecond] = useState<TrackRecord[]>([]);
 
+    function resetGame() {
+        setTrackBySecond([]);
+    }
     return (
-        <GameContext.Provider value={{ gameMode, setGameMode, trackBySecond, setTrackBySecond }}>
+        <GameContext.Provider value={{ gameMode, setGameMode, trackBySecond, setTrackBySecond, resetGame }}>
             {children}
         </GameContext.Provider>
     );
@@ -49,5 +53,7 @@ export function useGameContext() {
     }
     return context;
 }
+
+
 
 export { GameContext };

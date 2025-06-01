@@ -78,23 +78,32 @@ export default forwardRef<HTMLTextAreaElement, { setMistakes: React.Dispatch<Rea
       const container = containerRef.current;
       const currentChar = currentCharRef.current;
 
-      const containerRect = container.getBoundingClientRect();
-      const charRect = currentChar.getBoundingClientRect();
+      // Get the actual computed line height for accuracy (in px)
+      // const lineHeight = parseFloat(window.getComputedStyle(container).lineHeight);
+      const lineHeight = 60;
+      // Caret's line (relative to the container)
+      const caretLine = Math.round(currentChar.offsetTop / lineHeight);
+      console.log("lineHeight:", lineHeight);
+      console.log("caret offsetTop:", currentChar.offsetTop);
+      console.log("computed caretLine:", caretLine);
+      console.log("container.scrollTop before:", container.scrollTop);
 
-      if (charRect.top < containerRect.top) {
-        container.scrollTop -= containerRect.top - charRect.top;
-      } else if (charRect.bottom > containerRect.bottom) {
-        container.scrollTop += charRect.bottom - containerRect.bottom;
+
+      if (caretLine < 2) {
+        // Line 0 or 1: show the start (no scroll)
+        container.scrollTop = 0;
+      } else {
+        // Line 2 or greater: caret always appears on line 2
+        container.scrollTop = (caretLine - 1) * lineHeight;
       }
     }, [userInput]);
 
     return (
-      <div className="relative w-full bg-amber-100 text-blue-950 text-5xl border-amber-700 overflow-hidden leading-normal">
+      <div className="relative w-full bg-amber-100 text-blue-950 text-5xl border-amber-700">
         <div
           ref={containerRef}
-          className="text-display max-h-60 overflow-hidden"
+          className="text-display max-h-[11.25rem] leading-15 text-5xl overflow-hidden"
           onWheel={(e) => e.preventDefault()}
-          style={{ lineHeight: '1.25em' }}
         >
           {characters.map((char, index) => {
             let className = "";
