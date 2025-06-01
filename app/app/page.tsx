@@ -5,23 +5,12 @@ import StartScreen from "../_components/StartScreen";
 import App from "../_components/App";
 import Settings from "../_components/Settings";
 import { useGameContext } from "../_lib/gameContext";
-import { useSearchParams } from "next/navigation";
 
 export default function Home() {
-  const searchParams = useSearchParams();
-  const autostart = searchParams.get('autostart') === '1';
-  const [appInstance, setAppInstance] = useState<number | null>(autostart ? 1 : null);
+  // const searchParams = useSearchParams();
+  // const autostart = searchParams.get('autostart') === '1';
+  const [appInstance, setAppInstance] = useState<number | null>(null);
   const { setTrackBySecond } = useGameContext();
-
-  useEffect(() => {
-    if (autostart) {
-      setTrackBySecond([]);
-      setAppInstance(prev => (prev === null ? 1 : prev + 1));
-      // Optionally, remove the query param for a cleaner URL after autostart:
-      // router.replace("/app");
-    }
-  }, [autostart, setTrackBySecond]);
-
 
   function handleStart() {
     setTrackBySecond([]);
