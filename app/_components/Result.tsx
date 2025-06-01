@@ -2,34 +2,33 @@
 import ResultChart from "./ResultChart"
 import { useGameContext } from "../_lib/gameContext";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import html2canvas from 'html2canvas-pro';
-
-
-async function screenshotAndCopy() {
-    const canvas = await html2canvas(document.body);
-
-    canvas.toBlob(async (blob) => {
-        if (blob) {
-            try {
-                await navigator.clipboard.write([
-                    new window.ClipboardItem({"image/png": blob})
-                ]);
-                alert("screenshot copied to clipboard!");
-            } catch (e) {
-                alert("Failed to copy screenshot:" + e);
-            }
-        }
-    }, "image/png");
-}
-
-
 
 
 export default function Result() {
     const router = useRouter();
 
     const { trackBySecond, gameMode, resetGame } = useGameContext();
+
+    const [alertMessage, setAlertMessage] = useState<string | null>(null);
+
+    async function screenshotAndCopy() {
+        const canvas = await html2canvas(document.body);
+
+        canvas.toBlob(async (blob) => {
+            if (blob) {
+                try {
+                    await navigator.clipboard.write([
+                        new window.ClipboardItem({"image/png": blob})
+                    ]);
+                    setAlertMessage("screenshot copied to clipboard!")
+                } catch (e) {
+                    setAlertMessage("Failed to copy screenshot:" + e);
+                }
+            }
+        }, "image/png");
+    }
 
     useEffect(() => {
       if (trackBySecond.length === 0) {
@@ -54,10 +53,19 @@ export default function Result() {
         router.push("/app?autostart=1")
     }
 
-
-
     return (
         <>
+            {alertMessage && (
+              <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-fit">
+                <div role="alert" className="alert alert-info">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="h-6 w-6 shrink-0 stroke-current">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <span>{alertMessage}</span>
+                  <button onClick={() => setAlertMessage(null)} className="btn btn-sm btn-circle btn-ghost ml-2">✕</button>
+                </div>
+              </div>
+            )}
             <div className="bg-transparent w-11/13 flex h-1/2 relative top-20">
                 <div className="bg-transparent w-1/7 h-full flex flex-col text-center justify-center items-center text-blue-950 gap-1">
                     <div className="text-2xl">WPM</div>
@@ -94,4 +102,3 @@ export default function Result() {
         </>
     )
 }
-
