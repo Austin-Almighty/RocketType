@@ -66,7 +66,7 @@ export default function App({ reStart }: { reStart: MouseEventHandler }) {
     };
   }, [setKeyCount, typingRef, setHasStarted, hasStarted]); //打字位置有變時重新執行
 
-  //Record the result by second
+  //每秒紀錄數據
  useEffect(() => {
    if (!hasStarted) return;
    if (elapsedSeconds === 0 || keyCount === 0) return;

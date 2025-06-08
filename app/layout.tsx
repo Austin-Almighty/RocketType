@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-// import { unstable_ViewTransition } from "react";
-import { GameProvider } from "./_lib/gameContext";
+import { unstable_ViewTransition as ViewTransition } from "react";
 
+import { GameProvider } from "./_lib/gameContext";
+import { UserProvider } from "./_lib/userContext";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -42,12 +43,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={JetBrainsMono.className}>
-      <body>
-        <GameProvider>
-           {children}
-        </GameProvider>
-      </body>
-    </html>
+
+      <html lang="en" className={JetBrainsMono.className}>
+        <body>
+          <ViewTransition name="page">
+            <UserProvider>
+              <GameProvider>
+                {children}
+              </GameProvider>
+            </UserProvider>
+          </ViewTransition>
+        </body>
+      </html>
+
   );
 }

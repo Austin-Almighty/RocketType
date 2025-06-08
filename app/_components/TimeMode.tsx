@@ -77,23 +77,16 @@ export default forwardRef<HTMLTextAreaElement, { setMistakes: React.Dispatch<Rea
 
       const container = containerRef.current;
       const currentChar = currentCharRef.current;
-
-      // Get the actual computed line height for accuracy (in px)
-      // const lineHeight = parseFloat(window.getComputedStyle(container).lineHeight);
+      //大概每行的高度
       const lineHeight = 60;
-      // Caret's line (relative to the container)
+      // 輸入符號和最上面的距離
       const caretLine = Math.round(currentChar.offsetTop / lineHeight);
-      console.log("lineHeight:", lineHeight);
-      console.log("caret offsetTop:", currentChar.offsetTop);
-      console.log("computed caretLine:", caretLine);
-      console.log("container.scrollTop before:", container.scrollTop);
-
-
+    
       if (caretLine < 2) {
-        // Line 0 or 1: show the start (no scroll)
+        // 在第一行和第二行時
         container.scrollTop = 0;
       } else {
-        // Line 2 or greater: caret always appears on line 2
+        // 第三行時，網上滾動
         container.scrollTop = (caretLine - 1) * lineHeight;
       }
     }, [userInput]);
@@ -130,12 +123,12 @@ export default forwardRef<HTMLTextAreaElement, { setMistakes: React.Dispatch<Rea
           onChange={(e) => {
             const value = e.target.value;
 
-            //Find what character was just typed
+            //找出輸入的字元
             const prevLength = userInput.length;
             const nextLength = value.length;
             let newMistakes = 0
 
-            //Case1: User type a new character
+            //Case1: 輸入一個新字元
             if (nextLength > prevLength) {
               const newChar = value[value.length - 1];
               const expectedChar = characters[prevLength];

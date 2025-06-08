@@ -162,4 +162,34 @@
   }
 }
 
+@keyframes slideOut {
+  0% {
+    transform: translateY(0rem);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-2rem);
+  }
+  
+}
 
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0rem);
+  }
+}
+
+/* ::view-transition-old(page) {
+  animation: slideOut 0.5s ease-out both;
+}
+
+::view-transition-new(page) {
+  animation: slideIn 0.5s ease-out both;
+  animation-delay: 300ms;
+} */

@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 
+
 const nextConfig: NextConfig = {
   webpack(config) {
     // Find the existing rule that handles SVG imports
@@ -24,6 +25,10 @@ const nextConfig: NextConfig = {
     });
 
     return config;
+  },
+
+  experimental: {
+    viewTransition: true,
   },
 };
 
