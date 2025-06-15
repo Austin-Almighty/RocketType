@@ -6,6 +6,7 @@ import App from "../_components/App";
 import Settings from "../_components/Settings";
 import { useGameContext } from "../_lib/gameContext";
 
+
 export default function Home() {
   // const searchParams = useSearchParams();
   // const autostart = searchParams.get('autostart') === '1';
@@ -41,8 +42,8 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-amber-100 h-screen flex flex-col items-center w-screen">
-      <Header reStart={handleHomePage}/>
+    <div className="bg-base-100 flex flex-col items-center w-screen">
+      {/* <Header reStart={handleHomePage}/> */}
       {renderContent()}
     </div>
   );

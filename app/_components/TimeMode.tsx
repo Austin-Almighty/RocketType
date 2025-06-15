@@ -92,7 +92,7 @@ export default forwardRef<HTMLTextAreaElement, { setMistakes: React.Dispatch<Rea
     }, [userInput]);
 
     return (
-      <div className="relative w-full bg-amber-100 text-blue-950 text-5xl border-amber-700">
+      <div className="relative w-full bg-base-100 text-base-content text-5xl">
         <div
           ref={containerRef}
           className="text-display max-h-[11.25rem] leading-15 text-5xl overflow-hidden"

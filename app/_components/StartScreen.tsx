@@ -33,10 +33,10 @@ export default function StartScreen({onStart}: { onStart: () => void}) {
 
 
     return (
-        <div className="w-full flex items-center justify-center">
+        <div className="w-full flex items-center justify-center bg-base-100">
             {/* <img src="scroll.svg" width={80} className="animate-pulse fill-blue-950 animate-"/> */}
             <svg className="absolute top-[40vh] animate-bounce" version="1.1" id="designs" xmlns="http://www.w3.org/2000/svg" width="80px" height="80px" viewBox="0 0 32 32">
-                <path className="fill-blue-950 animate-pulse" d="M29.98,8.875c-0.079-0.388-0.181-0.774-0.299-1.152c-0.112-0.367-0.266-0.718-0.411-1.073
+                <path className="fill-base-content animate-pulse" d="M29.98,8.875c-0.079-0.388-0.181-0.774-0.299-1.152c-0.112-0.367-0.266-0.718-0.411-1.073
                     c-0.172-0.424-0.351-0.824-0.606-1.206c-0.253-0.378-0.531-0.743-0.793-1.117c-0.1-0.144-0.223-0.247-0.375-0.317
                     c-0.02-0.015-0.033-0.037-0.055-0.05c-0.031-0.018-0.065-0.027-0.098-0.041c-0.012-0.334-0.226-0.656-0.565-0.739
                     c-0.405-0.098-0.83-0.116-1.245-0.141c-0.363-0.023-0.726-0.039-1.088-0.044c-0.785-0.015-1.571-0.008-2.356-0.014
@@ -95,7 +95,7 @@ export default function StartScreen({onStart}: { onStart: () => void}) {
                     c0.536,0,1.071,0.037,1.607,0.041c0.484,0.004,0.969-0.008,1.453-0.01c0.48-0.002,0.959-0.008,1.438-0.029
                     c0.139-0.006,0.278-0.009,0.419-0.009c0.248,0,0.498,0.01,0.743,0.032C18.483,16.356,18.721,16.461,18.864,16.706z"/>
             </svg>
-            <h2 className="text-blue-950 text-3xl text-center absolute top-[50vh] animate-pulse">{!(gameMode.mode && gameMode.time && gameMode.words) ? "Select your settings" : "Press Space to Start"}</h2>
+            <h2 className="text-base-content text-3xl text-center absolute top-[50vh] animate-pulse">{!(gameMode.mode && gameMode.time && gameMode.words) ? "Select your settings" : "Press Space to Start"}</h2>
         </div>
     )
 }

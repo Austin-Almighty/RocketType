@@ -71,7 +71,7 @@ export default function ResultChart({trackBySecond}:ResultProp) {
 
   return (
     
-      <Card className="h-full bg-transparent border-none shadow-none text-blue-950">
+      <Card className="h-full bg-transparent border-none shadow-none text-base-content">
         <CardHeader>
           <CardTitle>Test Results</CardTitle>
           <CardDescription>{`${month}/${date}`}</CardDescription>
@@ -95,7 +95,8 @@ export default function ResultChart({trackBySecond}:ResultProp) {
                 axisLine={false}
                 tickMargin={10}
                 tickFormatter={(value) => value }
-                label={ {value: "Time (seconds)", position: "bottom", offset: 20} }
+                tick={{fill: "var(--color-base-content)"}}
+                label={ {value: "Time (seconds)", position: "bottom", offset: 20, fill:"var(--color-base-content)"} }
               />
               <YAxis
                   label={ {value: "Words Per Minute", position:"insideLeft", dx:-10, dy: 20, angle:-90} }
@@ -104,22 +105,23 @@ export default function ResultChart({trackBySecond}:ResultProp) {
               <Area
                   dataKey="raw"
                   type="monotone"
-                  fill="rgba(128,128,128, 0.3)"   // semi-transparent green fill
-                  stroke="grey"
+                  fill="var(--color-accent)"   // semi-transparent green fill
+                  stroke="var(--color-accent-content)"
                   strokeWidth={2}
               />
 
               <Area
                   dataKey="wpm"
                   type="monotone"
-                  fill="rgba(136, 23, 39, 0.3)"
+                  fill="var(--color-neutral-content)"
+                  stroke="var(--color-neutral)"
                   strokeWidth={2}
               />
               <Area
                   dataKey="mistakes"
                   type="monotone"
-                  fill="red"
-                  stroke="red"
+                  fill="var(--color-warning)"
+                  stroke="var(--color-warning)"
 
                   strokeWidth={2}
               />

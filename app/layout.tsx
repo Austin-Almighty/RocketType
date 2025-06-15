@@ -6,6 +6,9 @@ import { unstable_ViewTransition as ViewTransition } from "react";
 import { GameProvider } from "./_lib/gameContext";
 import { UserProvider } from "./_lib/userContext";
 
+import Header from "./_components/Header";
+import Footer from "./_components/Footer";
+
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
 //   subsets: ["latin"],
@@ -31,8 +34,11 @@ const JetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Celestial Scribe",
+  title: "RocketType",
   description: "Type Away at your Heart's Content!",
+  icons: {
+    icon: "/favicon.svg"
+  }
 };
 
 
@@ -44,12 +50,18 @@ export default function RootLayout({
 }) {
   return (
 
-      <html lang="en" className={JetBrainsMono.className}>
-        <body>
+      <html lang="en" className={JetBrainsMono.className} data-theme="sunset">
+        <body className="min-h-dvh flex flex-col">
           <ViewTransition name="page">
             <UserProvider>
               <GameProvider>
+                <Header>
+                </Header>
+                <main className="flex-1 bg-base-100">
                 {children}
+                </main>
+                <Footer>
+                </Footer>
               </GameProvider>
             </UserProvider>
           </ViewTransition>
@@ -58,3 +70,4 @@ export default function RootLayout({
 
   );
 }
+

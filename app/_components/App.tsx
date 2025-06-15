@@ -5,6 +5,9 @@ import Typing from "./TimeMode";
 import WpmCounter from "./WpmCounter";
 import { useGameContext } from "../_lib/gameContext";
 import { useRouter } from "next/navigation";
+import resultToDB from "../_lib/resultToFirebase";
+
+import { auth } from "../_lib/Firebase";
 
 export default function App({ reStart }: { reStart: MouseEventHandler }) {
   const [keyCount, setKeyCount] = useState(0); //總按鍵數
@@ -15,8 +18,8 @@ export default function App({ reStart }: { reStart: MouseEventHandler }) {
   const [hasStarted, setHasStarted] = useState(false);
   const [instantRaw, setInstantRaw] = useState<number | null>(null);
   const prevKeyCountRef = useRef(0);
-  const { gameMode, setTrackBySecond, setGameMode } = useGameContext();
-
+  const { gameMode, setTrackBySecond, setGameMode, trackBySecond } = useGameContext();
+  const user = auth.currentUser;
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const typingRef = useRef<HTMLTextAreaElement | null>(null);
@@ -45,6 +48,8 @@ export default function App({ reStart }: { reStart: MouseEventHandler }) {
         ...prev,
         start: false
       }))
+
+      if (user) resultToDB({trackBySecond, gameMode, user});
       router.push("/result");
     }
   }, [elapsedSeconds, gameMode.time, router, setGameMode]);
@@ -99,11 +104,11 @@ export default function App({ reStart }: { reStart: MouseEventHandler }) {
           raw={raw}
         />
       </div>
-      <div className="w-3/4 mx-auto absolute top-[30vh]">
+      <div className="w-3/4 mx-auto absolute top-[30vh] text-primary-content">
         <Clock start={gameMode.time} />
 
         <Typing ref={typingRef} setMistakes={setMistakes} />
-        <div className="tooltip tooltip-bottom absolute translate-x-[-50%] left-[50%]" data-tip="Restart Test">
+        <div className="tooltip tooltip-bottom absolute translate-x-[-50%] left-[50%] text-base-content" data-tip="Restart Test">
           <svg
             // width="70px"
             // height="70px"
@@ -112,10 +117,10 @@ export default function App({ reStart }: { reStart: MouseEventHandler }) {
             className="w-16 h-16 cursor-pointer hover:animate-spin "
             onClick={reStart}
           >
-            <circle cx="12" cy="12" r="10" stroke="#1C274C" strokeWidth="1.5" />
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
             <path
               d="M15.9775 8.71452L15.5355 8.2621C13.5829 6.26318 10.4171 6.26318 8.46447 8.2621C6.51184 10.261 6.51184 13.5019 8.46447 15.5008C10.4171 17.4997 13.5829 17.4997 15.5355 15.5008C16.671 14.3384 17.1462 12.7559 16.9611 11.242M15.9775 8.71452H13.3258M15.9775 8.71452V6"
-              stroke="#1C274C"
+              stroke="currentColor"
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"

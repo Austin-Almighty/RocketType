@@ -18,7 +18,7 @@ export function Clock({ start }: ClockProps) {
   }, [counter]);
 
   return (
-    <span className="countdown font-mono text-4xl text-blue-950">
+    <span className="countdown font-mono text-4xl text-base-content">
       <span
         style={{ "--value": counter } as React.CSSProperties}
         aria-live="polite"

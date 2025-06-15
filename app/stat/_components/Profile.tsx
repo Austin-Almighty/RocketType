@@ -1,8 +1,14 @@
+'use client';
+import { useUser } from "@/app/_lib/userContext";
+
+
 export default function Profile() {
+  const userContext = useUser();
+  const user = userContext.user;
   return (
     <>
-      <div className="bg-gray-400 flex w-[90%] align-middle h-32 rounded-md">
-        <div className="flex items-center gap-4 m-4">
+      <div className="bg-base-300 flex w-[90%] align-middle h-32 rounded-md">
+        <div className="flex items-center gap-4 m-4 w-[30%]">
           <div>
             <svg
               width="80px"
@@ -91,13 +97,22 @@ export default function Profile() {
               />
             </svg>
           </div>
-          <div>
-            <div>Austin Liao</div>
-            <div>Joined 04 May 2025</div>
+          <div className="text-base-content">
+            <div>{user?.displayName}</div>
+            <div>Joined</div>
+            <div>
+              {user?.metadata.creationTime
+                ? `${new Date(user.metadata.creationTime).toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}`
+                : ""}
+            </div>
           </div>
         </div>
         <div className="divider divider-horizontal h-[80%] "></div>
-        <div className="flex justify-between w-full items-center">
+        <div className="flex justify-between w-full items-center text-base-content">
           <div className="w-[33%]">
             <div>Test Started</div>
             <div>47</div>
