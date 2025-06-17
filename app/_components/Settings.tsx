@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useGameContext } from "../_lib/gameContext";
+import { FaKeyboard } from "react-icons/fa";
 
 export default function Settings() {
 
@@ -105,7 +106,9 @@ export default function Settings() {
           </ul>
         </li> */}
         <li>
+
           <details className="dropdown" ref={modeDropdownRef}>
+
             <summary className="btn m-1 bg-transparent border-0 shadow-none text-base-content w-34">
               {gameMode.mode === undefined ? "Mode" : gameMode.mode}
             </summary>

@@ -37,11 +37,9 @@ export const metadata: Metadata = {
   title: "RocketType",
   description: "Type Away at your Heart's Content!",
   icons: {
-    icon: "/favicon.svg"
-  }
+    icon: "/favicon.svg",
+  },
 };
-
-
 
 export default function RootLayout({
   children,
@@ -49,25 +47,32 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-
-      <html lang="en" className={JetBrainsMono.className} data-theme="sunset">
-        <body className="min-h-dvh flex flex-col">
-          <ViewTransition name="page">
-            <UserProvider>
-              <GameProvider>
-                <Header>
-                </Header>
-                <main className="flex-1 bg-base-100">
-                {children}
-                </main>
-                <Footer>
-                </Footer>
-              </GameProvider>
-            </UserProvider>
-          </ViewTransition>
-        </body>
-      </html>
-
+    <html lang="en" className={JetBrainsMono.className}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+      try {
+        let theme = localStorage.getItem("theme");
+        if (theme) {
+          document.documentElement.setAttribute("data-theme", theme);
+        }
+      } catch (e) {console.error(e  )}
+    `,
+          }}
+        />
+      </head>
+      <body className="min-h-dvh flex flex-col">
+        <ViewTransition name="page">
+          <UserProvider>
+            <GameProvider>
+              <Header></Header>
+              <main className="flex-1 bg-base-100">{children}</main>
+              <Footer></Footer>
+            </GameProvider>
+          </UserProvider>
+        </ViewTransition>
+      </body>
+    </html>
   );
 }
-

@@ -6,6 +6,7 @@ import AppLogo from "./Logo";
 import { signOut } from "firebase/auth";
 import { auth } from "../_lib/Firebase";
 
+
 function handleSignOut() {
   signOut(auth)
     .then(() => {
@@ -142,7 +143,7 @@ export default function Header({
   }
   return (
     <>
-      <div className="navbar bg-base-100 text-base-content">
+      <div className="navbar bg-base-100 text-primary">
         <div className="flex-1 mt-6">
           <Link
             href="/app"
@@ -158,7 +159,7 @@ export default function Header({
         <div className="flex-none">
           <ul className="menu menu-horizontal bg-base-100 rounded-box mt-6 text-base-content">
             <li>
-              <Link href="/stat" className="tooltip hover:scale-110" data-tip="Leaderboard">
+              <Link href="/leaderboard" className="tooltip hover:scale-110" data-tip="Leaderboard">
                 <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M22 22H2"
