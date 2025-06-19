@@ -30,7 +30,7 @@ export default function WelcomePage() {
 }, [router]);
   return (
 
-    <div className="w-screen h-screen flex items-center justify-center bg-amber-100">
+    <div className="w-screen h-screen flex items-center justify-center bg-base-100">
       <Link href="/start">
       <svg
         width="834"

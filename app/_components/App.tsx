@@ -1,6 +1,9 @@
 import { MouseEventHandler, useState, useEffect, useRef } from "react";
 import { Clock } from "./Clock";
+import WordCounter from "./WordCounter";
 import Typing from "./TimeMode";
+import WordCountMode from "./WordCountMode";
+
 // import Keyboard from "./Keyboard";
 import WpmCounter from "./WpmCounter";
 import { useGameContext } from "../_lib/gameContext";
@@ -15,8 +18,9 @@ export default function App({ reStart }: { reStart: MouseEventHandler }) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [wpm, setWpm] = useState(0);
   const [raw, setRaw] = useState(0);
-  const [hasStarted, setHasStarted] = useState(false);
   const [instantRaw, setInstantRaw] = useState<number | null>(null);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [completeWords, setCompleteWords] = useState(0);
   const prevKeyCountRef = useRef(0);
   const { gameMode, setTrackBySecond, setGameMode, trackBySecond } = useGameContext();
   const user = auth.currentUser;
@@ -25,34 +29,29 @@ export default function App({ reStart }: { reStart: MouseEventHandler }) {
   const typingRef = useRef<HTMLTextAreaElement | null>(null);
   const router = useRouter();
 
-
-
   useEffect(() => {
+    if (!gameMode.start || !hasStarted) {
+      setElapsedSeconds(0);
+      if (timerRef.current) clearInterval(timerRef.current);
+      return;
+    }
     timerRef.current = setInterval(() => {
       setElapsedSeconds((prev) => prev + 1);
     }, 1000);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, []);
+  }, [gameMode.start, hasStarted]);
 
   //Monitor Time
   useEffect(() => {
-    // Don't do anything if no valid time set
+    // Only trigger onTestEnd when in "time" mode
+    if (gameMode.mode !== "Rocket Run") return;
     if (!gameMode.time) return;
-    
-    // When time is up
     if (elapsedSeconds >= gameMode.time) {
-      if (timerRef.current) clearInterval(timerRef.current);
-      setGameMode(prev=>({
-        ...prev,
-        start: false
-      }))
-
-      if (user) resultToDB({trackBySecond, gameMode, user});
-      router.push("/result");
+      onTestEnd();
     }
-  }, [elapsedSeconds, gameMode.time, router, setGameMode]);
+  }, [elapsedSeconds, gameMode.time, gameMode.mode]);
 
   // Only update keyCount on keydown
   useEffect(() => {
@@ -62,33 +61,46 @@ export default function App({ reStart }: { reStart: MouseEventHandler }) {
     function totalKeyPress(e: KeyboardEvent) {
       if (e.key.length === 1) {
         setKeyCount((prev) => prev + 1);
-        setHasStarted(true);
+        if (!hasStarted) {
+          setHasStarted(true);
+        }
       }
     }
     target.addEventListener("keydown", totalKeyPress);
     return () => {
       target.removeEventListener("keydown", totalKeyPress); //回傳函式：結束時移除監聽
     };
-  }, [setKeyCount, typingRef, setHasStarted, hasStarted]); //打字位置有變時重新執行
+  }, [setKeyCount, typingRef, hasStarted]); //打字位置有變時重新執行
 
   //每秒紀錄數據
- useEffect(() => {
-   if (!hasStarted) return;
-   if (elapsedSeconds === 0 || keyCount === 0) return;
+  useEffect(() => {
+    if (!gameMode.start) return;
+    if (elapsedSeconds === 0 || keyCount === 0) return;
 
-   const keystrokesThisSecond = keyCount - prevKeyCountRef.current;
-   const newRaw = keystrokesThisSecond > 0 ? Math.floor((keystrokesThisSecond/5)*60):0;
+    const keystrokesThisSecond = keyCount - prevKeyCountRef.current;
+    const newRaw = keystrokesThisSecond > 0 ? Math.floor((keystrokesThisSecond/5)*60):0;
 
-   setInstantRaw(newRaw);
-   prevKeyCountRef.current = keyCount;
-   const adjustedWpm = Math.floor(((keyCount - mistakes) / 5) / (elapsedSeconds / 60));
+    setInstantRaw(newRaw);
+    prevKeyCountRef.current = keyCount;
+    const adjustedWpm = Math.floor(((keyCount - mistakes) / 5) / (elapsedSeconds / 60));
 
-   setTrackBySecond((prev) => [
-     ...prev,
-     { keyCount, wpm: adjustedWpm, raw: newRaw, mistakes, elapsedSeconds },
-   ]);
+    setTrackBySecond((prev) => [
+      ...prev,
+      { keyCount, wpm: adjustedWpm, raw: newRaw, mistakes, elapsedSeconds },
+    ]);
 
- }, [elapsedSeconds, hasStarted]);
+  }, [elapsedSeconds, gameMode.start]);
+
+  const onTestEnd = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setGameMode((prev: any) => ({
+      ...prev,
+      start: false,
+    }));
+    setHasStarted(false);
+    if (user) resultToDB({ trackBySecond, gameMode, user });
+    router.push("/result");
+  };
 
   return (
     <>
@@ -105,9 +117,11 @@ export default function App({ reStart }: { reStart: MouseEventHandler }) {
         />
       </div>
       <div className="w-3/4 mx-auto absolute top-[30vh] text-primary-content">
-        <Clock start={gameMode.time} />
+        {gameMode.mode === "Rocket Run" && <Clock start={gameMode.time} running={hasStarted} />}
+        {gameMode.mode === "Star Count" && <WordCounter complete={completeWords}/>}
+        {gameMode.mode === "Rocket Run" && <Typing ref={typingRef} setMistakes={setMistakes} />}
+        {gameMode.mode === "Star Count" && <WordCountMode setMistakes={setMistakes} onTestEnd={onTestEnd} ref={typingRef} setCompleteWords={setCompleteWords}/>}
 
-        <Typing ref={typingRef} setMistakes={setMistakes} />
         <div className="tooltip tooltip-bottom absolute translate-x-[-50%] left-[50%] text-base-content" data-tip="Restart Test">
           <svg
             // width="70px"

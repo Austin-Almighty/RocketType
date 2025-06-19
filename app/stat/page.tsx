@@ -2,7 +2,7 @@
 import Profile from "./_components/Profile";
 import Summary from "./_components/Summary";
 import Table from "./_components/Table";
-import LoadingScreen from "../_ui/loading";
+
 import { useUser } from "../_lib/userContext";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -28,7 +28,7 @@ export default function User() {
   //   }, []);
 
   if (loading) {
-    return <LoadingScreen />;
+    // return <LoadingScreen />;
   } else {
     return (
       <>

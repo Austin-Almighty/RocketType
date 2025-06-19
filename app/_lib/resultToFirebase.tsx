@@ -1,4 +1,3 @@
-
 import { collection, addDoc } from "firebase/firestore";
 
 
@@ -10,9 +9,10 @@ import { serverTimestamp } from "firebase/firestore";
 
 type GameMode = {
     start: boolean,
-    time: number|undefined,
-    mode: "Strict" | "Time Attack" | "Zen" | undefined,
-    words: "1k" | "5k" | "10k" | undefined
+    mode: "Rocket Run" | "Star Count" | "Zen" | null,
+    time: number | null,
+    count: number | null,
+    words: "1k" | "5k" | "10k" | null
 };
 
 type TrackRecord = {
@@ -50,6 +50,7 @@ export default async function resultToDB({trackBySecond, gameMode, user}: {track
             userUID: user?.uid,
             gameMode: gameMode.mode,
             time: gameMode.time,
+            count: gameMode.count,
             words: gameMode.words,
             keyCount: latest.keyCount,
             errors: latest.mistakes,

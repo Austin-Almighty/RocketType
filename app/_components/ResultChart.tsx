@@ -101,11 +101,11 @@ export default function ResultChart({trackBySecond}:ResultProp) {
               <YAxis
                   label={ {value: "Words Per Minute", position:"insideLeft", dx:-10, dy: 20, angle:-90} }
               />
-              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+              <ChartTooltip cursor={false} content={<ChartTooltipContent className="bg-base-200 text-base-content"/>} />
               <Area
                   dataKey="raw"
                   type="monotone"
-                  fill="var(--color-accent)"   // semi-transparent green fill
+                  fill="var(--color-accent)"   
                   stroke="var(--color-accent-content)"
                   strokeWidth={2}
               />
@@ -113,8 +113,8 @@ export default function ResultChart({trackBySecond}:ResultProp) {
               <Area
                   dataKey="wpm"
                   type="monotone"
-                  fill="var(--color-neutral-content)"
-                  stroke="var(--color-neutral)"
+                  fill="var(--color-info)"
+                  stroke="var(--color-info-content)"
                   strokeWidth={2}
               />
               <Area

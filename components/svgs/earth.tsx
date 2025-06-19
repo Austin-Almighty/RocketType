@@ -1,11 +1,8 @@
-'use client';
 
-import { useRef } from "react";
-import { gsap } from "gsap"
 
-export default function LoadingScreen() {
+export default function Earth() {
   return (
-    <div className="bg-amber-100 w-screen h-screen flex items-center justify-center">
+    <>
       <svg
         width="300px"
         height="300px"
@@ -104,6 +101,6 @@ export default function LoadingScreen() {
           <path d="m30.74 29.71c.08-.11 1-1 1.28-1s1 0 .91.22-1.41 1.91-1.66 1.75a1.66 1.66 0 0 1 -.53-.97z" />
         </g>
       </svg>
-    </div>
+    </>
   );
 }

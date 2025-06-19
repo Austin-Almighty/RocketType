@@ -1,5 +1,5 @@
 import { collection, query, where, getDocs, orderBy, Timestamp } from "firebase/firestore";
-import { db, auth } from "@/app/_lib/Firebase";
+import { db } from "@/app/_lib/Firebase";
 
 export async function getLeaderboardResults(range: string, time: string) {
     const resultsRef = collection(db, "results");

@@ -2,27 +2,33 @@
 import { useEffect, useState } from "react";
 
 type ClockProps = {
-  start: number|undefined;
+  start: number|null;
+  running: boolean;
 };
 
-export function Clock({ start }: ClockProps) {
+export function Clock({ start, running }: ClockProps) {
   const [counter, setCounter] = useState(start);
 
   useEffect(() => {
-    if (counter === undefined) return;
+    setCounter(start);
+  }, [start]);
+
+  useEffect(() => {
+    if (!running) return;
+    if (counter === null) return;
     if (counter <= 0) return;
     const timer = setInterval(() => {
-      setCounter((prev) => (prev === undefined ? 0: prev - 1));
+      setCounter((prev) => (prev === null ? 0: prev - 1));
     }, 1000);
     return () => clearInterval(timer);
-  }, [counter]);
+  }, [running, counter]);
 
   return (
     <span className="countdown font-mono text-4xl text-base-content">
       <span
         style={{ "--value": counter } as React.CSSProperties}
         aria-live="polite"
-        // aria-label={counter.toString()}
+        aria-label={counter?.toString()}
       >
         {counter}
       </span>

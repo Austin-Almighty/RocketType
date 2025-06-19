@@ -1,6 +1,5 @@
 'use client';
 import { useState } from "react";
-import Header from "../_components/Header"
 import StartScreen from "../_components/StartScreen";
 import App from "../_components/App";
 import Settings from "../_components/Settings";
@@ -23,10 +22,10 @@ export default function Home() {
     setAppInstance((prev) => (prev === null ? 1 : prev + 1));
   }
 
-  function handleHomePage() {
-    setTrackBySecond([]);
-    setAppInstance(null);
-  }
+  // function handleHomePage() {
+  //   setTrackBySecond([]);
+  //   setAppInstance(null);
+  // }
 
   function renderContent() {
     if (appInstance !== null) {

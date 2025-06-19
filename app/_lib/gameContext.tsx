@@ -3,9 +3,10 @@ import { createContext, useContext, useState, ReactNode } from "react";
 
 type GameMode = {
     start: boolean,
-    time: number|undefined,
-    mode: "Strict" | "Time Attack" | "Zen" | undefined,
-    words: "1k" | "5k" | "10k" | undefined
+    mode: "Rocket Run" | "Star Count" | "Zen" | null,
+    time: number | null, // Only used for 'time' mode
+    count: number | null, // Only used for 'count' mode
+    words: "1k" | "5k" | "10k" | null
 };
 
 type TrackRecord = {
@@ -29,9 +30,10 @@ const GameContext = createContext<GameContextType | undefined>(undefined);
 export function GameProvider({ children }: { children: ReactNode }) {
     const [gameMode, setGameMode] = useState<GameMode>({
         start: false,
-        time: undefined,
-        mode: undefined,
-        words: undefined,
+        mode: null,
+        time: null,
+        count: null,
+        words: null,
     });
 
     const [trackBySecond, setTrackBySecond] = useState<TrackRecord[]>([]);

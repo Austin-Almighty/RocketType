@@ -2,6 +2,7 @@
 import { FaGithub, FaPalette } from "react-icons/fa";
 import ThemeSelector from "./ThemeSelector";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type FooterProps = {
   className?: string;
@@ -91,10 +92,12 @@ export default function Footer({ className }: FooterProps) {
               <button>close</button>
             </form>
           </dialog>
-          <button className="btn bg-transparent border-none p-0 m-0 shadow-none outline-none">
-            <FaGithub className="w-9 h-9 fill-base-content" />
-            GitHub
-          </button>
+          <Link href="https://github.com/Austin-Almighty/RocketType" target="_blank" rel="noopener noreferrer">
+            <button className="btn bg-transparent border-none p-0 m-0 shadow-none outline-none">
+                <FaGithub className="w-9 h-9 fill-base-content" />
+                GitHub
+            </button>
+          </Link>
         </nav>
       </footer>
     </div>

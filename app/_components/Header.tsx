@@ -5,6 +5,9 @@ import { useUser } from "../_lib/userContext";
 import AppLogo from "./Logo";
 import { signOut } from "firebase/auth";
 import { auth } from "../_lib/Firebase";
+import { FaInfoCircle } from "react-icons/fa";
+import { useGameContext } from "../_lib/gameContext";
+import { Preahvihear } from "next/font/google";
 
 
 function handleSignOut() {
@@ -23,6 +26,7 @@ export default function Header({
   reStart?: () => void;
 }) {
   const user = useUser();
+  const {setGameMode} = useGameContext();
 
   function handleUser() {
     if (!user.user) {
@@ -144,16 +148,28 @@ export default function Header({
   return (
     <>
       <div className="navbar bg-base-100 text-primary">
-        <div className="flex-1 mt-6">
+        <div className="flex-1 mt-6 flex gap-6">
           <Link
             href="/app"
             className="mt-2"
             onClick={() => {
+              // setGameMode((prev)=>({
+              //   ...prev,
+              //   start: false
+              // }))
               reStart();
             }}
           >
             <AppLogo />
-            {/* Starlight Scribe */}
+          </Link>
+          <Link
+            href="/about"
+            className="mt-2"
+          >
+            <div className="tooltip hover:scale-110" data-tip="About">
+              <FaInfoCircle className="fill-base-content h-7 w-7"/>
+            </div>
+
           </Link>
         </div>
         <div className="flex-none">

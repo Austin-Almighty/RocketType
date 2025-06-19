@@ -81,3 +81,15 @@ html {
     transform: translate(-10px, 10px);
   }
 }
+
+
+/* @keyframes flicker-slow {
+  0%   { filter: brightness(0.95) }
+  100% { filter: brightness(1.12) }
+}
+
+@keyframes flicker-fast {
+  0%   { filter: brightness(1.05)}
+  50%  { filter: brightness(1.20) }
+  100% { filter: brightness(1.07) }
+} */
