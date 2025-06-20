@@ -9,7 +9,7 @@ export async function getLeaderboardResults(range: string, time: string) {
         resultsQuery = query(
             resultsRef,
             where("time", "==", Number(time)),
-            where("gameMode", "==", "Time Attack"),
+            where("gameMode", "==", "Rocket Run"),
             orderBy("wpm", "desc")
         );
     } else if (range === "Monthly") {
@@ -19,7 +19,7 @@ export async function getLeaderboardResults(range: string, time: string) {
         resultsQuery = query(
             resultsRef,
             where("time", "==", Number(time)),
-            where("gameMode", "==", "Time Attack"),
+            where("gameMode", "==", "Rocket Run"),
             where("createdAt", ">=", Timestamp.fromDate(startOfMonth)),
             where("createdAt", "<", Timestamp.fromDate(startOfNextMonth)),
             orderBy("wpm", "desc")
@@ -31,7 +31,7 @@ export async function getLeaderboardResults(range: string, time: string) {
         resultsQuery = query(
             resultsRef,
             where("time", "==", Number(time)),
-            where("gameMode", "==", "Time Attack"),
+            where("gameMode", "==", "Rocket Run"),
             where("createdAt", ">=", Timestamp.fromDate(startOfDay)),
             where("createdAt", "<", Timestamp.fromDate(startOfNextDay)),
             orderBy("wpm", "desc")

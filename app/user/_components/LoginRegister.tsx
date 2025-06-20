@@ -4,12 +4,14 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  GithubAuthProvider
 } from "firebase/auth";
 import { auth } from "../../_lib/Firebase";
 import { useForm } from "react-hook-form";
 import type { FieldValues } from "react-hook-form";
 
 const provider = new GoogleAuthProvider();
+const gitHubProvider = new GithubAuthProvider();
 
 export default function LoginRegister() {
   const {
@@ -43,6 +45,20 @@ export default function LoginRegister() {
         // const credential = GoogleAuthProvider.credentialFromError(error);
         console.log(errorCode, errorMessage);
       });
+  }
+
+  function signInWithGithub() {
+    signInWithPopup(auth, gitHubProvider)
+    .then((result) => {
+      const credential = GithubAuthProvider.credentialFromResult(result);
+      console.log(credential);
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+
+      console.error(errorCode, errorMessage)
+    });
   }
 
   function authCreateUserWithPassword(email: string, password: string) {
@@ -100,22 +116,22 @@ export default function LoginRegister() {
       <div className="flex space-x-40">
         <div id="register" className="h-32">
           <form onSubmit={handleSubmit(onSubmit)}>
-            <fieldset className="fieldset bg-currentColor border-base-300 rounded-box w-xs border p-4">
-              <legend className="fieldset-legend text-primary-content">
+            <fieldset className="fieldset bg-base-300 border-neutral rounded-box w-xs border p-4">
+              <legend className="fieldset-legend text-base-content">
                 Register
               </legend>
-              <label className="label text-primary-content">Email</label>
+              <label className="label text-base-content">Email</label>
               <input
                 {...register("email", {
                   required: "Please enter a valid email",
                 })}
                 type="email"
-                className="input bg-white"
+                className="input bg-base-100 text-base-content"
                 placeholder="Email"
                 id="email"
               />
               {errors.email && ErrorMessage(`${errors.email.message}`)}
-              <label className="label text-primary-content">Verify Email</label>
+              <label className="label text-base-content">Verify Email</label>
               <input
                 {...register("verifyEmail", {
                   required: "Confirm your email address",
@@ -123,13 +139,13 @@ export default function LoginRegister() {
                     value === getValues("email") || "Email address must match",
                 })}
                 type="email"
-                className="input bg-white"
+                className="input bg-base-100 text-base-content"
                 placeholder="Verify Email"
                 id="verifyEmail"
               />
               {errors.verifyEmail &&
                 ErrorMessage(`${errors.verifyEmail.message}`)}
-              <label className="label text-primary-content">Password</label>
+              <label className="label text-base-content">Password</label>
               <input
                 {...register("password", {
                   required: "Enter your password",
@@ -139,12 +155,12 @@ export default function LoginRegister() {
                   },
                 })}
                 type="password"
-                className="input bg-white"
+                className="input bg-base-100 text-base-context"
                 placeholder="Password"
                 id="password"
               />
               {errors.password && ErrorMessage(`${errors.password.message}`)}
-              <label className="label text-primary-content">Verify Password</label>
+              <label className="label text-base-content">Verify Password</label>
               <input
                 {...register("verifyPassword", {
                   required: "Confirm your password",
@@ -152,24 +168,24 @@ export default function LoginRegister() {
                     value === getValues("password") || "Password must match",
                 })}
                 type="password"
-                className="input bg-white"
+                className="input bg-base-100 text-base-content"
                 placeholder="Verify Password"
                 id="verifyPassword"
               />
               {errors.verifyPassword &&
                 ErrorMessage(`${errors.verifyPassword.message}`)}
-              <button className="btn btn-neutral mt-4" disabled={isSubmitting}>
+              <button className="btn btn-neutral mt-4 text-neutral-content" disabled={isSubmitting}>
                 Sign up
               </button>
             </fieldset>
           </form>
         </div>
         <div id="login" className="h-32">
-          <fieldset className="fieldset bg-currentColor border-base-300 rounded-box w-xs border p-4">
-            <legend className="fieldset-legend text-primary-content">Login</legend>
+          <fieldset className="fieldset bg-base-300 border-neutral rounded-box w-xs border p-4">
+            <legend className="fieldset-legend text-base-content">Login</legend>
 
             <label className="label text-primary-content"></label>
-            <button className="btn bg-black text-white border-black">
+            <button className="btn bg-black text-white border-black" onClick={signInWithGithub}>
               <svg
                 aria-label="GitHub logo"
                 width="16"
@@ -220,11 +236,11 @@ export default function LoginRegister() {
               Login with Google
             </button>
             <form onSubmit={handleSubmitLogin(onSubmitLogin)}>
-              <div className="divider divider-primary text-blue-950">OR</div>
-              <label className="label text-primary-content">Email</label>
+              <div className="divider divider-secondary text-base-content">OR</div>
+              <label className="label text-base-content">Email</label>
               <input
                 type="email"
-                className="input bg-white"
+                className="input bg-base-100 text-base-content"
                 placeholder="Email"
                 {...registerLogin("loginEmail", {
                   required: "Enter your email address",
@@ -233,10 +249,10 @@ export default function LoginRegister() {
               ></input>
               {errors.loginEmail &&
                 ErrorMessage(`${errors.loginEmail.message}`)}
-              <label className="label text-primary-content">Password</label>
+              <label className="label text-base-content">Password</label>
               <input
                 type="password"
-                className="input bg-white"
+                className="input bg-base-100 text-base-content"
                 placeholder="Password"
                 id="loginPassword"
                 {...registerLogin("loginPassword", {
@@ -245,7 +261,7 @@ export default function LoginRegister() {
               ></input>
               {errors.loginPassword &&
                ErrorMessage(`${errors.loginPassword.message}`)}
-              <button className="btn btn-neutral mt-4 w-full">Login</button>
+              <button className="btn btn-neutral text-neutral-content mt-4 w-full">Login</button>
             </form>
           </fieldset>
         </div>

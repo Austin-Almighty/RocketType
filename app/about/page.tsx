@@ -43,7 +43,7 @@ export default function About() {
             <h2 className="text-center align-middle text-3xl">Leaderboard and Personal Progress Tracking</h2>
           </span>
           <p className="text-base-content bg-base-300 rounded-2xl p-4">
-            Sign up to see your results on the leaderboards and keep track of your progress over time. If you prefer, you can still play without creating an account.
+            Sign up to see your results on the leaderboards and keep track of your progress over time. You can still play without creating an account.
           </p>
         </article>
 

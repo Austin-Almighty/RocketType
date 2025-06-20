@@ -2,7 +2,7 @@
 import Profile from "./_components/Profile";
 import Summary from "./_components/Summary";
 import Table from "./_components/Table";
-
+import Earth from "@/components/svgs/earth";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -28,9 +28,28 @@ export default function User() {
     averageAccuracyLast10: number,
   }>(null);
 
-  useEffect(()=>{
-    getSummaryStats().then(setStats);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(()=> {
+    setLoading(true);
+    const minDelay = 1000;
+    const start = Date.now();
+
+    async function loadData() {
+      const data = await getSummaryStats();
+      setStats(data);
+      const elapsed = Date.now() - start;
+      const wait = minDelay - elapsed;
+      if (wait > 0) {
+        setTimeout(()=> setLoading(false), wait);
+      } else {
+        setLoading(false);
+      }
+    }
+    loadData()
   }, []);
+
+ 
 
   useEffect(()=>{
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -51,6 +70,16 @@ export default function User() {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-2 w-full h-dvh py-8 text-center align-middle">
+        {/* <span className="loading loading-infinity loading-xl text-warning"></span> */}
+        <Earth />
+        <div>Loading...</div>
+      </div>
+    )
+  }
+
 
   
     return (
@@ -62,10 +91,10 @@ export default function User() {
               <Profile stats={stats}/>
               <Summary stats={stats}/>
               <Table />
-              <button className="btn">
+              {/* <button className="btn">
                 <span className="loading loading-spinner"></span>
                 loading
-              </button>
+              </button> */}
             </>
           )}
         </div>

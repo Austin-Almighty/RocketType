@@ -398,7 +398,7 @@ export default function Settings() {
           <div className="modal-box modal-bottom sm:modal-middle bg-base-200 flex flex-col gap-2 items-center rounded-2xl">
             <h3 className="font-bold text-3xl text-base-content flex gap-2">
               <FaUser />
-              Delete Account
+              Reset Progress
             </h3>
             <h3>Are you sure you want to reset your data?</h3>
             <form
