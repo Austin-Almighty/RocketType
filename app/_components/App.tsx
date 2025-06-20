@@ -3,6 +3,7 @@ import { Clock } from "./Clock";
 import WordCounter from "./WordCounter";
 import Typing from "./TimeMode";
 import WordCountMode from "./WordCountMode";
+import ZenMode from "./ZenMode";
 
 // import Keyboard from "./Keyboard";
 import WpmCounter from "./WpmCounter";
@@ -11,8 +12,12 @@ import { useRouter } from "next/navigation";
 import resultToDB from "../_lib/resultToFirebase";
 
 import { auth } from "../_lib/Firebase";
+import { GrPowerReset } from "react-icons/gr";
+import { IoMdReturnLeft } from "react-icons/io";
 
-export default function App({ reStart }: { reStart: MouseEventHandler }) {
+
+
+export default function App({ reStart, goHome }: { reStart: MouseEventHandler, goHome: () => void }) {
   const [keyCount, setKeyCount] = useState(0); //總按鍵數
   const [mistakes, setMistakes] = useState(0);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -118,28 +123,20 @@ export default function App({ reStart }: { reStart: MouseEventHandler }) {
       </div>
       <div className="w-3/4 mx-auto absolute top-[30vh] text-primary-content">
         {gameMode.mode === "Rocket Run" && <Clock start={gameMode.time} running={hasStarted} />}
-        {gameMode.mode === "Star Count" && <WordCounter complete={completeWords}/>}
+        {(gameMode.mode === "Star Count" || gameMode.mode === "Zen") && <WordCounter complete={completeWords}/>}
         {gameMode.mode === "Rocket Run" && <Typing ref={typingRef} setMistakes={setMistakes} />}
         {gameMode.mode === "Star Count" && <WordCountMode setMistakes={setMistakes} onTestEnd={onTestEnd} ref={typingRef} setCompleteWords={setCompleteWords}/>}
+        {gameMode.mode === "Zen" && (
+          <ZenMode ref={typingRef} setCompleteWords={setCompleteWords} />
+        )}
 
-        <div className="tooltip tooltip-bottom absolute translate-x-[-50%] left-[50%] text-base-content" data-tip="Restart Test">
-          <svg
-            // width="70px"
-            // height="70px"
-            viewBox="0 0 24 24"
-            fill="none"
-            className="w-16 h-16 cursor-pointer hover:animate-spin "
-            onClick={reStart}
-          >
-            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
-            <path
-              d="M15.9775 8.71452L15.5355 8.2621C13.5829 6.26318 10.4171 6.26318 8.46447 8.2621C6.51184 10.261 6.51184 13.5019 8.46447 15.5008C10.4171 17.4997 13.5829 17.4997 15.5355 15.5008C16.671 14.3384 17.1462 12.7559 16.9611 11.242M15.9775 8.71452H13.3258M15.9775 8.71452V6"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+        <div className="flex absolute translate-x-[-50%] left-[50%] text-base-content justify-center gap-20 min-w-[50%]" data-tip="Restart Test">
+          <div className="tooltip tooltip-bottom" data-tip="Restart">
+            <GrPowerReset className="w-10 h-10 fill-base-content" onClick={reStart}/>
+          </div>  
+          <div className="tooltip tooltip-bottom" data-tip="Back">
+            <IoMdReturnLeft className="w-10 h-10 fill-base-content" onClick={goHome}/>
+          </div>
         </div>
       </div>
     </>

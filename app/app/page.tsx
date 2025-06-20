@@ -22,14 +22,14 @@ export default function Home() {
     setAppInstance((prev) => (prev === null ? 1 : prev + 1));
   }
 
-  // function handleHomePage() {
-  //   setTrackBySecond([]);
-  //   setAppInstance(null);
-  // }
+  function handleHomePage() {
+    setTrackBySecond([]);
+    setAppInstance(null);
+  }
 
   function renderContent() {
     if (appInstance !== null) {
-      return <App key={appInstance} reStart={handleRestart} />;
+      return <App key={appInstance} reStart={handleRestart} goHome={handleHomePage} />;
     }
     // Not started yet
     return (

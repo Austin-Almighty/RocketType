@@ -37,7 +37,7 @@ export default function StartScreen({onStart}: { onStart: () => void}) {
 
       return (
           <div className="w-full flex items-center justify-center bg-base-100 flex-col">
-            {/* <ViewTransition name="shuttle" onUpdate={(instance)=>{
+            <ViewTransition name="shuttle" onUpdate={(instance)=>{
               instance.old.animate({
                 transform: ["scale(1)", "scale(0)"],
                 opacity: [1, 0]
@@ -47,11 +47,11 @@ export default function StartScreen({onStart}: { onStart: () => void}) {
                 transform: ["scale(0)", "scale(1)"],
                 opacity: [0, 1]
               }, {duration: 700})
-            }}> */}
+            }}>
               <div className="rotate-270 absolute top-[30vh]">
                 <SpaceShuttle flying={gameMode.start} thrust={true}/>
               </div>
-            {/* </ViewTransition> */}
+            </ViewTransition>
 
               <h2 className="text-base-content text-3xl text-center absolute top-[60vh] animate-pulse">{!(gameMode.start) ? "Preparing for Launch" : "Ready for Launch!"}</h2>
               <h2 className="text-base-content text-3xl text-center absolute top-[65vh] animate-pulse">{!(gameMode.start) ? "Select Your Settings" : "Press Space"}</h2>

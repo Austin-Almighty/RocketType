@@ -141,7 +141,7 @@ export default function ResultChart({trackBySecond}:ResultProp) {
             </div>
             <div>
               <div>Time</div>
-              <div>{gameMode.time}</div>
+              <div>{trackBySecond.length}s</div>
             </div>
           </div>
         </CardFooter>

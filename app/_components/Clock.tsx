@@ -7,6 +7,7 @@ type ClockProps = {
 };
 
 export function Clock({ start, running }: ClockProps) {
+
   const [counter, setCounter] = useState(start);
 
   useEffect(() => {

@@ -125,10 +125,10 @@ export default function Settings() {
 
           <details className="dropdown" ref={modeDropdownRef}>
 
-            <summary className="btn m-1 bg-transparent border-0 shadow-none text-base-content w-34">
+            <summary className="btn m-1 bg-base-300 border-0 shadow-none text-base-content w-34">
               {gameMode.mode === null ? "Mode" : gameMode.mode}
             </summary>
-            <ul className="menu dropdown-content bg-transparent text-base-content shadow-none">
+            <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none rounded-2xl">
               <li className="text-base-content flex justify-center">
                 <a
                   className="block w-full text-center"
@@ -162,7 +162,7 @@ export default function Settings() {
               <summary className="btn m-1 bg-transparent border-0 shadow-none text-base-content w-34">
                 {gameMode.count === null ? "Count" : `${gameMode.count} words`}
               </summary>
-              <ul className="menu dropdown-content bg-transparent text-base-content shadow-none absolute left-1/2 -translate-x-1/2">
+              <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl">
                 <li className="text-base-content flex justify-center">
                   <a
                     className="block w-full text-center"
@@ -197,7 +197,7 @@ export default function Settings() {
               <summary className="btn m-1 bg-transparent border-0 shadow-none text-base-content w-34">
                 {gameMode.time === null ? "Time" : `${gameMode.time}s`}
               </summary>
-              <ul className="menu dropdown-content bg-transparent text-base-content shadow-none absolute left-1/2 -translate-x-1/2">
+              <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl">
                 <li className="text-base-content flex justify-center">
                   <a
                     className="block w-full text-center"
@@ -226,18 +226,20 @@ export default function Settings() {
             </details>
           </li>
         )}
-        <li>
-          <details className="dropdown" ref={wordDropdownRef}>
-            <summary className="btn m-1 bg-transparent border-0 shadow-none text-base-content w-34">
-              {gameMode.words===null ? "Words": gameMode.words}
-            </summary>
-            <ul className="menu dropdown-content bg-transparent text-base-content shadow-none absolute left-1/2 -translate-x-1/2">
-              <li className="text-base-content flex justify-center"><a className="block w-full text-center" onClick={()=>handleWordsChange("1k")}>1k</a></li>
-              <li className="text-base-content flex justify-center"><a className="block w-full text-center" onClick={()=>handleWordsChange("5k")}>5k</a></li>
-              <li className="text-base-content flex justify-center"><a className="block w-full text-center" onClick={()=>handleWordsChange("10k")}>10k</a></li>
-            </ul>
-          </details>
-        </li>
+        {gameMode.mode !== "Zen" && (
+          <li>
+            <details className="dropdown" ref={wordDropdownRef}>
+              <summary className="btn m-1 bg-transparent border-0 shadow-none text-base-content w-34">
+                {gameMode.words===null ? "Words": gameMode.words}
+              </summary>
+              <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl">
+                <li className="text-base-content flex justify-center"><a className="block w-full text-center" onClick={()=>handleWordsChange("1k")}>1k</a></li>
+                <li className="text-base-content flex justify-center"><a className="block w-full text-center" onClick={()=>handleWordsChange("5k")}>5k</a></li>
+                <li className="text-base-content flex justify-center"><a className="block w-full text-center" onClick={()=>handleWordsChange("10k")}>10k</a></li>
+              </ul>
+            </details>
+          </li>
+        )}
       </ul>
     </div>
   );

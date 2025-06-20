@@ -1,10 +1,39 @@
 'use client';
 import { useUser } from "@/app/_lib/userContext";
 
+type Stats = {
+  DaysSinceCreation: number;
+  highestWPM: number;
+  averageWPM: number;
+  completed: number;
+  timeTyping: number;
+  averageWPMLast10: number;
+  highestRAW: number;
+  averageRAW: number;
+  averageRAWLast10: number;
+  highestAccuracy: number;
+  averageAccuracy: number;
+  averageAccuracyLast10: number;
+};
+type SummaryProps = {
+  stats: Stats | null;
+};
 
-export default function Profile() {
+export default function Profile({stats}: SummaryProps) {
   const userContext = useUser();
   const user = userContext.user;
+  function formatSeconds(seconds: number) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+
+  // Pad with zeros
+  const hh = h.toString().padStart(2, "0");
+  const mm = m.toString().padStart(2, "0");
+  const ss = s.toString().padStart(2, "0");
+
+  return `${hh}:${mm}:${ss}`;
+}
   return (
     <>
       <div className="bg-base-300 flex w-[90%] align-middle h-32 rounded-md">
@@ -114,16 +143,16 @@ export default function Profile() {
         <div className="divider divider-horizontal h-[80%] "></div>
         <div className="flex justify-between w-full items-center text-base-content">
           <div className="w-[33%]">
-            <div>Test Started</div>
-            <div>47</div>
+            <div>Days Since Joined</div>
+            <div>{stats ? stats.DaysSinceCreation: "No Data Available"}</div>
           </div>
           <div className="w-[33%]">
             <div>Test Completed</div>
-            <div>40</div>
+            <div>{stats ? stats.completed: "No Data Available"}</div>
           </div>
           <div className="w-[33%]">
             <div>Time Typing</div>
-            <div>12:02</div>
+            <div>{stats ? formatSeconds(stats.timeTyping): "No Data Available"}</div>
           </div>
         </div>
       </div>

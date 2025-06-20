@@ -20,11 +20,11 @@ import SpaceShuttle from "@/components/svgs/SpaceShuttle";
 export default function About() {
   return (
     <div className="w-[90%] bg-base-100 mx-auto mt-6">
-        {/* <ViewTransition name="shuttle"> */}
+        <ViewTransition name="shuttle">
             <Hero>
                 <SpaceShuttle flying={true} thrust={true}/>
             </Hero>
-        {/* </ViewTransition> */}
+        </ViewTransition>
       <div>
         <article aria-label="About">
           <span className="flex my-4">
@@ -33,8 +33,17 @@ export default function About() {
           </span>
           <p className="text-base-content bg-base-300 rounded-2xl p-4">
             RocketType is a typing test that can be run in the browser.
-            Currently, it features three test modes: time attack, word scramble,
-            and zen mode. To start the test, choose your desired settings and start typing!
+            Currently, it features three test modes: Rocket Run (time based mode), Star Count (word count based mode),
+            and Zen mode (free typing mode). Choose your desired settings and start typing!
+          </p>
+        </article>
+        <article aria-label="About">
+          <span className="flex my-4">
+            <FaInfoCircle className="w-10 h-10 mr-4" />
+            <h2 className="text-center align-middle text-3xl">Leaderboard and Personal Progress Tracking</h2>
+          </span>
+          <p className="text-base-content bg-base-300 rounded-2xl p-4">
+            Sign up to see your results on the leaderboards and keep track of your progress over time. If you prefer, you can still play without creating an account.
           </p>
         </article>
 
@@ -150,7 +159,7 @@ export default function About() {
             <h2 className="text-center align-middle text-3xl">Acknowledgement</h2>
           </span>
           <p className="text-base-content bg-base-300 rounded-2xl p-4">
-            Inspired by the minimalistic aesthetic and incredible responsiveness of MonkeyType, this project is built by Austin Liao.
+            Inspired by the minimalistic aesthetic and incredible responsiveness of MonkeyType!
           </p>
         </section>
       </div>

@@ -1,24 +1,42 @@
 import { getSummaryStats } from "@/app/_lib/getResults";
 import { useEffect, useState } from "react";
 
-export default function Summary() {
-  const [stats, setStats] = useState<null | {
-    highestWPM: number,
-    averageWPM: number,
-    completed: number,
-    timeTyping: number,
-    averageWPMLast10: number,
-    highestRAW: number,
-    averageRAW: number,
-    averageRAWLast10: number,
-    highestAccuracy: number,
-    averageAccuracy: number,
-    averageAccuracyLast10: number,
-  }>(null);
+type Stats = {
+  DaysSinceCreation: number;
+  highestWPM: number;
+  averageWPM: number;
+  completed: number;
+  timeTyping: number;
+  averageWPMLast10: number;
+  highestRAW: number;
+  averageRAW: number;
+  averageRAWLast10: number;
+  highestAccuracy: number;
+  averageAccuracy: number;
+  averageAccuracyLast10: number;
+};
+type SummaryProps = {
+  stats: Stats | null;
+};
 
-  useEffect(()=>{
-    getSummaryStats().then(setStats);
-  }, []);
+export default function Summary({stats}: SummaryProps) {
+  // const [stats, setStats] = useState<null | {
+  //   highestWPM: number,
+  //   averageWPM: number,
+  //   completed: number,
+  //   timeTyping: number,
+  //   averageWPMLast10: number,
+  //   highestRAW: number,
+  //   averageRAW: number,
+  //   averageRAWLast10: number,
+  //   highestAccuracy: number,
+  //   averageAccuracy: number,
+  //   averageAccuracyLast10: number,
+  // }>(null);
+
+  // useEffect(()=>{
+  //   getSummaryStats().then(setStats);
+  // }, []);
 
   function formatSeconds(seconds: number) {
     const h = Math.floor(seconds / 3600);
@@ -38,8 +56,8 @@ export default function Summary() {
     <div className="grid grid-cols-3 grid-rows-4 gap-4 bg-transparent p-4 rounded-lg w-[90%] text-base-content">
       {/* Row 1 */}
       <div className="bg-base-200 rounded shadow p-2">
-        <div>Test Started</div>
-        <div>47</div>
+        <div>Days Since Joined</div>
+        <div>{stats ? stats.DaysSinceCreation : "No Data Available"}</div>
       </div>
       <div className="bg-base-200 p-2 rounded shadow">
         <div>Test Completed</div>
