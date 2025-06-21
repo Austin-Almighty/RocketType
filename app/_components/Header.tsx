@@ -7,6 +7,8 @@ import { signOut } from "firebase/auth";
 import { auth } from "../_lib/Firebase";
 import { FaInfoCircle } from "react-icons/fa";
 import { useGameContext } from "../_lib/gameContext";
+import { IoSettings } from "react-icons/io5";
+
 
 
 
@@ -55,7 +57,7 @@ export default function Header({
       );
     } else {
       return (
-        <div className="tooltip text-base-content hover:scale-110" data-tip="User">
+        <div className="tooltip text-base-content hover:scale-110">
                 <div className="dropdown dropdown-end dropdown-hover">
                   <div tabIndex={0} role="button">
                     <svg
@@ -90,7 +92,7 @@ export default function Header({
                   </div>
                   <ul
                     tabIndex={0}
-                    className="dropdown-content menu bg-base-100 rounded-box z-1 w-40 p-2 shadow-sm !mt-0"
+                    className="dropdown-content menu bg-base-300 rounded-box z-1 w-40 p-2 shadow-sm !mt-0"
                   >
                     <li className="text-base-content">
                       <Link href="/stat">
@@ -117,6 +119,12 @@ export default function Header({
                           </defs>
                         </svg>
                         User Stats
+                      </Link>
+                    </li>
+                    <li className="text-base-content">
+                      <Link href="/settings">
+                        <IoSettings className="w-6 h-6 fill-base-content"/>
+                        Settings
                       </Link>
                     </li>
                    
@@ -201,7 +209,7 @@ export default function Header({
                 </svg>
               </Link>
             </li>
-            <li className="tooltip" data-tip="Settings">
+            {/* <li className="tooltip" data-tip="Settings">
               <Link
                 href="/settings"
                 className="hover:scale-110"
@@ -226,7 +234,7 @@ export default function Header({
                   />
                 </svg>
               </Link>
-            </li>
+            </li> */}
             <li>
               {handleUser()}
             </li>
