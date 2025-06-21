@@ -15,6 +15,8 @@
 - Color Themes Support (35 themes)
 - Animated visual feedback and fun graphics
 
+![alt text](image-1.png)
+
 ## 🖥️ Tech Stack
 
 - React
