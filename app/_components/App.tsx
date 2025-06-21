@@ -6,7 +6,7 @@ import WordCountMode from "./WordCountMode";
 import ZenMode from "./ZenMode";
 
 // import Keyboard from "./Keyboard";
-import WpmCounter from "./WpmCounter";
+// import WpmCounter from "./WpmCounter";
 import { useGameContext } from "../_lib/gameContext";
 import { useRouter } from "next/navigation";
 import resultToDB from "../_lib/resultToFirebase";
@@ -21,8 +21,8 @@ export default function App({ reStart, goHome }: { reStart: MouseEventHandler, g
   const [keyCount, setKeyCount] = useState(0); //總按鍵數
   const [mistakes, setMistakes] = useState(0);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [wpm, setWpm] = useState(0);
-  const [raw, setRaw] = useState(0);
+  // const [wpm, setWpm] = useState(0);
+  // const [raw, setRaw] = useState(0);
   const [instantRaw, setInstantRaw] = useState<number | null>(null);
   const [hasStarted, setHasStarted] = useState(false);
   const [completeWords, setCompleteWords] = useState(0);

@@ -83,7 +83,7 @@ export default function WelcomePage() {
             className="absolute left-1/2 -translate-x-1/2"
             style={{ top: '70%' }}
           >
-            <SpaceShuttle thrust={true} flying={true} height={120} />
+            <SpaceShuttle thrust={true} flying={true} />
           </div>
           </ViewTransition>
         )}
