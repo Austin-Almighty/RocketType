@@ -40,7 +40,7 @@ export default function Header({
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               stroke="currentColor"
-              className="h-7 w-7"
+              className="md:h-8 md:w-8 w-6 h-6"
             >
               <circle cx="12" cy="9" r="3" stroke="currentColor" strokeWidth="2" />
               <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
@@ -65,7 +65,7 @@ export default function Header({
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                       stroke="currentColor"
-                      className="h-7 w-7"
+                      className="md:h-8 md:w-8 w-6 h-6"
                     >
                       <circle
                         cx="12"
@@ -155,11 +155,11 @@ export default function Header({
   }
   return (
     <>
-      <div className="navbar bg-base-100 text-primary">
-        <div className="flex-1 mt-6 flex gap-6">
+      <div className="navbar bg-base-100 text-primary p-2 sm:p-4 md:px-6">
+        <div className="flex-1 flex gap-2 sm:gap-4 md:gap-6 ">
           <Link
             href="/app"
-            className="mt-2"
+            className=""
             onClick={() => {
               // setGameMode((prev)=>({
               //   ...prev,
@@ -168,23 +168,23 @@ export default function Header({
               reStart();
             }}
           >
-            <AppLogo />
+            <AppLogo className={"w-[132px] lg:w-[220px] md:h-8 md:w-[176px] sm:w-[132px] sm:h-6 h-6"}/>
           </Link>
           <Link
             href="/about"
-            className="mt-2"
+            className=""
           >
             <div className="tooltip hover:scale-110" data-tip="About">
-              <FaInfoCircle className="fill-base-content h-7 w-7"/>
+              <FaInfoCircle className="fill-base-content  md:h-8 md:w-8 w-6 h-6"/>
             </div>
 
           </Link>
         </div>
         <div className="flex-none">
-          <ul className="menu menu-horizontal bg-base-100 rounded-box mt-6 text-base-content">
+          <ul className="menu menu-horizontal bg-base-100 rounded-box text-base-content">
             <li>
               <Link href="/leaderboard" className="tooltip hover:scale-110" data-tip="Leaderboard">
-                <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none">
+                <svg className="md:h-8 md:w-8 w-6 h-6" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M22 22H2"
                     stroke="currentColor"

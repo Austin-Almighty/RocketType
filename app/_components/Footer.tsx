@@ -50,45 +50,36 @@ export default function Footer({ className }: FooterProps) {
 
   return (
     <div className={className}>
-      <footer className="footer sm:footer-horizontal bg-base-100 items-center p-4 text-base-content">
-        <aside className="grid-flow-col items-center">
-         
+      <footer className="flex flex-col md:flex-row justify-between items-center p-4 bg-base-100 text-base-content">
+        <aside className="mb-2 md:mb-0 flex items-center">
           <Link href="https://github.com/Austin-Almighty/RocketType" target="_blank" rel="noopener noreferrer">
-            <button className="btn bg-transparent border-none p-0 m-0 shadow-none outline-none">
-                <FaGithub className="w-9 h-9 fill-base-content" />
-                GitHub
+            <button className="btn bg-transparent border-none p-0 m-0 shadow-none outline-none flex items-center gap-2">
+              <FaGithub className="w-6 h-6 md:w-8 md:h-8 fill-base-content" />
+              <span className="sm:inline">GitHub</span>
             </button>
           </Link>
         </aside>
-        <nav className="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
-          {/* Open the modal using document.getElementById('ID').showModal() method */}
-          <div
-            className="w-fit h-fit tooltip-left tooltip"
-            data-tip="Change themes here"
-          >
+        <nav className="flex items-center gap-4">
+          <div className="w-fit h-fit tooltip-left tooltip" data-tip="Change themes here">
             <button
-              className="btn bg-transparent border-none p-0 m-0 shadow-none outline-none"
+              className="btn bg-transparent border-none p-0 m-0 shadow-none outline-none flex items-center gap-2"
               onClick={() => {
                 const modal = document.getElementById("themeModal");
                 if (modal) (modal as HTMLDialogElement).showModal();
               }}
             >
-              <FaPalette className="w-9 h-9 fill-base-content" />
-              {theme}
+              <FaPalette className="w-6 h-6 md:w-8 md:h-8 fill-base-content" />
+              <span className="sm:inline">{theme}</span>
             </button>
           </div>
           <dialog id="themeModal" className="modal">
             <div className="modal-box">
               <ThemeSelector setTheme={setTheme} />
-              {/* <h3 className="font-bold text-lg">Hello!</h3> */}
-              {/* <p className="py-4">Press ESC key or click outside to close</p> */}
             </div>
-
             <form method="dialog" className="modal-backdrop">
               <button>close</button>
             </form>
           </dialog>
-          
         </nav>
       </footer>
     </div>

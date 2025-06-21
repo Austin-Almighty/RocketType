@@ -3,6 +3,7 @@ import { getLeaderboardResults } from "./getLeaderboardDB";
 import { useState, useEffect, startTransition} from "react";
 import { unstable_ViewTransition as ViewTransition } from "react";
 
+
 export default function Leaderboard({
   range,
   time,
