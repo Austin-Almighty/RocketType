@@ -25,7 +25,7 @@ export default function Motion() {
     // )
       return (
         <>
-            <SpaceShuttle thrust={false}/>
+            <SpaceShuttle thrust={true} flying={true}/>
         </>
       )
     }

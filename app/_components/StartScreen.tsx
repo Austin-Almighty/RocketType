@@ -54,7 +54,7 @@ export default function StartScreen({onStart}: { onStart: () => void}) {
             </ViewTransition>
 
               <h2 className="text-base-content text-3xl text-center absolute top-[60vh] animate-pulse">{!(gameMode.start) ? "Preparing for Launch" : "Ready for Launch!"}</h2>
-              <h2 className="text-base-content text-3xl text-center absolute top-[65vh] animate-pulse">{!(gameMode.start) ? "Select Your Settings" : "Press Space"}</h2>
+              <h2 className="text-base-content text-3xl text-center absolute top-[65vh] animate-pulse">{!(gameMode.start) ? "Select Your Settings" : "Press Space to Start"}</h2>
 
               
           </div>

@@ -1,38 +1,77 @@
-"use client"
+"use client";
 import React from "react"
 import Link from "next/link"
 import "../css/welcomepage.css"
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { gsap } from "gsap"
+import { useGSAP } from "@gsap/react";
+import { SplitText } from "gsap/all";
+
 
 
 export default function WelcomePage() {
-  const router = useRouter();
-  useEffect(()=>{
-    function directToApp() {
-      router.push("/app")
-    }
-    document.addEventListener("click", directToApp);
-    document.addEventListener('keypress', directToApp)
-    return ()=> {
-      document.removeEventListener("click", directToApp)
-      document.removeEventListener("keypress", directToApp)
-    }
-  }, [])
+
+  const logoRef = useRef(null);
+  const text = "Rocket Type";
 
   useEffect(() => {
-  const timer = setTimeout(() => {
-    router.push("/app");
-  }, 6000); 
+    const chars = text.split("");
+    let currentText = "";
+
+    gsap.to(chars, {
+      duration: 1.2,
+      repeat: 0,
+      ease: "none",
+      onUpdate: function () {
+        const progress = Math.floor(this.progress() * chars.length);
+        currentText = chars.slice(0, progress).join("");
+        if (logoRef.current) logoRef.current.textContent = currentText;
+      },
+      onComplete: function () {
+        if (logoRef.current) logoRef.current.textContent = text;
+      },
+      // The trick: use a stagger to animate over time
+      stagger: {
+        each: 0.1,
+        onStart: function () {
+          // You can play a sound or do something here on each char
+        },
+      },
+    });
+  }, []);
+
+//   const router = useRouter();
+//   useEffect(()=>{
+//     function directToApp() {
+//       router.push("/app")
+//     }
+//     document.addEventListener("click", directToApp);
+//     document.addEventListener('keypress', directToApp)
+//     return ()=> {
+//       document.removeEventListener("click", directToApp)
+//       document.removeEventListener("keypress", directToApp)
+//     }
+//   }, [])
+
+//   useEffect(() => {
+//   const timer = setTimeout(() => {
+//     router.push("/app");
+//   }, 6000); 
 
 
-  return () => clearTimeout(timer);
-}, [router]);
+//   return () => clearTimeout(timer);
+// }, [router]);
   return (
 
-    <div className="w-screen h-screen flex items-center justify-center bg-base-100">
-      <Link href="/start">
-      <svg
+    <div className="w-full h-full flex flex-1 items-center justify-center bg-base-100 flex-col">
+
+      <h1 ref={logoRef}>
+
+      </h1>
+      
+      {/* <Link href="/start"> */}
+      {/* <svg
         width="834"
         height="156"
         viewBox="0 0 417 78"
@@ -78,7 +117,7 @@ export default function WelcomePage() {
           strokeLinecap="round"
         />
       </svg>
-      </Link>
+      </Link> */}
     </div>
   );
 }
