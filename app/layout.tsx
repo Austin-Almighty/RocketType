@@ -67,7 +67,7 @@ export default function RootLayout({
           <UserProvider>
             <GameProvider>
               <Header></Header>
-              <main className="flex-1 bg-base-100">{children}</main>
+              <main className="flex-1 flex flex-col bg-base-100">{children}</main>
               <Footer></Footer>
             </GameProvider>
           </UserProvider>

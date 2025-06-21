@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Welcome to Your Next Galactic Adventure!
 
-## Getting Started
+# 🚀 Rocket Type
 
-First, run the development server:
+**Rocket Type** is a minimalistic typing app designed to help you improve your speed and accuracy while having fun! Compete for the top spot, track your progress, and blast off your typing skills to new heights.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+![alt text](<Screenshot 2025-06-20 at 22.29.58.png>)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚩 Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Multiple typing modes: Timed, Word Count, and free mode
+- Clean, distraction-free interface
+- Real-time stats: WPM, accuracy, errors, raw speed
+- Leaderboards & personal progress tracking
+- Color Themes Support (35 themes)
+- Animated visual feedback and fun graphics
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🖥️ Tech Stack
 
-## Learn More
+- React
+- Next.js
+- DaisyUI
+- Tailwind
+- GSAP
+- Firestore
+- Recharts
+- React-icons
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+![alt text](image.png)

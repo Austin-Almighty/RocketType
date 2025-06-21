@@ -7,7 +7,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../_lib/Firebase";
 import { FaInfoCircle } from "react-icons/fa";
 import { useGameContext } from "../_lib/gameContext";
-import { Preahvihear } from "next/font/google";
+
 
 
 function handleSignOut() {

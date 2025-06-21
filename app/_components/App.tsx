@@ -109,7 +109,7 @@ export default function App({ reStart, goHome }: { reStart: MouseEventHandler, g
 
   return (
     <>
-      <div>
+      {/* <div>
         <WpmCounter
           mistakes={mistakes}
           keyCount={keyCount}
@@ -120,7 +120,7 @@ export default function App({ reStart, goHome }: { reStart: MouseEventHandler, g
           wpm={wpm}
           raw={raw}
         />
-      </div>
+      </div> */}
       <div className="w-3/4 mx-auto absolute top-[30vh] text-primary-content">
         {gameMode.mode === "Rocket Run" && <Clock start={gameMode.time} running={hasStarted} />}
         {(gameMode.mode === "Star Count" || gameMode.mode === "Zen") && <WordCounter complete={completeWords}/>}

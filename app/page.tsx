@@ -2,57 +2,64 @@
 import React from "react"
 import Link from "next/link"
 import "../css/welcomepage.css"
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
+import { useRef } from "react";
 import { useRouter } from "next/navigation";
-import { gsap } from "gsap"
-import { useGSAP } from "@gsap/react";
-import { SplitText } from "gsap/all";
-
+import { gsap } from "gsap";
+import { unstable_ViewTransition as ViewTransition } from "react";
+// import { useGSAP } from "@gsap/react";
+// import { SplitText } from "gsap/all";
+import SpaceShuttle from "@/components/svgs/SpaceShuttle";
 
 
 export default function WelcomePage() {
 
-  const logoRef = useRef(null);
   const text = "Rocket Type";
+  const [displayed, setDisplayed] = useState("");
 
+  const [showShuttle, setShowShuttle] = useState(false);
+  const shuttleRef = useRef(null);
+
+
+  // Typewriter effect
   useEffect(() => {
-    const chars = text.split("");
-    let currentText = "";
-
-    gsap.to(chars, {
+    let obj = { progress: 0 };
+    gsap.to(obj, {
+      progress: text.length,
       duration: 1.2,
-      repeat: 0,
       ease: "none",
-      onUpdate: function () {
-        const progress = Math.floor(this.progress() * chars.length);
-        currentText = chars.slice(0, progress).join("");
-        if (logoRef.current) logoRef.current.textContent = currentText;
+      onUpdate: () => {
+        setDisplayed(text.slice(0, Math.floor(obj.progress)));
       },
-      onComplete: function () {
-        if (logoRef.current) logoRef.current.textContent = text;
-      },
-      // The trick: use a stagger to animate over time
-      stagger: {
-        each: 0.1,
-        onStart: function () {
-          // You can play a sound or do something here on each char
-        },
+      onComplete: () => {
+        setDisplayed(text);
+        setShowShuttle(true);
       },
     });
-  }, []);
-
-//   const router = useRouter();
-//   useEffect(()=>{
-//     function directToApp() {
-//       router.push("/app")
-//     }
-//     document.addEventListener("click", directToApp);
-//     document.addEventListener('keypress', directToApp)
-//     return ()=> {
-//       document.removeEventListener("click", directToApp)
-//       document.removeEventListener("keypress", directToApp)
-//     }
-//   }, [])
+  }, [text]);
+  
+  useEffect(() => {
+    if (showShuttle && shuttleRef.current) {
+      gsap.fromTo(
+        shuttleRef.current,
+        { y: 60, opacity: 0, scale: 0.7 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.7, ease: "power3.out" }
+      );
+    }
+  }, [showShuttle]);
+   
+  const router = useRouter();
+  useEffect(()=>{
+    function directToApp() {
+      router.push("/app")
+    }
+    document.addEventListener("click", directToApp);
+    document.addEventListener('keypress', directToApp)
+    return ()=> {
+      document.removeEventListener("click", directToApp)
+      document.removeEventListener("keypress", directToApp)
+    }
+  }, [])
 
 //   useEffect(() => {
 //   const timer = setTimeout(() => {
@@ -64,11 +71,26 @@ export default function WelcomePage() {
 // }, [router]);
   return (
 
-    <div className="w-full h-full flex flex-1 items-center justify-center bg-base-100 flex-col">
+    <div className="flex flex-1 items-center justify-center bg-base-100 flex-col">
+      <div className="relative flex flex-col items-center w-full" style={{ height: 200 }}>
+        <h1 className="text-7xl font-bold font-mono absolute top-2/9 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          {displayed}
+        </h1>
+        {showShuttle && (
+          <ViewTransition name="shuttle">
+          <div
+            ref={shuttleRef}
+            className="absolute left-1/2 -translate-x-1/2"
+            style={{ top: '70%' }}
+          >
+            <SpaceShuttle thrust={true} flying={true} height={120} />
+          </div>
+          </ViewTransition>
+        )}
+      </div>
 
-      <h1 ref={logoRef}>
 
-      </h1>
+
       
       {/* <Link href="/start"> */}
       {/* <svg
