@@ -49,17 +49,17 @@ export default function WelcomePage() {
   }, [showShuttle]);
    
   const router = useRouter();
-  useEffect(()=>{
-    function directToApp() {
-      router.push("/app")
-    }
-    document.addEventListener("click", directToApp);
-    document.addEventListener('keypress', directToApp)
-    return ()=> {
-      document.removeEventListener("click", directToApp)
-      document.removeEventListener("keypress", directToApp)
-    }
-  }, [])
+  // useEffect(()=>{
+  //   function directToApp() {
+  //     router.push("/app")
+  //   }
+  //   document.addEventListener("click", directToApp);
+  //   document.addEventListener('keypress', directToApp)
+  //   return ()=> {
+  //     document.removeEventListener("click", directToApp)
+  //     document.removeEventListener("keypress", directToApp)
+  //   }
+  // }, [])
 
 //   useEffect(() => {
 //   const timer = setTimeout(() => {
@@ -78,15 +78,24 @@ export default function WelcomePage() {
         </h1>
         {showShuttle && (
           <ViewTransition name="shuttle">
-          <div
-            ref={shuttleRef}
-            className="absolute left-1/2 -translate-x-1/2"
-            style={{ top: '70%' }}
-          >
-            <SpaceShuttle thrust={true} flying={true} />
-          </div>
+            <div
+              ref={shuttleRef}
+              className="absolute left-1/2 -translate-x-1/2"
+              style={{ top: '70%' }}
+            >
+              <SpaceShuttle thrust={true} flying={true} />
+            </div>
+            <div className="join relative top-90">
+              <Link href="/about">
+                <button className="btn join-item md:btn-lg bg-base-300 text-base-content hover:bg-neutral hover:text-neutral-content">Intro</button>
+              </Link>
+              <Link href="/app">
+                <button className="btn join-item md:btn-lg bg-base-300 text-base-content hover:bg-neutral hover:text-neutral-content">App</button>
+              </Link>
+            </div>
           </ViewTransition>
         )}
+
       </div>
 
 

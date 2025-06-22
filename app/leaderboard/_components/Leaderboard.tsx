@@ -93,23 +93,23 @@ export default function Leaderboard({
          <tbody className="rounded-2x1">{renderLeaderBoard()}</tbody>
         </ViewTransition>
       </table>
-      <div className="flex justify-center items-center gap-4 mt-4">
+      <div className="join flex justify-center items-center gap-4 mt-4">
         <button
-          className="btn btn-sm"
+          className="btn join-item"
           onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
           disabled={currentPage === 1}
         >
-          Previous
+          «
         </button>
-        <span>
+        <button className="join-item btn">
           Page {currentPage} of {totalPages}
-        </span>
+        </button>
         <button
-          className="btn btn-sm"
+          className="btn"
           onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
           disabled={currentPage === totalPages}
         >
-          Next
+          »
         </button>
       </div>
     </div>

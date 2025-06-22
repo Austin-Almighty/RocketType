@@ -60,23 +60,23 @@ export default function Table() {
         </thead>
         <tbody className="rounded-2x1">{renderResults()}</tbody>
       </table>
-      <div className="flex justify-center items-center mt-4 space-x-4">
+      <div className="flex join justify-center items-center mt-4 space-x-4">
         <button
-          className="btn btn-sm"
+          className="btn join-item"
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
-          Previous
+          «
         </button>
-        <span>
+        <button className="btn join-item">
           Page {currentPage} of {totalPages}
-        </span>
+        </button>
         <button
-          className="btn btn-sm"
+          className="btn join-item"
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
         >
-          Next
+          »
         </button>
       </div>
     </div>
