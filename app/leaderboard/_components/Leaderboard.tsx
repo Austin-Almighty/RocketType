@@ -14,16 +14,19 @@ export default function Leaderboard({
 
     const [docs, setDocs] = useState<any[] | null>(null);  
     const [loading, setLoading] = useState(true); 
-    
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10;
+
+    useEffect(() => {
+      setCurrentPage(1);
+    }, [docs]);
+
     useEffect(() => {
         setLoading(true);
         const minDelay = 1000;
         const start = Date.now();
 
-        function fetchDocs(data: object[], page:number) {
-          
-        }
-
+       
         async function fetchResults() {
             const res = await getLeaderboardResults(range, time);
             setDocs(res);
@@ -47,9 +50,11 @@ export default function Leaderboard({
         </tr>
       );
     } else {
-      return docs.map((doc, i) => (
-        <tr key={i} className="odd:text-base-content even:text-primary w-full">
-          <th>{i + 1}</th>
+      const startIndex = (currentPage - 1) * pageSize;
+      const currentDocs = docs.slice(startIndex, startIndex + pageSize);
+      return currentDocs.map((doc, i) => (
+        <tr key={startIndex + i} className="odd:text-base-content even:text-primary w-full">
+          <th>{startIndex + i + 1}</th>
           <th>{doc.userDisplayName}</th>
           <th>{doc.wpm}</th>
           <th>{doc.accuracy}%</th>
@@ -69,6 +74,8 @@ export default function Leaderboard({
     );
   }
 
+  const totalPages = docs ? Math.ceil(docs.length / pageSize) : 1;
+
   return (
     <div className="overflow-x-auto w-full">
       <table className="table table-zebra">
@@ -86,6 +93,25 @@ export default function Leaderboard({
          <tbody className="rounded-2x1">{renderLeaderBoard()}</tbody>
         </ViewTransition>
       </table>
+      <div className="flex justify-center items-center gap-4 mt-4">
+        <button
+          className="btn btn-sm"
+          onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          className="btn btn-sm"
+          onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }

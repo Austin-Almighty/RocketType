@@ -3,6 +3,8 @@ import { getResults } from "@/app/_lib/getResults";
 
 export default function Table() {
   const [results, setResults] = useState<any[] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
 
   useEffect(() => {
     async function fetchResults() {
@@ -12,6 +14,10 @@ export default function Table() {
     fetchResults();
   }, []);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [results]);
+
   function renderResults() {
     if (!results || results.length === 0) {
       return (
@@ -20,8 +26,10 @@ export default function Table() {
         </tr>
       );
     } else {
-      return results.map((result, i) => (
-        <tr key={i} className="odd:text-base-content even:text-primary">
+      const startIndex = (currentPage - 1) * pageSize;
+      const currentResults = results.slice(startIndex, startIndex + pageSize);
+      return currentResults.map((result, i) => (
+        <tr key={startIndex + i} className="odd:text-base-content even:text-primary">
           <th></th>
           <th>{result.wpm}</th>
           <th>{result.raw}</th>
@@ -33,6 +41,8 @@ export default function Table() {
       ));
     }
   }
+
+  const totalPages = results ? Math.ceil(results.length / pageSize) : 1;
 
   return (
     <div className="overflow-x-auto w-[90%] ">
@@ -50,6 +60,25 @@ export default function Table() {
         </thead>
         <tbody className="rounded-2x1">{renderResults()}</tbody>
       </table>
+      <div className="flex justify-center items-center mt-4 space-x-4">
+        <button
+          className="btn btn-sm"
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          className="btn btn-sm"
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }
