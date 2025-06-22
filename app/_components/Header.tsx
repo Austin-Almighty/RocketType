@@ -8,6 +8,9 @@ import { auth } from "../_lib/Firebase";
 import { FaInfoCircle } from "react-icons/fa";
 import { useGameContext } from "../_lib/gameContext";
 import { IoSettings } from "react-icons/io5";
+import { IoStatsChart } from "react-icons/io5";
+import { PiSignOutBold } from "react-icons/pi";
+
 
 
 
@@ -34,7 +37,7 @@ export default function Header({
     if (!user.user) {
       return (
         <Link href="/user">
-          <div className="tooltip text-base-content hover:scale-110" data-tip="User">
+          <div className="tooltip text-base-content tooltip-bottom md:tooltip-top hover:scale-110" data-tip="User">
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -57,8 +60,8 @@ export default function Header({
       );
     } else {
       return (
-        <div className="tooltip text-base-content hover:scale-110">
-                <div className="dropdown dropdown-end dropdown-hover">
+        <div className="tooltip text-base-content tooltip-bottom md:tooltip-top hover:scale-110">
+                <div className="dropdown dropdown-end dropdown-hover z-1000">
                   <div tabIndex={0} role="button">
                     <svg
                       viewBox="0 0 24 24"
@@ -92,58 +95,24 @@ export default function Header({
                   </div>
                   <ul
                     tabIndex={0}
-                    className="dropdown-content menu bg-base-300 rounded-box z-1 w-40 p-2 shadow-sm !mt-0"
+                    className="dropdown-content menu bg-base-300 rounded-box w-34 sm:w-34 md:w-43 p-2 shadow-sm !mt-0 z-1000"
                   >
-                    <li className="text-base-content">
+                    <li className="text-base-content flex text-xs md:text-base">
                       <Link href="/stat">
-                        <svg
-                          width="24px"
-                          height="24px"
-                          viewBox="0 0 32 32"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <g clipPath="url(#clip0_901_1551)">
-                            <path
-                              d="M27 8H30C30.553 8 31 8.447 31 9V30C31 30.553 30.553 31 30 31H2C1.447 31 1 30.553 1 30V9C1 8.447 1.447 8 2 8H21M4 28L16 16L24 24V1M24 1L20 5M24 1L28 5"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </g>
-                          <defs>
-                            <clipPath id="clip0_901_1551">
-                              <rect width="32" height="32" fill="currentColor" />
-                            </clipPath>
-                          </defs>
-                        </svg>
+                        <IoStatsChart className="md:h-6 md:w-6 w-4 h-4"/> 
                         User Stats
                       </Link>
                     </li>
-                    <li className="text-base-content">
+                    <li className="text-base-content flex text-xs md:text-base">
                       <Link href="/settings">
-                        <IoSettings className="w-6 h-6 fill-base-content"/>
+                        <IoSettings className="md:w-6 md:h-6 w-4 h-4 *:fill-base-content"/>
                         Settings
                       </Link>
                     </li>
                    
-                    <li className="currentColor" onClick={handleSignOut}>
+                    <li className="text-base-content flex text-xs md:text-base" onClick={handleSignOut}>
                       <a>
-                        <svg
-                          width="24px"
-                          height="24px"
-                          viewBox="0 0 24 24"
-                          fill="white"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            clipRule="evenodd"
-                            d="M21.593 10.943c.584.585.584 1.53 0 2.116L18.71 15.95c-.39.39-1.03.39-1.42 0a.996.996 0 0 1 0-1.41 9.552 9.552 0 0 1 1.689-1.345l.387-.242-.207-.206a10 10 0 0 1-2.24.254H8.998a1 1 0 1 1 0-2h7.921a10 10 0 0 1 2.24.254l.207-.206-.386-.241a9.562 9.562 0 0 1-1.69-1.348.996.996 0 0 1 0-1.41c.39-.39 1.03-.39 1.42 0l2.883 2.893zM14 16a1 1 0 0 0-1 1v1.5a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1.505a1 1 0 1 0 2 0V5.5A2.5 2.5 0 0 0 12.5 3h-7A2.5 2.5 0 0 0 3 5.5v13A2.5 2.5 0 0 0 5.5 21h7a2.5 2.5 0 0 0 2.5-2.5V17a1 1 0 0 0-1-1z"
-                            fill="currentColor"
-                          />
-                        </svg>
+                        <PiSignOutBold className="md:w-6 md:h-6 w-4 h-4 fill-base-content"/>
                         Sign Out
                       </a>
                     </li>
@@ -155,7 +124,7 @@ export default function Header({
   }
   return (
     <>
-      <div className="navbar bg-base-100 text-primary p-2 sm:p-4 md:px-6">
+      <div className="navbar bg-base-100 text-primary p-2 sm:p-4 md:mt-6">
         <div className="flex-1 flex gap-2 sm:gap-4 md:gap-6 ">
           <Link
             href="/app"
@@ -172,9 +141,8 @@ export default function Header({
           </Link>
           <Link
             href="/about"
-            className=""
           >
-            <div className="tooltip hover:scale-110" data-tip="About">
+            <div className="tooltip hover:scale-110 tooltip-bottom md:tooltip-top" data-tip="About">
               <FaInfoCircle className="fill-base-content  md:h-8 md:w-8 w-6 h-6"/>
             </div>
 
@@ -183,7 +151,7 @@ export default function Header({
         <div className="flex-none">
           <ul className="menu menu-horizontal bg-base-100 rounded-box text-base-content">
             <li>
-              <Link href="/leaderboard" className="tooltip hover:scale-110" data-tip="Leaderboard">
+              <Link href="/leaderboard" className="tooltip hover:scale-110 tooltip-bottom md:tooltip-top" data-tip="Leaderboard">
                 <svg className="md:h-8 md:w-8 w-6 h-6" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M22 22H2"

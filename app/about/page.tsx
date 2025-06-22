@@ -8,7 +8,8 @@ import { FaClock, FaKeyboard } from "react-icons/fa";
 import { ImTarget } from "react-icons/im";
 import { RiSortAlphabetAsc } from "react-icons/ri";
 import { TbBrandSpeedtest } from "react-icons/tb";
-import Earth from "@/components/svgs/earth";
+import { MdLeaderboard } from "react-icons/md";
+
 import Hero from "./_components/Hero";
 import SpaceShuttle from "@/components/svgs/SpaceShuttle";
 
@@ -28,8 +29,8 @@ export default function About() {
       <div>
         <article aria-label="About">
           <span className="flex my-4">
-            <FaInfoCircle className="w-10 h-10 mr-4" />
-            <h2 className="text-center align-middle text-3xl">About RocketType</h2>
+            <FaInfoCircle className="w-8 h-8 md:w-10 md:h-10 mr-3 md:mr-4" />
+            <h2 className="text-center align-middle text-2xl md:text-3xl">About RocketType</h2>
           </span>
           <p className="text-base-content bg-base-300 rounded-2xl p-4">
             RocketType is a typing test that can be run in the browser.
@@ -39,8 +40,8 @@ export default function About() {
         </article>
         <article aria-label="About">
           <span className="flex my-4">
-            <FaInfoCircle className="w-10 h-10 mr-4" />
-            <h2 className="text-center align-middle text-3xl">Leaderboard and Personal Progress Tracking</h2>
+            <MdLeaderboard className="w-8 h-8 md:w-10 md:h-10 mr-3 md:mr-4" />
+            <h2 className="text-center align-middle text-2xl md:text-3xl">Leaderboard and Personal Progress Tracking</h2>
           </span>
           <p className="text-base-content bg-base-300 rounded-2xl p-4">
             Sign up to see your results on the leaderboards and keep track of your progress over time. You can still play without creating an account.
@@ -49,8 +50,8 @@ export default function About() {
 
         <section aria-label="Word sets">
             <span className="flex my-4">
-            <FaLanguage className="w-10 h-10 mr-4"/>
-            <h2 className="text-center align-middle text-3xl">Word Sets</h2>
+            <FaLanguage className="md:w-10 md:h-10 w-8 h-8 mr-3 md:mr-4"/>
+            <h2 className="text-center align-middle text-2xl md:text-3xl">Word Sets</h2>
           </span>
           <p className="text-base-content bg-base-300 rounded-2xl p-4">
             Currently, there are 3 word sets: English Most Common 1k, 5k and 10k. Support for other languages and word sets will be added in the future.
@@ -58,8 +59,8 @@ export default function About() {
         </section>
         <section aria-label="Test Modes">
           <span className="flex my-4">
-            <TbBrandSpeedtest className="w-10 h-10 mr-4" />
-            <h2 className="text-center align-middle text-3xl">Test Modes</h2>
+            <TbBrandSpeedtest className="md:w-10 md:h-10 md:mr-4 w-8 h-8 mr-3" />
+            <h2 className="text-center align-middle text-2xl md:text-3xl">Test Modes</h2>
           </span>
           <div
             tabIndex={0}
@@ -101,8 +102,8 @@ export default function About() {
 
         <section aria-label="stat">
           <span className="flex my-4">
-            <IoStatsChart className="w-10 h-10 mr-4" />
-            <h2 className="text-center align-middle text-3xl">Stats</h2>
+            <IoStatsChart className="md:w-10 md:h-10 md:mr-4 w-8 h-8 mr-3" />
+            <h2 className="text-center align-middle text-2xl md:text-3xl">Stats</h2>
           </span>
           <div
             tabIndex={0}

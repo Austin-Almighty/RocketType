@@ -62,10 +62,10 @@ const ZenMode = forwardRef<HTMLTextAreaElement, ZenModeProps>(
     const chars = userInput.split("");
 
     return (
-      <div className="relative w-full bg-base-100 text-base-content text-5xl">
+      <div className="relative w-full bg-base-100 text-base-content text-3xl sm:text-5xl">
         <div
           ref={containerRef}
-          className="text-display max-h-[11.25rem] min-h-[11.25rem] leading-15 text-5xl overflow-hidden"
+          className="text-display sm:max-h-[11.25rem] sm:min-h-[11.25rem] max-h-[9rem] min-h-[9rem] leading-12 sm:leading-15 sm:text-5xl overflow-hidden break-words"
           onWheel={(e) => e.preventDefault()}
         >
           {chars.map((char, idx) => (
@@ -79,7 +79,7 @@ const ZenMode = forwardRef<HTMLTextAreaElement, ZenModeProps>(
           {/* Blinking caret after last character */}
           <span
             ref={caretRef}
-            className="inline-block w-2 h-10 bg-blue-950 align-bottom animate-pulse"
+            className="inline-block w-2 h-10 bg-base-content align-bottom animate-pulse"
           ></span>
         </div>
         <textarea

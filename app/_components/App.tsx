@@ -121,7 +121,7 @@ export default function App({ reStart, goHome }: { reStart: MouseEventHandler, g
           raw={raw}
         />
       </div> */}
-      <div className="w-3/4 mx-auto absolute top-[30vh] text-primary-content">
+      <div className="w-[85%] sm:w-3/4 mx-auto absolute top-[30vh] text-primary-content">
         {gameMode.mode === "Rocket Run" && <Clock start={gameMode.time} running={hasStarted} />}
         {(gameMode.mode === "Star Count" || gameMode.mode === "Zen") && <WordCounter complete={completeWords}/>}
         {gameMode.mode === "Rocket Run" && <Typing ref={typingRef} setMistakes={setMistakes} />}

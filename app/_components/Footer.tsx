@@ -8,24 +8,7 @@ type FooterProps = {
   className?: string;
 };
 
-// export default function App() {
-//   const [theme, setTheme] = useState(
-//     JSON.parse(localStorage.getItem('theme'))
-//   );
-//   useEffect(() => {
-//     localStorage.setItem('isdark', JSON.stringify(isdark));
-//   }, [isdark]);
-//   return (
-//     <>
-//       <input
-//         type="checkbox"
-//         checked={isdark}
-//         onChange={() => setIsdark(!isdark)}
-//       />
-//       The value of this checkbox gets saved on browser localStorage
-//     </>
-//   );
-// }
+
 
 export default function Footer({ className }: FooterProps) {
   const [theme, setTheme] = useState("light");
@@ -50,7 +33,7 @@ export default function Footer({ className }: FooterProps) {
 
   return (
     <div className={className}>
-      <footer className="flex flex-col md:flex-row justify-between items-center p-4 bg-base-100 text-base-content">
+      <footer className="flex md:flex-row justify-between m-2 items-center md:p-4 bg-base-100 text-base-content">
         <aside className="mb-2 md:mb-0 flex items-center">
           <Link href="https://github.com/Austin-Almighty/RocketType" target="_blank" rel="noopener noreferrer">
             <button className="btn bg-transparent border-none p-0 m-0 shadow-none outline-none flex items-center gap-2">
@@ -73,7 +56,7 @@ export default function Footer({ className }: FooterProps) {
             </button>
           </div>
           <dialog id="themeModal" className="modal">
-            <div className="modal-box">
+            <div className="modal-box w-[65%] sm:w-full">
               <ThemeSelector setTheme={setTheme} />
             </div>
             <form method="dialog" className="modal-backdrop">
