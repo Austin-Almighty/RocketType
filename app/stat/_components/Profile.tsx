@@ -37,7 +37,7 @@ export default function Profile({stats}: SummaryProps) {
   return (
     <>
       <div className="bg-base-300 flex w-[90%] align-middle h-32 rounded-md">
-        <div className="flex items-center gap-4 m-4 w-[30%]">
+        <div className="flex items-center gap-4 m-4 md:w-[30%] w-full">
           <div>
             <svg
               width="80px"
@@ -140,8 +140,8 @@ export default function Profile({stats}: SummaryProps) {
             </div>
           </div>
         </div>
-        <div className="divider divider-horizontal h-[80%] "></div>
-        <div className="flex justify-between w-full items-center text-base-content">
+        <div className="divider divider-horizontal h-[80%] hidden md:block"></div>
+        <div className="md:flex justify-between w-full items-center text-base-content hidden">
           <div className="w-[33%]">
             <div>Days Since Joined</div>
             <div>{stats ? stats.DaysSinceCreation: "No Data Available"}</div>

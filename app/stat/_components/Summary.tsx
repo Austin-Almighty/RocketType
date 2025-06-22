@@ -53,7 +53,7 @@ export default function Summary({stats}: SummaryProps) {
   
 
   return (
-    <div className="grid grid-cols-3 grid-rows-4 gap-4 bg-transparent p-4 rounded-lg w-[90%] text-base-content">
+    <div className="grid sm:grid-cols-3 sm:grid-rows-4 gap-4 bg-transparent p-4 rounded-lg w-[90%] text-base-content">
       {/* Row 1 */}
       <div className="bg-base-200 rounded shadow p-2">
         <div>Days Since Joined</div>

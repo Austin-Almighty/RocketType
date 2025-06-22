@@ -182,9 +182,9 @@ export default function Settings() {
       {showSuccessReset && renderInfo("Account data reset!")}
       {showErrorReset && renderError(resetErrorMsg)}
       <div className="w-full mx-auto flex flex-col px-6 items-center mt-6 gap-10">
-        <section className="flex w-[50%] mx-auto bg-base-200 text-center p-6 rounded-2xl gap-3 items-center">
-          <div className="flex-1">
-            <span className="text-2xl font-bold flex text-start items-center gap-1 text-base-content">
+        <section className="flex flex-col lg:flex-row sm:w-[50%] w-[80%] mx-auto bg-base-200 text-center p-6 rounded-2xl gap-3 items-center">
+          <div className="lg:flex-1 flex flex-col items-center lg:block">
+            <span className="lg:text-2xl font-bold flex text-start items-center gap-1 text-base-content">
               <FaUser className="w-5 h-5 fill-base-content" />
               Update Display Name
             </span>
@@ -193,7 +193,7 @@ export default function Settings() {
             </p>
           </div>
           <button
-            className="btn btn-xs min-w-3xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl bg-primary text-primary-content hover:bg-secondary hover:text-secondary-content rounded-2xl"
+            className="btn btn-xs sm:btn-sm md:btn-md bg-primary text-primary-content hover:bg-secondary hover:text-secondary-content rounded-2xl"
             onClick={() => {
               const dialog = document.getElementById(
                 "username"
@@ -204,9 +204,9 @@ export default function Settings() {
             Update name
           </button>
         </section>
-        <section className="flex w-[50%] mx-auto bg-base-200 text-center p-6 rounded-2xl gap-3 items-center">
-          <div className="flex-1">
-            <span className="text-2xl font-bold flex text-start items-center gap-1 text-base-content">
+        <section className="flex flex-col lg:flex-row sm:w-[50%] w-[80%] mx-auto bg-base-200 text-center p-6 rounded-2xl gap-3 items-center">
+          <div className="lg:flex-1 flex flex-col items-center lg:block">
+            <span className="lg:text-2xl font-bold flex text-start items-center gap-1 text-base-content">
               <RiLockPasswordFill className="w-5 h-5 fill-base-content" />
               Change Password
             </span>
@@ -215,7 +215,7 @@ export default function Settings() {
               Keep your new password safe
             </p>
           </div>
-          <button className="btn btn-xs min-w-3xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl bg-primary text-primary-content hover:bg-secondary hover:text-secondary-content rounded-2xl"
+          <button className="btn btn-xs sm:btn-sm md:btn-md bg-primary text-primary-content hover:bg-secondary hover:text-secondary-content rounded-2xl"
           onClick={() => {
               const dialog = document.getElementById(
                 "password"
@@ -226,21 +226,21 @@ export default function Settings() {
             Change password
           </button>
         </section>
-        <section className="flex w-[50%] mx-auto bg-base-200 text-center p-6 rounded-2xl gap-3 items-center">
-          <div className="flex-1">
-            <span className="text-2xl font-bold flex text-start items-center gap-1 text-base-content">
+        <section className="flex flex-col lg:flex-row sm:w-[50%] w-[80%] mx-auto bg-base-200 text-center p-6 rounded-2xl gap-3 items-center">
+          <div className="lg:flex-1 flex flex-col items-center lg:block">
+            <span className="lg:text-2xl font-bold flex text-start items-center gap-1 text-base-content">
               <IoStatsChart className="w-5 h-5 fill-base-content" />
-              Reset Stats
+              Reset Data
             </span>
-            <p className="text-base-content text-start">
+            <p className="text-base-content text-center lg:text-left">
               Delete all existing data, including all records and leaderboard
               placement
             </p>
-            <p className="text-warning text-start">
+            <p className="text-warning text-center lg:text-left">
               Warning: You cannot undo this action!
             </p>
           </div>
-          <button className="btn btn-xs min-w-3xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl bg-warning text-warning-content hover:bg-info hover:text-info-content rounded-2xl"
+          <button className="btn btn-xs sm:btn-sm md:btn-md bg-warning text-warning-content hover:bg-info hover:text-info-content rounded-2xl"
           onClick={() => {
               const dialog = document.getElementById(
                 "reset"
@@ -250,20 +250,20 @@ export default function Settings() {
             Reset Account
           </button>
         </section>
-        <section className="flex w-[50%] mx-auto bg-base-200 text-center p-6 rounded-2xl gap-3 items-center">
-          <div className="flex-1">
-            <span className="text-2xl font-bold flex text-start items-center gap-1 text-base-content">
+        <section className="flex flex-col lg:flex-row sm:w-[50%] w-[80%] mx-auto bg-base-200 text-center p-6 rounded-2xl gap-3 items-center">
+          <div className="lg:flex-1 flex flex-col items-center lg:block">
+            <span className="lg:text-2xl font-bold flex text-start items-center gap-1 text-base-content">
               <MdOutlineDeleteForever className="w-5 h-5 fill-base-content" />
               Delete Account
             </span>
-            <p className="text-base-content text-start">
+            <p className="text-base-content text-center lg:text-left">
               Delete your account permanently
             </p>
-            <p className="text-warning text-start">
+            <p className="text-warning text-center lg:text-left">
               Warning: You will lose all data! You cannot undo this action!
             </p>
           </div>
-          <button className="btn btn-xs min-w-3xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl bg-warning text-warning-content hover:bg-info hover:text-info-content rounded-2xl"
+          <button className="btn btn-xs sm:btn-sm md:btn-md bg-warning text-warning-content hover:bg-info hover:text-info-content rounded-2xl"
           onClick={() => {
               const dialog = document.getElementById(
                 "delete"
@@ -277,7 +277,7 @@ export default function Settings() {
 
         <dialog id="username" className="modal">
           <div className="modal-box modal-bottom sm:modal-middle bg-base-200 flex flex-col gap-2 items-center rounded-2xl">
-            <h3 className="font-bold text-3xl text-base-content flex gap-2">
+            <h3 className="font-bold md:text-3xl text-base-content flex gap-2">
               <FaUser />
               Update username
             </h3>
@@ -302,7 +302,7 @@ export default function Settings() {
               />
               <button
                 type="submit"
-                className="w-full mt-4 bg-neutral text-neutral-content rounded-2xl text-xl p-1"
+                className="w-full mt-4 bg-neutral text-neutral-content rounded-2xl md:text-xl p-1"
               >
                 Update
               </button>
@@ -314,7 +314,7 @@ export default function Settings() {
         </dialog>
         <dialog id="password" className="modal">
           <div className="modal-box modal-bottom sm:modal-middle bg-base-200 flex flex-col gap-2 items-center rounded-2xl">
-            <h3 className="font-bold text-3xl text-base-content flex gap-2">
+            <h3 className="font-bold md:text-3xl text-base-content flex gap-2">
               <FaUser />
               Change password
             </h3>
@@ -339,7 +339,7 @@ export default function Settings() {
               />
               <button
                 type="submit"
-                className="w-full mt-4 bg-neutral text-neutral-content rounded-2xl text-xl p-1"
+                className="w-full mt-4 bg-neutral text-neutral-content rounded-2xl md:text-xl p-1"
               >
                 Update
               </button>
@@ -351,7 +351,7 @@ export default function Settings() {
         </dialog>
         <dialog id="delete" className="modal">
           <div className="modal-box modal-bottom sm:modal-middle bg-base-200 flex flex-col gap-2 items-center rounded-2xl">
-            <h3 className="font-bold text-3xl text-base-content flex gap-2">
+            <h3 className="font-bold md:text-3xl text-base-content flex gap-2">
               <FaUser />
               Delete Account
             </h3>
@@ -369,7 +369,7 @@ export default function Settings() {
               <div className="flex gap-2">
               <button
                 type="submit"
-                className="w-full mt-4 bg-neutral text-neutral-content rounded-2xl text-xl p-1 hover:bg-warning hover:text-warning-content"
+                className="w-full mt-4 bg-neutral text-neutral-content rounded-2xl md:text-xl p-1 hover:bg-warning hover:text-warning-content"
                 onSubmit={async (e) => {
                 e.preventDefault();
                 const dialog = document.getElementById(
@@ -382,7 +382,7 @@ export default function Settings() {
               </button>
               <button
                 type="submit"
-                className="w-full mt-4 bg-neutral text-neutral-content rounded-2xl text-xl p-1 hover:bg-warning hover:text-warning-content"
+                className="w-full mt-4 bg-neutral text-neutral-content rounded-2xl md:text-xl p-1 hover:bg-warning hover:text-warning-content"
                 onClick={deleteProfile}
               >
                 Delete
@@ -396,7 +396,7 @@ export default function Settings() {
         </dialog>
         <dialog id="reset" className="modal">
           <div className="modal-box modal-bottom sm:modal-middle bg-base-200 flex flex-col gap-2 items-center rounded-2xl">
-            <h3 className="font-bold text-3xl text-base-content flex gap-2">
+            <h3 className="font-bold md:text-3xl text-base-content flex gap-2">
               <FaUser />
               Reset Progress
             </h3>
@@ -414,7 +414,7 @@ export default function Settings() {
               <div className="flex gap-2">
               <button
                 type="submit"
-                className="w-full mt-4 bg-neutral text-neutral-content rounded-2xl text-xl p-1 hover:bg-warning hover:text-warning-content"
+                className="w-full mt-4 bg-neutral text-neutral-content rounded-2xl md:text-xl p-1 hover:bg-warning hover:text-warning-content"
                 onSubmit={async (e) => {
                 e.preventDefault();
                 const dialog = document.getElementById(
@@ -427,7 +427,7 @@ export default function Settings() {
               </button>
               <button
                 type="submit"
-                className="w-full mt-4 bg-neutral text-neutral-content rounded-2xl text-xl p-1 hover:bg-warning hover:text-warning-content"
+                className="w-full mt-4 bg-neutral text-neutral-content rounded-2xl md:text-xl p-1 hover:bg-warning hover:text-warning-content"
                 onClick={handleResetData}
               >
                 Delete
