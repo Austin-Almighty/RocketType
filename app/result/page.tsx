@@ -6,7 +6,6 @@ export default function ResultPage() {
     return(
     <div className="bg-base-100 flex flex-col items-center w-screen">
 
-
         <Result />
 
     </div>
