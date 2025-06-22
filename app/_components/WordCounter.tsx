@@ -9,7 +9,7 @@ export default function WordCounter({complete}: {complete?:number}) {
     const showTotal = typeof gameMode.count === "number" && !isNaN(gameMode.count);
   return (
     <>
-      <span className="font-mono text-4xl text-base-content">
+      <span className="font-mono text-2xl sm:text-4xl text-base-content">
         <span className="countdown">
           <span
             style={{ "--value": complete ?? 0 } as React.CSSProperties}
@@ -21,7 +21,7 @@ export default function WordCounter({complete}: {complete?:number}) {
         </span>
         {showTotal && (
           <>
-            <span className="mx-1 font-normal">/</span>
+            <span className="mx-1 font-mono sm:text-4xl text-2xl text-base-content">/</span>
             <span className="countdown">
               <span
                 style={{ "--value": gameMode.count } as React.CSSProperties}

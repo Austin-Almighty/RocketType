@@ -132,10 +132,10 @@ export default function App({ reStart, goHome }: { reStart: MouseEventHandler, g
 
         <div className="flex absolute translate-x-[-50%] left-[50%] text-base-content justify-center gap-20 min-w-[50%]" data-tip="Restart Test">
           <div className="tooltip tooltip-bottom" data-tip="Restart">
-            <GrPowerReset className="w-10 h-10 fill-base-content" onClick={reStart}/>
+            <GrPowerReset className="sm:w-10 sm:h-10 h-8 w-8 fill-base-content" onClick={reStart}/>
           </div>  
           <div className="tooltip tooltip-bottom" data-tip="Back">
-            <IoMdReturnLeft className="w-10 h-10 fill-base-content" onClick={goHome}/>
+            <IoMdReturnLeft className="sm:w-10 sm:h-10 w-8 h-8 fill-base-content" onClick={goHome}/>
           </div>
         </div>
       </div>

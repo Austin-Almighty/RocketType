@@ -103,10 +103,10 @@ const WordCountMode = forwardRef<HTMLTextAreaElement, WordCountModeProps>(
     }, [userInput, characters, onTestEnd, testFinished]);
 
     return (
-      <div className="relative w-full bg-base-100 text-base-content text-5xl">
+      <div className="relative w-full bg-base-100 text-base-content sm:text-5xl text-3xl">
         <div
           ref={containerRef}
-          className="text-display max-h-[11.25rem] leading-15 text-5xl overflow-hidden"
+          className="text-display sm:max-h-[11.25rem] sm:leading-15 max-h-[9rem] min-h-[9rem] leading-12 overflow-hidden"
           onWheel={(e) => e.preventDefault()}
         >
           {characters.map((char, idx) => {

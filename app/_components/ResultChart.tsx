@@ -99,14 +99,16 @@ export default function ResultChart({trackBySecond}:ResultProp) {
                 label={ {value: "Time (seconds)", position: "bottom", offset: 20, fill:"var(--color-base-content)"} }
               />
               <YAxis
-                  label={ {value: "Words Per Minute", position:"insideLeft", dx:-10, dy: 20, angle:-90} }
+                  label={ {value: "Words Per Minute", position:"insideLeft", dx:-10, dy: 20, angle:-90, fill:"var(--color-base-content"} }
+                  tick={{fill: "var(--color-base-content"}}
+                 
               />
               <ChartTooltip cursor={false} content={<ChartTooltipContent className="bg-base-200 text-base-content"/>} />
               <Area
                   dataKey="raw"
                   type="monotone"
                   fill="var(--color-accent)"   
-                  stroke="var(--color-accent-content)"
+                  stroke="var(--color-accent)"
                   strokeWidth={2}
               />
 
@@ -114,7 +116,7 @@ export default function ResultChart({trackBySecond}:ResultProp) {
                   dataKey="wpm"
                   type="monotone"
                   fill="var(--color-info)"
-                  stroke="var(--color-info-content)"
+                  stroke="var(--color-info)"
                   strokeWidth={2}
               />
               <Area
