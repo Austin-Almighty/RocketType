@@ -2,7 +2,7 @@
 import { getLeaderboardResults } from "./getLeaderboardDB";
 import { useState, useEffect, startTransition} from "react";
 import { unstable_ViewTransition as ViewTransition } from "react";
-
+import { useInfiniteQuery } from "@tanstack/react-query"
 
 export default function Leaderboard({
   range,
@@ -19,6 +19,10 @@ export default function Leaderboard({
         setLoading(true);
         const minDelay = 1000;
         const start = Date.now();
+
+        function fetchDocs(data: object[], page:number) {
+          
+        }
 
         async function fetchResults() {
             const res = await getLeaderboardResults(range, time);

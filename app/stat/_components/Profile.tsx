@@ -140,7 +140,7 @@ export default function Profile({stats}: SummaryProps) {
             </div>
           </div>
         </div>
-        <div className="divider divider-horizontal h-[80%] hidden md:block"></div>
+        <div className="divider divider-horizontal h-[80%] hidden md:inline-block"></div>
         <div className="md:flex justify-between w-full items-center text-base-content hidden">
           <div className="w-[33%]">
             <div>Days Since Joined</div>

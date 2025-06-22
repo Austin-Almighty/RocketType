@@ -35,7 +35,7 @@ export default function Table() {
   }
 
   return (
-    <div className="overflow-x-auto w-[90%]">
+    <div className="overflow-x-auto w-[90%] ">
       <table className="table table-zebra">
         <thead className="text-base-content">
           <tr>
