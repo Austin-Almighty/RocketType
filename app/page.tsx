@@ -70,37 +70,51 @@ export default function WelcomePage() {
 //   return () => clearTimeout(timer);
 // }, [router]);
   return (
-
     <div className="flex flex-1 items-center justify-center bg-base-100 flex-col">
-      <div className="relative flex flex-col items-center w-full" style={{ height: 200 }}>
+      <div
+        className="relative flex flex-col items-center w-full"
+        style={{ height: 200 }}
+      >
         <h1 className="text-7xl font-bold font-mono absolute top-2/9 left-1/2 -translate-x-1/2 -translate-y-1/2">
           {displayed}
         </h1>
         {showShuttle && (
-          <ViewTransition name="shuttle">
+          <ViewTransition
+            name="shuttle"
+            onUpdate={(instance) => {
+              instance.old.animate(
+                { transform: ["scale(1)", "scale(0)"], opacity: [1, 0] },
+                { duration: 700 }
+              );
+              instance.new.animate(
+                { transform: ["scale(0)", "scale(1)"], opacity: [0, 1] },
+                { duration: 700 }
+              );
+            }}
+          >
             <div
               ref={shuttleRef}
               className="absolute left-1/2 -translate-x-1/2"
-              style={{ top: '70%' }}
+              style={{ top: "70%" }}
             >
               <SpaceShuttle thrust={true} flying={true} />
             </div>
             <div className="join relative top-90">
               <Link href="/about">
-                <button className="btn join-item md:btn-lg bg-base-300 text-base-content hover:bg-neutral hover:text-neutral-content">Intro</button>
+                <button className="btn join-item md:btn-lg bg-base-300 text-base-content hover:bg-neutral hover:text-neutral-content">
+                  Intro
+                </button>
               </Link>
               <Link href="/app">
-                <button className="btn join-item md:btn-lg bg-base-300 text-base-content hover:bg-neutral hover:text-neutral-content">App</button>
+                <button className="btn join-item md:btn-lg bg-base-300 text-base-content hover:bg-neutral hover:text-neutral-content">
+                  App
+                </button>
               </Link>
             </div>
           </ViewTransition>
         )}
-
       </div>
 
-
-
-      
       {/* <Link href="/start"> */}
       {/* <svg
         width="834"

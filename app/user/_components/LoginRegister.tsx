@@ -20,7 +20,7 @@ export default function LoginRegister() {
     formState: { errors, isSubmitting },
     reset,
     getValues,
-  } = useForm(); //different form different calls
+  } = useForm(); //不同的表格
   const {
     register: registerLogin,
     handleSubmit: handleSubmitLogin,
@@ -78,7 +78,7 @@ export default function LoginRegister() {
       authCreateUserWithPassword(email, password);
       reset();
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
   }
 

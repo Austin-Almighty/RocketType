@@ -193,7 +193,7 @@ export default function Settings() {
             </p>
           </div>
           <button
-            className="btn btn-xs sm:btn-sm md:btn-md bg-primary text-primary-content hover:bg-secondary hover:text-secondary-content rounded-2xl"
+            className="btn btn-xs sm:btn-sm md:btn-md bg-primary text-primary-content hover:bg-secondary hover:text-secondary-content rounded-2xl lg:min-w-40"
             onClick={() => {
               const dialog = document.getElementById(
                 "username"
@@ -215,7 +215,7 @@ export default function Settings() {
               Keep your new password safe
             </p>
           </div>
-          <button className="btn btn-xs sm:btn-sm md:btn-md bg-primary text-primary-content hover:bg-secondary hover:text-secondary-content rounded-2xl"
+          <button className="btn btn-xs sm:btn-sm md:btn-md bg-primary text-primary-content hover:bg-secondary hover:text-secondary-content rounded-2xl lg:min-w-40"
           onClick={() => {
               const dialog = document.getElementById(
                 "password"
@@ -240,7 +240,7 @@ export default function Settings() {
               Warning: You cannot undo this action!
             </p>
           </div>
-          <button className="btn btn-xs sm:btn-sm md:btn-md bg-warning text-warning-content hover:bg-info hover:text-info-content rounded-2xl"
+          <button className="btn btn-xs sm:btn-sm md:btn-md bg-warning text-warning-content hover:bg-info hover:text-info-content rounded-2xl lg:min-w-40"
           onClick={() => {
               const dialog = document.getElementById(
                 "reset"
@@ -263,7 +263,7 @@ export default function Settings() {
               Warning: You will lose all data! You cannot undo this action!
             </p>
           </div>
-          <button className="btn btn-xs sm:btn-sm md:btn-md bg-warning text-warning-content hover:bg-info hover:text-info-content rounded-2xl"
+          <button className="btn btn-xs sm:btn-sm md:btn-md bg-warning text-warning-content hover:bg-info hover:text-info-content rounded-2xl lg:min-w-40"
           onClick={() => {
               const dialog = document.getElementById(
                 "delete"
