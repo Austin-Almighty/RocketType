@@ -2,8 +2,8 @@
 
 
 **Rocket Type** is a minimalistic typing app designed to help you improve your speed and accuracy while having fun! Compete for the top spot, track your progress, and blast off your typing skills to new heights.
+![alt text](homepage.gif)
 
-![alt text](<Screenshot 2025-06-20 at 22.29.58.png>)
 ## Give it a try here!
 **[Live Demo](https://celestial-scribes.vercel.app)**
 
@@ -16,12 +16,15 @@
 - Color Themes Support (35 themes)
 - Animated visual feedback and fun graphics
 
-![alt text](image-1.png)
 
-![alt text](homepage.gif)
 
-## ⌨ 
 
+
+## ⌨ User Guide
+- Select your settings and get ready to type!
+![alt text](<Screenshot 2025-06-20 at 22.29.58.png>)
+- Track your scores with detailed stats!
+![alt text](<Screenshot 2025-07-01 at 13.41.46.png>)
 ## 🖥️ Tech Stack
 
 #### Front-end
@@ -36,11 +39,14 @@
 - Vercel
 - Firestore
 
+![alt text](image-1.png)
+
 #### UI/UX
 - DaisyUI
 - shadcn/ui
 - Recharts
 - React-icons
+
 
 ![alt text](image.png)
 
