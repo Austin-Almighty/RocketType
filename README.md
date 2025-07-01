@@ -1,10 +1,12 @@
 ## Welcome to Your Next Galactic Adventure!
 
-# 🚀 Rocket Type
+## 🚀 Rocket Type
 
 **Rocket Type** is a minimalistic typing app designed to help you improve your speed and accuracy while having fun! Compete for the top spot, track your progress, and blast off your typing skills to new heights.
 
 ![alt text](<Screenshot 2025-06-20 at 22.29.58.png>)
+
+[Live Demo](https://celestial-scribes.vercel.app)
 
 ## 🚩 Features
 
@@ -19,12 +21,21 @@
 
 ## 🖥️ Tech Stack
 
+#### Front-end
 - React
+    - Custom Hooks
 - Next.js
-- DaisyUI
 - Tailwind
-- GSAP
+- Motion
+
+
+#### Back-end and Database
+- Vercel
 - Firestore
+
+#### UI/UX
+- DaisyUI
+- shadcn/ui
 - Recharts
 - React-icons
 
