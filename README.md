@@ -17,14 +17,16 @@
 - Animated visual feedback and fun graphics
 
 
-
-
-
 ## ⌨ User Guide
 - Select your settings and get ready to type!
 ![alt text](<Screenshot 2025-06-20 at 22.29.58.png>)
 - Track your scores with detailed stats!
 ![alt text](<Screenshot 2025-07-01 at 13.41.46.png>)
+- See how you stack up against other players on the leaderboard
+![alt text](image-2.png)
+- Want a different look? Choose from 35 color themes and find one that suit your fancy!
+![alt text](image-3.png)
+
 ## 🖥️ Tech Stack
 
 #### Front-end
@@ -39,7 +41,6 @@
 - Vercel
 - Firestore
 
-![alt text](image-1.png)
 
 #### UI/UX
 - DaisyUI
