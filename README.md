@@ -58,6 +58,8 @@
 
 ![alt text](image-4.png)
 
+![alt text](result.gif)
+
 ## 📧 Contact
 - My name is Austin Liao (廖祥廷). I am a front-end developer based in Taiwan. You can reach me via one of the methods below. Come and say hi!
 - [E-mail](austin.ht.liao@gmail.com)
