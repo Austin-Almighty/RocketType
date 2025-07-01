@@ -5,7 +5,7 @@
 
 ![alt text](<Screenshot 2025-06-20 at 22.29.58.png>)
 ## Give it a try here!
-[Live Demo](https://celestial-scribes.vercel.app)
+**[Live Demo](https://celestial-scribes.vercel.app)**
 
 ## 🚩 Features
 
@@ -17,6 +17,10 @@
 - Animated visual feedback and fun graphics
 
 ![alt text](image-1.png)
+
+![alt text](homepage.gif)
+
+## ⌨ 
 
 ## 🖥️ Tech Stack
 
@@ -40,7 +44,11 @@
 
 ![alt text](image.png)
 
+## Development Deep Dive and Technical Detail
+
+- The test settings and login state are managed by 
+
 ## 📧 Contact
-- My name is Austin Liao (廖祥廷). I am a front-end developer based in Taiwan. You can reach me via one of the methods. Come and say hi!
+- My name is Austin Liao (廖祥廷). I am a front-end developer based in Taiwan. You can reach me via one of the methods below. Come and say hi!
 - [E-mail](austin.ht.liao@gmail.com)
 - [LinkedIn](https://www.linkedin.com/in/hsiang-ting-liao/)
