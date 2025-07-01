@@ -18,7 +18,7 @@
 
 
 ## ⌨ User Guide
-- Select your settings and get ready to type!
+- Select your settings and get ready to type! <br>
 ![alt text](<Screenshot 2025-06-20 at 22.29.58.png>)
 - Track your scores with detailed stats!
 ![alt text](<Screenshot 2025-07-01 at 13.41.46.png>)
@@ -51,9 +51,12 @@
 
 ![alt text](image.png)
 
-## Development Deep Dive and Technical Detail
+## Development Details
 
-- The test settings and login state are managed by 
+- The test settings, current test results, and login state are managed by a custom hook. Certain settings are only visible in certain game modes. 
+- Once a test is completed, the result in the custom hook will be sent to the Firestore database via an async function.
+
+![alt text](image-4.png)
 
 ## 📧 Contact
 - My name is Austin Liao (廖祥廷). I am a front-end developer based in Taiwan. You can reach me via one of the methods below. Come and say hi!
