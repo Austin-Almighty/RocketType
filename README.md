@@ -60,6 +60,32 @@
 
 ![alt text](result.gif)
 
+## "Controlled" Auto Scrolling
+To keep the caret (the current input position) always in the middle of the viewport—the second line in a three-line layout—I used a combination of the useEffect and useRef hooks to achieve the desired effect.
+
+
+``` JavaScript
+ useEffect(() => {
+      if (!containerRef.current || !currentCharRef.current) return;
+
+      //useRef hooks to track the position of the caret and its parent container
+      const container = containerRef.current; 
+      const currentChar = currentCharRef.current;
+
+      const lineHeight = 60;
+      // the distance between the current position and the top of the container
+      const caretLine = Math.round(currentChar.offsetTop / lineHeight);
+    
+      if (caretLine < 2) {
+        // if the caret is on the first or second line, no scrolling is required.
+        container.scrollTop = 0;
+      } else {
+        // When the caret enters the third line, the scrollTop method will be triggered. Therefore, always keeping three lines of text visible.
+        container.scrollTop = (caretLine - 1) * lineHeight;
+      }
+    }, [userInput]);
+```
+
 ## 📧 Contact
 - My name is Austin Liao (廖祥廷). I am a front-end developer based in Taiwan. You can reach me via one of the methods below. Come and say hi!
 - [E-mail](austin.ht.liao@gmail.com)
