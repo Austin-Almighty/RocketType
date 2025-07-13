@@ -15,25 +15,25 @@ export default function Settings() {
   const modeDropdownRef = useRef<HTMLDetailsElement>(null);
   function handleModeChange(mode: "Rocket Run" | "Star Count" | "Zen") {
     setGameMode((prev) => ({ ...prev, mode }));
-    modeDropdownRef.current?.removeAttribute("open");
+    setTimeout(() => modeDropdownRef.current?.removeAttribute("open"), 50);
   }
 
   const timeDropdownRef = useRef<HTMLDetailsElement>(null);
   function handleTimeChange(time: number) {
     setGameMode((prev) => ({ ...prev, time }));
-    timeDropdownRef.current?.removeAttribute("open");
+    setTimeout(() => timeDropdownRef.current?.removeAttribute("open"), 50);
   }
 
   const countDropdownRef = useRef<HTMLDetailsElement>(null);
   function handleCountChange(count: number) {
     setGameMode((prev) => ({ ...prev, count }));
-    countDropdownRef.current?.removeAttribute("open");
+    setTimeout(() => countDropdownRef.current?.removeAttribute("open"), 50);
   }
 
   const wordDropdownRef = useRef<HTMLDetailsElement>(null);
   function handleWordsChange(words: "1k" | "5k" | "10k") {
     setGameMode((prev) => ({ ...prev, words }));
-    wordDropdownRef.current?.removeAttribute("open");
+    setTimeout(() => wordDropdownRef.current?.removeAttribute("open"), 50);
   }
 
   useEffect(() => {
@@ -119,28 +119,31 @@ export default function Settings() {
             </summary>
             <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none rounded-2xl">
               <li className="text-base-content flex justify-center">
-                <a
+                <button
+                  type="button"
                   className="block w-full text-center"
                   onClick={() => handleModeChange("Rocket Run")}
                 >
                   Rocket Run
-                </a>
+                </button>
               </li>
               <li className="text-base-content flex justify-center">
-                <a
+                <button
+                  type="button"
                   className="block w-full text-center"
                   onClick={() => handleModeChange("Star Count")}
                 >
                   Star Count
-                </a>
+                </button>
               </li>
               <li className="text-base-content">
-                <a
+                <button
+                  type="button"
                   className="block w-full text-center"
                   onClick={() => handleModeChange("Zen")}
                 >
                   Zen
-                </a>
+                </button>
               </li>
             </ul>
           </details>
@@ -153,28 +156,31 @@ export default function Settings() {
               </summary>
               <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl">
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleCountChange(20)}
                   >
                     20
-                  </a>
+                  </button>
                 </li>
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleCountChange(50)}
                   >
                     50
-                  </a>
+                  </button>
                 </li>
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleCountChange(100)}
                   >
                     100
-                  </a>
+                  </button>
                 </li>
               </ul>
             </details>
@@ -188,28 +194,31 @@ export default function Settings() {
               </summary>
               <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl">
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleTimeChange(15)}
                   >
                     15
-                  </a>
+                  </button>
                 </li>
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleTimeChange(30)}
                   >
                     30
-                  </a>
+                  </button>
                 </li>
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleTimeChange(60)}
                   >
                     60
-                  </a>
+                  </button>
                 </li>
               </ul>
             </details>
@@ -223,28 +232,31 @@ export default function Settings() {
               </summary>
               <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl">
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleWordsChange("1k")}
                   >
                     1k
-                  </a>
+                  </button>
                 </li>
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleWordsChange("5k")}
                   >
                     5k
-                  </a>
+                  </button>
                 </li>
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleWordsChange("10k")}
                   >
                     10k
-                  </a>
+                  </button>
                 </li>
               </ul>
             </details>
@@ -271,28 +283,31 @@ export default function Settings() {
             </summary>
             <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none w-full rounded-2xl">
               <li className="text-base-content flex justify-center">
-                <a
+                <button
+                  type="button"
                   className="block w-full text-center"
                   onClick={() => handleModeChange("Rocket Run")}
                 >
                   Rocket Run
-                </a>
+                </button>
               </li>
               <li className="text-base-content flex justify-center">
-                <a
+                <button
+                  type="button"
                   className="block w-full text-center"
                   onClick={() => handleModeChange("Star Count")}
                 >
                   Star Count
-                </a>
+                </button>
               </li>
               <li className="text-base-content">
-                <a
+                <button
+                  type="button"
                   className="block w-full text-center"
                   onClick={() => handleModeChange("Zen")}
                 >
                   Zen
-                </a>
+                </button>
               </li>
             </ul>
           </details>
@@ -305,28 +320,31 @@ export default function Settings() {
               </summary>
               <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl w-[80%]">
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleCountChange(20)}
                   >
                     20
-                  </a>
+                  </button>
                 </li>
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleCountChange(50)}
                   >
                     50
-                  </a>
+                  </button>
                 </li>
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleCountChange(100)}
                   >
                     100
-                  </a>
+                  </button>
                 </li>
               </ul>
             </details>
@@ -341,28 +359,31 @@ export default function Settings() {
               </summary>
               <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl w-full">
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleTimeChange(15)}
                   >
                     15
-                  </a>
+                  </button>
                 </li>
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleTimeChange(30)}
                   >
                     30
-                  </a>
+                  </button>
                 </li>
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleTimeChange(60)}
                   >
                     60
-                  </a>
+                  </button>
                 </li>
               </ul>
             </details>
@@ -377,28 +398,31 @@ export default function Settings() {
               </summary>
               <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl w-full">
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleWordsChange("1k")}
                   >
                     1k
-                  </a>
+                  </button>
                 </li>
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleWordsChange("5k")}
                   >
                     5k
-                  </a>
+                  </button>
                 </li>
                 <li className="text-base-content flex justify-center">
-                  <a
+                  <button
+                    type="button"
                     className="block w-full text-center"
                     onClick={() => handleWordsChange("10k")}
                   >
                     10k
-                  </a>
+                  </button>
                 </li>
               </ul>
             </details>
