@@ -1,420 +1,198 @@
-import { useEffect, useRef } from "react";
-import { useGameContext } from "../_lib/gameContext";
+import { ReactNode, useLayoutEffect, useRef, useState } from "react";
+import { AnimatePresence, LayoutGroup, MotionConfig, motion } from "motion/react";
+import {
+  COUNT_OPTIONS,
+  GameMode,
+  MODE_OPTIONS,
+  TIME_OPTIONS,
+  WORD_OPTIONS,
+  useGameContext,
+} from "../_lib/gameContext";
+import OptionGroup from "./settings/OptionGroup";
 import { FaKeyboard } from "react-icons/fa";
 import { IoIosSettings } from "react-icons/io";
 import { MdTimer } from "react-icons/md";
 import { TiSortAlphabetically } from "react-icons/ti";
 import { IoDocument } from "react-icons/io5";
 
+// Quick and settled: no visible bounce on the highlight or the bar width.
+const SPRING = { type: "spring", stiffness: 500, damping: 40 } as const;
 
+const FADE = {
+  initial: { opacity: 0, filter: "blur(4px)" },
+  animate: { opacity: 1, filter: "blur(0px)" },
+  exit: { opacity: 0, filter: "blur(4px)" },
+};
 
+// Tracks an element's width so the bar can animate to it instead of jumping.
+function useWidth() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState<number | null>(null);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new ResizeObserver(() => setWidth(el.offsetWidth));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return [ref, width] as const;
+}
+
+function summarize(gameMode: GameMode): string {
+  const parts = [
+    gameMode.mode,
+    gameMode.mode === "Rocket Run" && `${gameMode.time}s`,
+    gameMode.mode === "Star Count" && `${gameMode.count} words`,
+    gameMode.mode !== "Zen" && gameMode.words,
+  ];
+  return parts.filter(Boolean).join(" · ");
+}
 
 export default function Settings() {
+  const { settingsLoaded } = useGameContext();
+  // Remount once the saved settings are read, so the bar appears with them
+  // in place instead of sliding over from the defaults.
+  return <SettingsPanel key={settingsLoaded ? "loaded" : "default"} visible={settingsLoaded} />;
+}
+
+function SettingsPanel({ visible }: { visible: boolean }) {
   const { gameMode, setGameMode } = useGameContext();
+  const [contentRef, contentWidth] = useWidth();
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
-  const modeDropdownRef = useRef<HTMLDetailsElement>(null);
-  function handleModeChange(mode: "Rocket Run" | "Star Count" | "Zen") {
-    setGameMode((prev) => ({ ...prev, mode }));
-    setTimeout(() => modeDropdownRef.current?.removeAttribute("open"), 50);
+  function update(change: Partial<GameMode>) {
+    setGameMode((prev) => ({ ...prev, ...change }));
   }
 
-  const timeDropdownRef = useRef<HTMLDetailsElement>(null);
-  function handleTimeChange(time: number) {
-    setGameMode((prev) => ({ ...prev, time }));
-    setTimeout(() => timeDropdownRef.current?.removeAttribute("open"), 50);
-  }
-
-  const countDropdownRef = useRef<HTMLDetailsElement>(null);
-  function handleCountChange(count: number) {
-    setGameMode((prev) => ({ ...prev, count }));
-    setTimeout(() => countDropdownRef.current?.removeAttribute("open"), 50);
-  }
-
-  const wordDropdownRef = useRef<HTMLDetailsElement>(null);
-  function handleWordsChange(words: "1k" | "5k") {
-    setGameMode((prev) => ({ ...prev, words }));
-    setTimeout(() => wordDropdownRef.current?.removeAttribute("open"), 50);
-  }
-
-  useEffect(() => {
-    let shouldStart = false;
-
-    if (gameMode.mode === "Rocket Run") {
-      shouldStart = Boolean(gameMode.time && gameMode.words);
-    } else if (gameMode.mode === "Star Count") {
-      shouldStart = Boolean(gameMode.count && gameMode.words);
-    } else if (gameMode.mode === "Zen") {
-      shouldStart = true;
-    }
-
-    if (gameMode.start !== shouldStart) {
-      setGameMode((prev) => ({
-        ...prev,
-        start: shouldStart,
-      }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    gameMode.mode,
-    gameMode.time,
-    gameMode.words,
-    gameMode.count,
-    setGameMode,
-  ]);
+  // Only the groups that apply to the current mode are shown.
+  const groups: ({ key: string; label: string; render: (compact: boolean) => ReactNode } | false)[] = [
+    {
+      key: "mode",
+      label: "Mode",
+      render: (compact) => (
+        <OptionGroup
+          id="mode"
+          label="Mode"
+          compact={compact}
+          icon={<FaKeyboard />}
+          options={MODE_OPTIONS}
+          value={gameMode.mode}
+          onChange={(mode) => update({ mode })}
+        />
+      ),
+    },
+    gameMode.mode === "Rocket Run" && {
+      key: "time",
+      label: "Time in seconds",
+      render: (compact) => (
+        <OptionGroup
+          id="time"
+          label="Time in seconds"
+          compact={compact}
+          icon={<MdTimer />}
+          options={TIME_OPTIONS}
+          value={gameMode.time}
+          onChange={(time) => update({ time })}
+        />
+      ),
+    },
+    gameMode.mode === "Star Count" && {
+      key: "count",
+      label: "Word count",
+      render: (compact) => (
+        <OptionGroup
+          id="count"
+          label="Word count"
+          compact={compact}
+          icon={<IoDocument />}
+          options={COUNT_OPTIONS}
+          value={gameMode.count}
+          onChange={(count) => update({ count })}
+        />
+      ),
+    },
+    gameMode.mode !== "Zen" && {
+      key: "words",
+      label: "Word set",
+      render: (compact) => (
+        <OptionGroup
+          id="words"
+          label="Word set"
+          compact={compact}
+          icon={<TiSortAlphabetically />}
+          options={WORD_OPTIONS}
+          value={gameMode.words}
+          onChange={(words) => update({ words })}
+        />
+      ),
+    },
+  ];
+  const visibleGroups = groups.filter((group) => group !== false);
 
   return (
-    <div className="flex justify-center w-fit h-fit items-center bg-base-300 rounded-2xl z-1">
-      <ul className="menu menu-horizontal w-fit mx-auto hidden md:flex">
-        <li
-          className={`${
-            !(gameMode.mode && gameMode.time && gameMode.words)
-              ? "tooltip tooltip-open tooltip-bottom md:tooltip-top"
-              : ""
-          }`}
-          data-tip="Change settings"
-        >
-          <div
-            className={`hover:scale-110 bg-transparent pointer-events-none text-base-content flex justify-center align-middle h-full ${
-              !(gameMode.mode && gameMode.time && gameMode.words) ? "" : ""
-            }`}
-          >
-            <FaKeyboard className="lg:text-xl" />
-          </div>
-        </li>
-        {/* <li className="w-32">
-          <button className="btn bg-transparent border-0 shadow-none text-blue-950 w-full" popoverTarget="popover-1" style={{ anchorName: "--anchor-1" }  as React.CSSProperties }>
-            {gameMode.mode===undefined ? "Mode": gameMode.mode}
-          </button> 
-          <ul className="dropdown menu w-fit bg-transparent shadow-none text-blue-950 left-[-20]"
-            popover="auto" id="popover-1" style={{ positionAnchor: "--anchor-1" } as React.CSSProperties }>
-            <li className="text-blue-950 flex justify-center"><a className="block w-full text-center" onClick={()=> handleModeChange("Time Attack")}>Time Attack</a></li>
-            <li className="text-blue-950 flex justify-center"><a className="block w-full text-center" onClick={()=> handleModeChange("Strict")}>Strict</a></li>
-            <li className="text-blue-950"><a className="block w-full text-center" onClick={()=>handleModeChange('Zen')}>Zen</a></li>
-          </ul>
-        </li>
-        <li className="w-32">
-          <button className="btn bg-transparent border-0 shadow-none text-blue-950" popoverTarget="popover-2" style={{ anchorName: "--anchor-2"} as React.CSSProperties }>
-            {gameMode.time===undefined ? "Time": `${gameMode.time}s`}
-          </button>
-          <ul className="dropdown menu w-fit bg-transparent shadow-none text-blue-950 left-5" popover="auto" id="popover-2" style={{ positionAnchor: "--anchor-2"} as React.CSSProperties }>
-            <li className="text-blue-950 flex justify-center"><a className="block w-full text-center" onClick={()=>handleTimeChange(15)}>15</a></li>
-            <li className="text-blue-950 flex justify-center"><a className="block w-full text-center" onClick={()=>handleTimeChange(30)}>30</a></li>
-            <li className="text-blue-950 flex justify-center"><a className="block w-full text-center" onClick={()=>handleTimeChange(60)}>60</a></li>
-          </ul>
-        </li>
-        <li className="w-32 relative">
-          <button className="btn bg-transparent border-0 shadow-none text-blue-950" popoverTarget="popover-3" style={{ anchorName: "--anchor-3"} as React.CSSProperties }>
-            {gameMode.words===undefined ? "Words": gameMode.words}
-          </button>
-          <ul className="dropdown menu w-fit bg-transparent shadow-none text-blue-950 left-[15]" popover="auto" id="popover-3" style={{ positionAnchor: "--anchor-3"} as React.CSSProperties }>
-            <li className="text-blue-950 flex justify-center"><a className="block w-full text-center" onClick={()=>handleWordsChange("1k")}>1k</a></li>
-            <li className="text-blue-950 flex justify-center"><a className="block w-full text-center" onClick={()=>handleWordsChange("5k")}>5k</a></li>
-            <li className="text-blue-950 flex justify-center"><a className="block w-full text-center" onClick={()=>handleWordsChange("10k")}>10k</a></li>
-          </ul>
-        </li> */}
-        <li>
-          <details className="dropdown" ref={modeDropdownRef}>
-            <summary className="btn m-1 bg-base-300 border-0 shadow-none text-base-content w-34 lg:w-42 lg:text-xl">
-              {gameMode.mode === null ? "Mode" : gameMode.mode}
-            </summary>
-            <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none rounded-2xl">
-              <li className="text-base-content flex justify-center">
-                <button
-                  type="button"
-                  className="block w-full text-center"
-                  onClick={() => handleModeChange("Rocket Run")}
-                >
-                  Rocket Run
-                </button>
-              </li>
-              <li className="text-base-content flex justify-center">
-                <button
-                  type="button"
-                  className="block w-full text-center"
-                  onClick={() => handleModeChange("Star Count")}
-                >
-                  Star Count
-                </button>
-              </li>
-              <li className="text-base-content">
-                <button
-                  type="button"
-                  className="block w-full text-center"
-                  onClick={() => handleModeChange("Zen")}
-                >
-                  Zen
-                </button>
-              </li>
-            </ul>
-          </details>
-        </li>
-        {gameMode.mode === "Star Count" && (
-          <li>
-            <details className="dropdown relative" ref={countDropdownRef}>
-              <summary className="btn m-1 bg-transparent border-0 shadow-none text-base-content w-34 lg:w-42 lg:text-xl">
-                {gameMode.count === null ? "Count" : `${gameMode.count} words`}
-              </summary>
-              <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl">
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleCountChange(20)}
-                  >
-                    20
-                  </button>
-                </li>
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleCountChange(50)}
-                  >
-                    50
-                  </button>
-                </li>
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleCountChange(100)}
-                  >
-                    100
-                  </button>
-                </li>
-              </ul>
-            </details>
-          </li>
-        )}
-        {gameMode.mode === "Rocket Run" && (
-          <li>
-            <details className="dropdown relative" ref={timeDropdownRef}>
-              <summary className="btn m-1 bg-transparent border-0 shadow-none text-base-content w-34 lg:w-42 lg:text-xl">
-                {gameMode.time === null ? "Time" : `${gameMode.time}s`}
-              </summary>
-              <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl">
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleTimeChange(15)}
-                  >
-                    15
-                  </button>
-                </li>
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleTimeChange(30)}
-                  >
-                    30
-                  </button>
-                </li>
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleTimeChange(60)}
-                  >
-                    60
-                  </button>
-                </li>
-              </ul>
-            </details>
-          </li>
-        )}
-        {gameMode.mode !== "Zen" && (
-          <li>
-            <details className="dropdown" ref={wordDropdownRef}>
-              <summary className="btn m-1 bg-transparent border-0 shadow-none text-base-content w-34 lg:w-42 lg:text-xl">
-                {gameMode.words === null ? "Words" : gameMode.words}
-              </summary>
-              <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl">
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleWordsChange("1k")}
-                  >
-                    1k
-                  </button>
-                </li>
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleWordsChange("5k")}
-                  >
-                    5k
-                  </button>
-                </li>
-              </ul>
-            </details>
-          </li>
-        )}
-      </ul>
+    <MotionConfig reducedMotion="user" transition={SPRING}>
       <div
-        className="md:hidden flex bg-base-300 rounded-2xl 00 text-base-content p-4 g-4 z-1 hover:bg-info hover:text-info-content hover:cursor-pointer absolute top-35"
-        onClick={() => {
-          const modal = document.getElementById("settingsModal");
-          if (modal) (modal as HTMLDialogElement).showModal();
-        }}
+        className={`flex justify-center items-center z-1 ${
+          visible ? "animate-[test-in_300ms_ease-out]" : "invisible"
+        }`}
       >
-        <IoIosSettings className="w-6 h-6 md:w-8 md:h-8 fill-base-content" />
-        <p className="text-base-content">Test Settings</p>
+        <LayoutGroup id="settings-bar">
+          <motion.div
+            className="hidden md:block bg-base-300 rounded-2xl overflow-hidden"
+            initial={false}
+            animate={{ width: contentWidth ?? "auto" }}
+          >
+            <div ref={contentRef} className="relative flex items-center w-max p-2 lg:text-lg">
+              <AnimatePresence initial={false} mode="popLayout">
+                {visibleGroups.map((group, i) => (
+                  <motion.div key={group.key} layout="position" className="flex items-center" {...FADE}>
+                    {i > 0 && <span aria-hidden className="mx-2 h-6 w-px bg-base-content/15" />}
+                    {group.render(false)}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        </LayoutGroup>
+
+        <button
+          type="button"
+          className="md:hidden flex items-center gap-2 bg-base-300 rounded-2xl text-base-content px-4 py-3 z-1 cursor-pointer hover:bg-info hover:text-info-content absolute top-35"
+          onClick={() => dialogRef.current?.showModal()}
+        >
+          <IoIosSettings className="w-6 h-6 shrink-0" />
+          <span>{summarize(gameMode)}</span>
+        </button>
+        <dialog ref={dialogRef} className="modal md:hidden">
+          <div className="modal-box w-11/12 max-w-sm flex flex-col">
+            <h2 className="font-bold mb-4 text-base-content">Test Settings</h2>
+            <LayoutGroup id="settings-modal">
+              <AnimatePresence initial={false}>
+                {visibleGroups.map((group) => (
+                  <motion.div
+                    key={group.key}
+                    className="overflow-hidden"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                  >
+                    <p className="mb-1 ml-2 text-xs text-base-content/50">{group.label}</p>
+                    <div className="mb-3 bg-base-300 rounded-2xl p-1 text-sm">{group.render(true)}</div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </LayoutGroup>
+            <form method="dialog" className="mt-1">
+              <button className="btn w-full rounded-2xl">Done</button>
+            </form>
+          </div>
+          <form method="dialog" className="modal-backdrop">
+            <button>close</button>
+          </form>
+        </dialog>
       </div>
-      <dialog id="settingsModal" className="modal md:hidden ">
-        <div className="modal-box w-[50%] join join-horizontal h-[50%] flex flex-col items-center justify-center gap-4">
-          <h2 className="text-bold mb-4 text-base-content">Test Settings</h2>
-          <details className="dropdown w-[90%] rounded-2xl" ref={modeDropdownRef}>
-            <summary className="btn m-1 bg-base-300 border-0 shadow-none text-base-content w-full lg:w-42 lg:text-xl rounded-2xl">
-              <FaKeyboard />  
-              {gameMode.mode === null ? "Mode" : gameMode.mode}
-            </summary>
-            <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none w-full rounded-2xl">
-              <li className="text-base-content flex justify-center">
-                <button
-                  type="button"
-                  className="block w-full text-center"
-                  onClick={() => handleModeChange("Rocket Run")}
-                >
-                  Rocket Run
-                </button>
-              </li>
-              <li className="text-base-content flex justify-center">
-                <button
-                  type="button"
-                  className="block w-full text-center"
-                  onClick={() => handleModeChange("Star Count")}
-                >
-                  Star Count
-                </button>
-              </li>
-              <li className="text-base-content">
-                <button
-                  type="button"
-                  className="block w-full text-center"
-                  onClick={() => handleModeChange("Zen")}
-                >
-                  Zen
-                </button>
-              </li>
-            </ul>
-          </details>
-          {gameMode.mode === "Star Count" && (
-
-            <details className="dropdown relative w-[90%]" ref={countDropdownRef}>
-              <summary className="btn m-1 bg-base-300 border-0 shadow-none text-base-content w-full lg:w-42 lg:text-xl rounded-2xl">
-                <IoDocument />
-                {gameMode.count === null ? "Count" : `${gameMode.count} words`}
-              </summary>
-              <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl w-[80%]">
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleCountChange(20)}
-                  >
-                    20
-                  </button>
-                </li>
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleCountChange(50)}
-                  >
-                    50
-                  </button>
-                </li>
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleCountChange(100)}
-                  >
-                    100
-                  </button>
-                </li>
-              </ul>
-            </details>
-
-        )}
-        {gameMode.mode === "Rocket Run" && (
-
-            <details className="dropdown relative w-[90%]" ref={timeDropdownRef}>
-              <summary className="btn m-1 bg-base-300 border-0 shadow-none text-base-content w-full lg:w-42 lg:text-xl rounded-2xl">
-                <MdTimer />
-                {gameMode.time === null ? "Time" : `${gameMode.time}s`}
-              </summary>
-              <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl w-full">
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleTimeChange(15)}
-                  >
-                    15
-                  </button>
-                </li>
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleTimeChange(30)}
-                  >
-                    30
-                  </button>
-                </li>
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleTimeChange(60)}
-                  >
-                    60
-                  </button>
-                </li>
-              </ul>
-            </details>
-
-        )}
-         {gameMode.mode !== "Zen" && (
-
-            <details className="dropdown w-[90%]" ref={wordDropdownRef}>
-              <summary className="btn m-1 bg-base-300 border-0 shadow-none text-base-content w-full lg:w-42 lg:text-xl rounded-2xl">
-                <TiSortAlphabetically />
-                {gameMode.words === null ? "Words" : gameMode.words}
-              </summary>
-              <ul className="menu dropdown-content bg-base-300 text-base-content shadow-none absolute left-1/2 -translate-x-1/2 rounded-2xl w-full">
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleWordsChange("1k")}
-                  >
-                    1k
-                  </button>
-                </li>
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleWordsChange("5k")}
-                  >
-                    5k
-                  </button>
-                </li>
-              </ul>
-            </details>
-
-        )}
-        </div>
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
-      </dialog>
-    </div>
+    </MotionConfig>
   );
 }

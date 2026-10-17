@@ -4,13 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import StartScreen from "../_components/StartScreen";
 import App from "../_components/App";
 import Settings from "../_components/Settings";
-import { GameMode, useGameContext } from "../_lib/gameContext";
-
-function settingsReady(gameMode: GameMode): boolean {
-  if (gameMode.mode === "Rocket Run") return Boolean(gameMode.time && gameMode.words);
-  if (gameMode.mode === "Star Count") return Boolean(gameMode.count && gameMode.words);
-  return gameMode.mode === "Zen";
-}
+import { settingsReady, useGameContext } from "../_lib/gameContext";
 
 function Home() {
   const [appInstance, setAppInstance] = useState<number | null>(null);
