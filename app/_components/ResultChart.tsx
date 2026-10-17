@@ -16,7 +16,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 
-import { useGameContext } from "../_lib/gameContext";
+import type { TrackRecord } from "../_lib/gameContext";
 
     
 
@@ -44,21 +44,12 @@ const today = new Date();
 const month = (today.getMonth()+1).toString();
 const date = today.getDate().toString();
 
-type TrackRecord = {
-  keyCount: number;
-  wpm: number;
-  raw: number;
-  mistakes: number;
-  elapsedSeconds: number;
-};
-
 type ResultProp = {
   trackBySecond: TrackRecord[]; 
 };
 
 
 export default function ResultChart({trackBySecond}:ResultProp) {
-  const { gameMode } = useGameContext();
   const latest = trackBySecond[trackBySecond.length - 1];
 
   const averageRaw =
@@ -143,7 +134,7 @@ export default function ResultChart({trackBySecond}:ResultProp) {
             </div>
             <div>
               <div>Time</div>
-              <div>{trackBySecond.length}s</div>
+              <div>{latest.elapsedSeconds}s</div>
             </div>
           </div>
         </CardFooter>

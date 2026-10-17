@@ -31,7 +31,7 @@ export default function Settings() {
   }
 
   const wordDropdownRef = useRef<HTMLDetailsElement>(null);
-  function handleWordsChange(words: "1k" | "5k" | "10k") {
+  function handleWordsChange(words: "1k" | "5k") {
     setGameMode((prev) => ({ ...prev, words }));
     setTimeout(() => wordDropdownRef.current?.removeAttribute("open"), 50);
   }
@@ -249,15 +249,6 @@ export default function Settings() {
                     5k
                   </button>
                 </li>
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleWordsChange("10k")}
-                  >
-                    10k
-                  </button>
-                </li>
               </ul>
             </details>
           </li>
@@ -413,15 +404,6 @@ export default function Settings() {
                     onClick={() => handleWordsChange("5k")}
                   >
                     5k
-                  </button>
-                </li>
-                <li className="text-base-content flex justify-center">
-                  <button
-                    type="button"
-                    className="block w-full text-center"
-                    onClick={() => handleWordsChange("10k")}
-                  >
-                    10k
                   </button>
                 </li>
               </ul>

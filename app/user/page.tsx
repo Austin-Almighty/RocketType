@@ -5,7 +5,7 @@ import { useUser } from "../_lib/userContext"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
-export default function user() {
+export default function UserPage() {
     const router = useRouter();
     const user = useUser();
 

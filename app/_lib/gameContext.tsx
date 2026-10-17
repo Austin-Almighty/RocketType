@@ -1,15 +1,15 @@
 "use client"
 import { createContext, useContext, useState, ReactNode } from "react";
 
-type GameMode = {
+export type GameMode = {
     start: boolean,
     mode: "Rocket Run" | "Star Count" | "Zen" | null,
     time: number | null, // Only used for 'time' mode
     count: number | null, // Only used for 'count' mode
-    words: "1k" | "5k" | "10k" | null
+    words: "1k" | "5k" | null
 };
 
-type TrackRecord = {
+export type TrackRecord = {
   keyCount: number;
   wpm: number;
   raw: number;

@@ -6,7 +6,6 @@ import AppLogo from "./Logo";
 import { signOut } from "firebase/auth";
 import { auth } from "../_lib/Firebase";
 import { FaInfoCircle } from "react-icons/fa";
-import { useGameContext } from "../_lib/gameContext";
 import { IoSettings } from "react-icons/io5";
 import { IoStatsChart } from "react-icons/io5";
 import { PiSignOutBold } from "react-icons/pi";
@@ -31,7 +30,6 @@ export default function Header({
   reStart?: () => void;
 }) {
   const user = useUser();
-  const {setGameMode} = useGameContext();
 
   function handleUser() {
     if (!user.user) {

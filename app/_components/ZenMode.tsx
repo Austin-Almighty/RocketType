@@ -1,97 +1,84 @@
 "use client";
 
-import { useRef, useEffect, useState, forwardRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import WordCounter from "./WordCounter";
+import ZenSky, { ZenSkyHandle } from "./zen/ZenSky";
 
-type ZenModeProps = {
-  setCompleteWords: React.Dispatch<React.SetStateAction<number>>;
-  onTestEnd?: () => void;
-};
+// Free typing with no target text and no score. It never ends on its own;
+// the starfield behind it reacts to every keystroke.
+export default function ZenMode() {
+  const textRef = useRef<HTMLTextAreaElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const caretRef = useRef<HTMLSpanElement>(null);
+  const skyRef = useRef<ZenSkyHandle>(null);
 
-function assignRefs<T>(...refs: (React.Ref<T> | undefined)[]) {
-  return (value: T) => {
-    refs.forEach((ref) => {
-      if (!ref) return;
-      if (typeof ref === "function") ref(value);
-      else (ref as React.RefObject<T>).current = value;
-    });
-  };
-}
+  const [userInput, setUserInput] = useState("");
+  const [offset, setOffset] = useState(0);
 
-const ZenMode = forwardRef<HTMLTextAreaElement, ZenModeProps>(
-  function ZenMode({ setCompleteWords }, ref) {
-    const textRef = useRef<HTMLTextAreaElement>(null);
-    const containerRef = useRef<HTMLDivElement>(null);
-    const caretRef = useRef<HTMLSpanElement>(null);
+  const completeWords = userInput.split(/\s+/).filter((w) => /^[a-zA-Z]+$/.test(w)).length;
 
-    const [userInput, setUserInput] = useState("");
+  useEffect(() => {
+    textRef.current?.focus({ preventScroll: true });
+    function focusOnInput(e: KeyboardEvent) {
+      if (e.metaKey || e.ctrlKey || e.altKey || e.key === "Tab") return;
+      textRef.current?.focus({ preventScroll: true });
+    }
+    document.addEventListener("keydown", focusOnInput);
+    return () => document.removeEventListener("keydown", focusOnInput);
+  }, []);
 
-    // Update word count as user types
-    useEffect(() => {
-      const words = userInput
-        .trim()
-        .split(/\s+/)
-        .filter((w) => /^[a-zA-Z]+$/.test(w));
-      setCompleteWords(words.length);
-    }, [userInput, setCompleteWords]);
+  // Keep the caret's line as the last of three visible lines.
+  useLayoutEffect(() => {
+    const caret = caretRef.current;
+    if (!caret) return;
+    const lineHeight = caret.offsetHeight;
+    const line = Math.round(caret.offsetTop / lineHeight);
+    setOffset(Math.max(0, line - 2) * lineHeight);
+  }, [userInput]);
 
-    // Focus textarea logic
-    useEffect(() => {
-      if (textRef.current) textRef.current.focus({ preventScroll: true });
-      function focusOnInput() {
-        if (textRef.current) textRef.current.focus({ preventScroll: true });
+  function handleChange(value: string) {
+    if (value.length > userInput.length) {
+      const added = value.slice(userInput.length);
+      for (const char of added) {
+        if (char === " " || char === "\n") skyRef.current?.word();
+        else skyRef.current?.keystroke();
       }
-      document.addEventListener("keypress", focusOnInput);
-      return () => document.removeEventListener("keypress", focusOnInput);
-    }, []);
+    }
+    setUserInput(value);
+  }
 
-    // Scroll caret into view, keep last 3 lines visible
-    useEffect(() => {
-      if (!containerRef.current || !caretRef.current) return;
-      const container = containerRef.current;
-      const caret = caretRef.current;
-      const lineHeight = 60; // px, should match your line height
-      const caretLine = Math.round(caret.offsetTop / lineHeight);
-      if (caretLine < 2) {
-        container.scrollTop = 0;
-      } else {
-        container.scrollTop = (caretLine - 1) * lineHeight;
-      }
-    }, [userInput]);
-
-    // Render each character as a span, with a blinking caret after last char
-    const chars = userInput.split("");
-
-    return (
-      <div className="relative w-full bg-base-100 text-base-content text-3xl sm:text-5xl">
+  return (
+    <>
+      <ZenSky ref={skyRef} />
+      <div className="relative z-10 w-full text-base-content">
+        <div className="flex items-baseline gap-6 mb-4 h-12 font-mono text-3xl sm:text-4xl text-primary">
+          <WordCounter complete={completeWords} />
+        </div>
         <div
           ref={containerRef}
-          className="text-display sm:max-h-[11.25rem] sm:min-h-[11.25rem] max-h-[9rem] min-h-[9rem] leading-12 sm:leading-15 sm:text-5xl overflow-hidden break-words"
-          onWheel={(e) => e.preventDefault()}
+          className="typing-viewport zen-viewport relative overflow-hidden cursor-text"
+          onClick={() => textRef.current?.focus({ preventScroll: true })}
         >
-          {chars.map((char, idx) => (
-            <span
-              key={idx}
-              className="user-typed" // Use your main span class, or blank if you want
-            >
-              {char}
-            </span>
-          ))}
-          {/* Blinking caret after last character */}
-          <span
-            ref={caretRef}
-            className="inline-block w-2 h-10 bg-base-content align-bottom animate-pulse"
-          ></span>
+          <div
+            className="typing-words zen-text whitespace-pre-wrap break-words transition-transform duration-150 ease-out"
+            style={{ transform: `translateY(-${offset}px)` }}
+          >
+            {userInput}
+            <span ref={caretRef} aria-hidden className="zen-caret" />
+          </div>
         </div>
         <textarea
-          ref={assignRefs(textRef, ref)}
+          ref={textRef}
+          aria-label="Zen typing input"
           value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
-          className="typing-input opacity-0 -z-50 h-0 w-0"
-          autoFocus
+          onChange={(e) => handleChange(e.target.value)}
+          autoCapitalize="off"
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck={false}
+          className="absolute opacity-0 pointer-events-none w-px h-px top-0 left-0 resize-none"
         />
       </div>
-    );
-  }
-);
-
-export default ZenMode;
+    </>
+  );
+}

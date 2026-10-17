@@ -1,13 +1,16 @@
-import { collection, query, where, getDocs, orderBy, deleteDoc, doc } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy, deleteDoc, doc, Timestamp } from "firebase/firestore";
 import { db, auth} from "./Firebase";
 
-type ResultDoc = {
+export type ResultDoc = {
   id: string;
   wpm: number;
   raw: number;
   accuracy: number;
   time: number;
-  // Add any other fields you expect here
+  keyCount: number;
+  errors: number;
+  gameMode: string;
+  createdAt: Timestamp;
 };
 
 export async function getResults(): Promise<ResultDoc[]> {

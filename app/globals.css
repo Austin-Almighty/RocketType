@@ -23,16 +23,126 @@ html {
   @apply scale-110 bg-base-content;
 }
 
-.correct {
-  @apply text-success;
+/* ---------- Typing test ---------- */
+
+.typing-viewport {
+  font-size: 1.75rem;
+  line-height: 1.6;
 }
 
-.incorrect {
-  @apply text-warning;
+@media (min-width: 40rem) {
+  .typing-viewport {
+    font-size: 2.25rem;
+  }
 }
 
-.current {
-  box-shadow: inset 3px 0 0 var(--color-primary);
+.typing-words {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.55em;
+  user-select: none;
+}
+
+.typing-word {
+  display: inline-block;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: border-color 150ms ease-out;
+}
+
+.typing-word-error {
+  border-bottom-color: color-mix(in oklab, var(--color-error) 70%, transparent);
+}
+
+.typing-letter {
+  transition: color 80ms ease-out;
+}
+
+.typing-letter-pending {
+  color: color-mix(in oklab, var(--color-base-content) 35%, transparent);
+}
+
+.typing-letter-correct {
+  color: var(--color-base-content);
+}
+
+.typing-letter-incorrect {
+  color: var(--color-error);
+}
+
+.typing-letter-missed {
+  color: color-mix(in oklab, var(--color-error) 45%, transparent);
+}
+
+.typing-letter-extra {
+  color: color-mix(in oklab, var(--color-error) 60%, transparent);
+}
+
+.typing-caret {
+  position: absolute;
+  top: 0;
+  left: -1px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--color-primary);
+  transition: transform 90ms ease-out;
+  pointer-events: none;
+}
+
+.typing-caret-idle {
+  animation: caret-blink 1s ease-in-out infinite;
+}
+
+@keyframes caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes test-in {
+  from { opacity: 0; transform: translateY(0.75rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Zen ---------- */
+
+.zen-viewport {
+  height: 3lh;
+}
+
+.zen-text {
+  display: block;
+  color: var(--color-base-content);
+}
+
+.zen-caret {
+  display: inline-block;
+  width: 3px;
+  height: 1lh;
+  padding-block: 0.25lh;
+  margin-left: 1px;
+  vertical-align: top;
+  background: var(--color-primary);
+  background-clip: content-box;
+  animation: caret-blink 1s ease-in-out infinite;
+}
+
+.zen-star {
+  animation: star-twinkle 4s ease-in-out infinite;
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing-caret,
+  .typing-words {
+    transition: none;
+  }
+  .zen-star {
+    animation: none;
+  }
 }
 
 

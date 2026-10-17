@@ -33,9 +33,9 @@ export default function Settings() {
       await deleteData();
       setShowSuccessReset(true);
       setTimeout(() => setShowSuccessReset(false), 2000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setShowErrorReset(true);
-      setResetErrorMsg(error?.message || "Data reset failed!");
+      setResetErrorMsg(error instanceof Error ? error.message : "Data reset failed!");
       setTimeout(() => setShowErrorReset(false), 2000);
     }
   }
@@ -49,7 +49,7 @@ export default function Settings() {
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   if (!authChecked) {
     return (

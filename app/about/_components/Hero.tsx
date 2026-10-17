@@ -1,4 +1,3 @@
-import Earth from "@/components/svgs/earth"
 
 import { ReactNode } from "react"
 

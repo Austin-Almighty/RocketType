@@ -1,53 +1,30 @@
-import { collection, addDoc } from "firebase/firestore";
-
-
-
-import { db} from "./Firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { User } from "firebase/auth";
-import { serverTimestamp } from "firebase/firestore";
-
-
-type GameMode = {
-    start: boolean,
-    mode: "Rocket Run" | "Star Count" | "Zen" | null,
-    time: number | null,
-    count: number | null,
-    words: "1k" | "5k" | "10k" | null
-};
-
-type TrackRecord = {
-  keyCount: number;
-  wpm: number;
-  raw: number;
-  mistakes: number;
-  elapsedSeconds: number;
-};
-
-
-
+import { db } from "./Firebase";
+import type { GameMode, TrackRecord } from "./gameContext";
 
 export default async function resultToDB({trackBySecond, gameMode, user}: {trackBySecond: TrackRecord[], gameMode: GameMode, user: User}) {
     if (!user) return;
-    if (trackBySecond.length === 0) console.error("Test Result not Found")
-    const averageRaw =
-  trackBySecond.length > 0
-    ? (
-        trackBySecond.reduce((sum, entry) => sum + (entry.raw ?? 0), 0) /
-        trackBySecond.length
-      ).toFixed(1)
-    : "0.0";
-    
-    let accuracy = "0.0";
     const latest = trackBySecond[trackBySecond.length - 1];
-    if (latest && latest.keyCount > 0) {
+    if (!latest) {
+        console.error("Test result not found; nothing saved");
+        return;
+    }
+
+    const averageRaw = (
+        trackBySecond.reduce((sum, entry) => sum + (entry.raw ?? 0), 0) / trackBySecond.length
+    ).toFixed(1);
+
+    let accuracy = "0.0";
+    if (latest.keyCount > 0) {
       const correct = latest.keyCount - latest.mistakes;
-      accuracy = ((correct / latest.keyCount) * 100).toFixed(1); 
+      accuracy = ((correct / latest.keyCount) * 100).toFixed(1);
     }
 
     try {
-        const docRef = await addDoc(collection(db, "results"), {
-            userDisplayName: user?.displayName,
-            userUID: user?.uid,
+        await addDoc(collection(db, "results"), {
+            userDisplayName: user.displayName,
+            userUID: user.uid,
             gameMode: gameMode.mode,
             time: gameMode.time,
             count: gameMode.count,
@@ -55,7 +32,7 @@ export default async function resultToDB({trackBySecond, gameMode, user}: {track
             keyCount: latest.keyCount,
             errors: latest.mistakes,
             wpm: latest.wpm,
-            raw:Number(averageRaw),
+            raw: Number(averageRaw),
             accuracy: Number(accuracy),
             createdAt: serverTimestamp()
         })

@@ -60,7 +60,7 @@ export default function User() {
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   if (!authChecked) {
     return (

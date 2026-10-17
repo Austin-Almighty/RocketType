@@ -1,8 +1,8 @@
 'use client';
 import { getLeaderboardResults } from "./getLeaderboardDB";
-import { useState, useEffect, startTransition} from "react";
+import { useState, useEffect } from "react";
 import { unstable_ViewTransition as ViewTransition } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query"
+import type { DocumentData } from "firebase/firestore";
 
 export default function Leaderboard({
   range,
@@ -12,7 +12,7 @@ export default function Leaderboard({
   time: string;
 }) {
 
-    const [docs, setDocs] = useState<any[] | null>(null);  
+    const [docs, setDocs] = useState<DocumentData[] | null>(null);  
     const [loading, setLoading] = useState(true); 
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 10;

@@ -1,5 +1,3 @@
-import { getSummaryStats } from "@/app/_lib/getResults";
-import { useEffect, useState } from "react";
 
 type Stats = {
   DaysSinceCreation: number;

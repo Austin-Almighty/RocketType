@@ -14,7 +14,7 @@ import { MdSimCardDownload } from "react-icons/md";
 export default function Result() {
     const router = useRouter();
 
-    const { trackBySecond, gameMode, resetGame } = useGameContext();
+    const { trackBySecond, gameMode } = useGameContext();
 
     const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
@@ -55,8 +55,9 @@ export default function Result() {
 
     
 
+    // The app page clears the old records when the new test starts. Clearing
+    // them here would trigger the redirect above and drop ?autostart=1.
     function reStartGame() {
-        resetGame();
         router.push("/app?autostart=1")
     }
 

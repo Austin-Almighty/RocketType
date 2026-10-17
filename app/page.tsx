@@ -4,7 +4,6 @@ import Link from "next/link"
 import "../css/welcomepage.css"
 import { useEffect, useState } from "react";
 import { useRef } from "react";
-import { useRouter } from "next/navigation";
 import { gsap } from "gsap";
 import { unstable_ViewTransition as ViewTransition } from "react";
 // import { useGSAP } from "@gsap/react";
@@ -23,7 +22,7 @@ export default function WelcomePage() {
 
   // Typewriter effect
   useEffect(() => {
-    let obj = { progress: 0 };
+    const obj = { progress: 0 };
     gsap.to(obj, {
       progress: text.length,
       duration: 1.2,
@@ -48,7 +47,6 @@ export default function WelcomePage() {
     }
   }, [showShuttle]);
    
-  const router = useRouter();
   // useEffect(()=>{
   //   function directToApp() {
   //     router.push("/app")

@@ -54,7 +54,7 @@ export default function About() {
             <h2 className="text-center align-middle text-2xl md:text-3xl">Word Sets</h2>
           </span>
           <p className="text-base-content bg-base-300 rounded-2xl p-4">
-            Currently, there are 3 word sets: English Most Common 1k, 5k and 10k. Support for other languages and word sets will be added in the future.
+            Currently, there are 2 word sets: English Most Common 1k and 5k. Support for other languages and word sets will be added in the future.
           </p>
         </section>
         <section aria-label="Test Modes">
@@ -83,7 +83,7 @@ export default function About() {
                 Star Count (Word Count Mode)
             </div>
             <div className="collapse-content text-sm">
-                In Star Count, you are tasked to type a set number of words. The test won't stop until you hit the target word count!           
+                In Star Count, you are tasked to type a set number of words. The test won&apos;t stop until you hit the target word count!           
             </div>
           </div>
           <div

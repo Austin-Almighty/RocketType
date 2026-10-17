@@ -47,7 +47,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={JetBrainsMono.className}>
+    // The inline script sets data-theme before React loads, so the server
+    // HTML can't know it; suppress the expected <html> attribute mismatch.
+    <html lang="en" className={JetBrainsMono.className} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

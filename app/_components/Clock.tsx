@@ -1,37 +1,19 @@
 "use client";
-import { useEffect, useState } from "react";
 
 type ClockProps = {
-  start: number|null;
-  running: boolean;
+  seconds: number | null;
 };
 
-export function Clock({ start, running }: ClockProps) {
-
-  const [counter, setCounter] = useState(start);
-
-  useEffect(() => {
-    setCounter(start);
-  }, [start]);
-
-  useEffect(() => {
-    if (!running) return;
-    if (counter === null) return;
-    if (counter <= 0) return;
-    const timer = setInterval(() => {
-      setCounter((prev) => (prev === null ? 0: prev - 1));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [running, counter]);
-
+// Display only: the running test owns the timer and passes the time left.
+export function Clock({ seconds }: ClockProps) {
   return (
-    <span className="countdown font-mono text-3xl sm:text-4xl text-base-content">
+    <span className="countdown font-mono">
       <span
-        style={{ "--value": counter } as React.CSSProperties}
+        style={{ "--value": seconds ?? 0 } as React.CSSProperties}
         aria-live="polite"
-        aria-label={counter?.toString()}
+        aria-label={`${seconds ?? 0} seconds left`}
       >
-        {counter}
+        {seconds}
       </span>
     </span>
   );

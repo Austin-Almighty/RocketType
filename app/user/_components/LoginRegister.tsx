@@ -24,9 +24,7 @@ export default function LoginRegister() {
   const {
     register: registerLogin,
     handleSubmit: handleSubmitLogin,
-    formState: { errors: errorsLogin, isSubmitting: isSubmittingLogin },
     reset: resetLogin,
-    getValues: getValuesLogin,
   } = useForm(); //for the login form
 
   function signInWithGoogle() {
