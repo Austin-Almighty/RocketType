@@ -113,3 +113,35 @@ export function completedWords(state: TypingState): number {
 export function wordHasError(state: TypingState, index: number): boolean {
   return index < state.wordIndex && state.typed[index] !== state.words[index];
 }
+
+export type CharacterStats = {
+  correct: number;
+  incorrect: number;
+  extra: number; // typed past the end of a word
+  missed: number; // skipped by pressing space early
+};
+
+// Letters as they stand at the end of the test, after any corrections
+// (unlike `mistakes`, which counts every wrong keystroke).
+export function characterStats(state: TypingState): CharacterStats {
+  const stats = { correct: 0, incorrect: 0, extra: 0, missed: 0 };
+  for (let i = 0; i <= state.wordIndex; i++) {
+    const target = state.words[i] ?? "";
+    const typed = state.typed[i] ?? "";
+    // The word being typed when time ran out has no missed letters yet.
+    const passed = i < state.wordIndex || state.finished;
+    const length = Math.max(target.length, typed.length);
+    for (let j = 0; j < length; j++) {
+      if (j >= typed.length) {
+        if (passed) stats.missed += 1;
+      } else if (j >= target.length) {
+        stats.extra += 1;
+      } else if (typed[j] === target[j]) {
+        stats.correct += 1;
+      } else {
+        stats.incorrect += 1;
+      }
+    }
+  }
+  return stats;
+}

@@ -7,7 +7,8 @@ import WordCounter from "../WordCounter";
 import { useGameContext, TrackRecord } from "../../_lib/gameContext";
 import { useUser } from "../../_lib/userContext";
 import resultToDB from "../../_lib/resultToFirebase";
-import { completedWords, createTypingState, typingReducer } from "../../_lib/typing/engine";
+import { getPersonalBest } from "../../_lib/getResults";
+import { characterStats, completedWords, createTypingState, typingReducer } from "../../_lib/typing/engine";
 import { getRandomWords, wordListFor } from "../../_lib/typing/words";
 import { buildRecord, computeWpm } from "../../_lib/typing/stats";
 import { useTypingInput } from "../../_lib/typing/useTypingInput";
@@ -21,7 +22,7 @@ type TypingTestProps = {
 };
 
 export default function TypingTest({ onFocusChange }: TypingTestProps) {
-  const { gameMode, setGameMode, setTrackBySecond } = useGameContext();
+  const { gameMode, setGameMode, setTrackBySecond, setTestDetails } = useGameContext();
   const { user } = useUser();
   const router = useRouter();
   const isTimed = gameMode.mode === "Rocket Run";
@@ -40,10 +41,31 @@ export default function TypingTest({ onFocusChange }: TypingTestProps) {
   const recordsRef = useRef<TrackRecord[]>([]);
   const startedAtRef = useRef<number | null>(null);
   const endedRef = useRef(false);
+  // Best WPM before this test: undefined until loaded (or if the lookup
+  // fails), null if this is the first result with these settings.
+  const previousBestRef = useRef<number | null | undefined>(undefined);
 
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
+
+  // Look up the previous best now, so the result page can compare without
+  // racing the save of this test's result.
+  const userID = user?.uid;
+  useEffect(() => {
+    previousBestRef.current = undefined;
+    if (!userID) return;
+    let cancelled = false;
+    getPersonalBest(userID, gameMode)
+      .then((best) => {
+        if (!cancelled) previousBestRef.current = best;
+      })
+      .catch((e) => console.error("Failed to load personal best", e));
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userID, gameMode.mode, gameMode.time, gameMode.count, gameMode.words]);
 
   // Ends the test exactly once, using the records collected so far plus
   // a final record for the partial last second.
@@ -62,11 +84,20 @@ export default function TypingTest({ onFocusChange }: TypingTestProps) {
       records.push(buildRecord(keyCount, mistakes, finalSeconds, previous));
     }
 
+    const wpm = records[records.length - 1].wpm;
+    const previousBest = previousBestRef.current;
+    setTestDetails({
+      characters: characterStats(stateRef.current),
+      personalBest:
+        user && previousBest !== undefined
+          ? { previous: previousBest, isNew: previousBest === null || wpm > previousBest }
+          : null,
+    });
     setTrackBySecond(records);
     setGameMode((prev) => ({ ...prev, start: false }));
     if (user) resultToDB({ trackBySecond: records, gameMode, user });
     router.push("/result");
-  }, [gameMode, isTimed, router, setGameMode, setTrackBySecond, user]);
+  }, [gameMode, isTimed, router, setGameMode, setTestDetails, setTrackBySecond, user]);
 
   const endTestRef = useRef(endTest);
   useEffect(() => {

@@ -1,5 +1,6 @@
 import { collection, query, where, getDocs, orderBy, deleteDoc, doc, Timestamp } from "firebase/firestore";
 import { db, auth} from "./Firebase";
+import type { GameMode } from "./gameContext";
 
 export type ResultDoc = {
   id: string;
@@ -7,6 +8,8 @@ export type ResultDoc = {
   raw: number;
   accuracy: number;
   time: number;
+  count: number | null;
+  words: string | null;
   keyCount: number;
   errors: number;
   gameMode: string;
@@ -26,6 +29,23 @@ export async function getResults(): Promise<ResultDoc[]> {
     const docs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ResultDoc));
 
     return docs;
+}
+
+// Best WPM among this user's earlier results with the same settings, or null
+// if this is their first. Filtered here because Firestore would need a
+// composite index to filter on all of these fields at once.
+export async function getPersonalBest(userID: string, gameMode: GameMode): Promise<number | null> {
+    const resultsQuery = query(collection(db, "results"), where("userUID", "==", userID));
+    const querySnapshot = await getDocs(resultsQuery);
+    const sameSettings = querySnapshot.docs
+        .map(doc => doc.data() as ResultDoc)
+        .filter(result =>
+            result.gameMode === gameMode.mode &&
+            result.words === gameMode.words &&
+            (gameMode.mode === "Rocket Run" ? result.time === gameMode.time : result.count === gameMode.count)
+        );
+    if (sameSettings.length === 0) return null;
+    return Math.max(...sameSettings.map(result => result.wpm));
 }
 
 export async function deleteData() {

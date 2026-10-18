@@ -24,6 +24,12 @@ const FADE = {
   exit: { opacity: 0, filter: "blur(4px)" },
 };
 
+const MODE_DESCRIPTIONS: Record<(typeof MODE_OPTIONS)[number], string> = {
+  "Rocket Run": "Race the clock: type as many words as you can before time runs out.",
+  "Star Count": "Type a set number of words as fast as you can.",
+  Zen: "No timer, no score. Just type and watch the stars drift by.",
+};
+
 // Tracks an element's width so the bar can animate to it instead of jumping.
 function useWidth() {
   const ref = useRef<HTMLDivElement>(null);
@@ -134,7 +140,7 @@ function SettingsPanel({ visible }: { visible: boolean }) {
   return (
     <MotionConfig reducedMotion="user" transition={SPRING}>
       <div
-        className={`flex justify-center items-center z-1 ${
+        className={`flex flex-col justify-center items-center gap-3 z-1 ${
           visible ? "animate-[test-in_300ms_ease-out]" : "invisible"
         }`}
       >
@@ -156,6 +162,23 @@ function SettingsPanel({ visible }: { visible: boolean }) {
             </div>
           </motion.div>
         </LayoutGroup>
+
+        {/* What the selected mode is, since the names alone don't say. */}
+        <div className="hidden md:block h-5 text-sm text-base-content/50">
+          <AnimatePresence initial={false} mode="wait">
+            {gameMode.mode && (
+              <motion.p
+                key={gameMode.mode}
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 4 }}
+                transition={{ duration: 0.15 }}
+              >
+                {MODE_DESCRIPTIONS[gameMode.mode]}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </div>
 
         <button
           type="button"
@@ -180,6 +203,9 @@ function SettingsPanel({ visible }: { visible: boolean }) {
                   >
                     <p className="mb-1 ml-2 text-xs text-base-content/50">{group.label}</p>
                     <div className="mb-3 bg-base-300 rounded-2xl p-1 text-sm">{group.render(true)}</div>
+                    {group.key === "mode" && gameMode.mode && (
+                      <p className="-mt-1 mb-3 mx-2 text-xs text-base-content/60">{MODE_DESCRIPTIONS[gameMode.mode]}</p>
+                    )}
                   </motion.div>
                 ))}
               </AnimatePresence>

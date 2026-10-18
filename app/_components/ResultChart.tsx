@@ -1,11 +1,10 @@
 "use client";
-import { CartesianGrid, XAxis, YAxis, Area, AreaChart } from "recharts"
+import { CartesianGrid, XAxis, YAxis, Area, ComposedChart, Scatter } from "recharts"
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -17,8 +16,9 @@ import {
 } from "@/components/ui/chart"
 
 import type { TrackRecord } from "../_lib/gameContext";
+import { errorsPerSecond } from "../_lib/typing/stats";
 
-    
+
 
 const chartConfig = {
   raw: {
@@ -29,7 +29,7 @@ const chartConfig = {
     label: "WPM",
     color: "hsl(var(--chart-2))",
   },
-  mistakes: {
+  errors: {
     label: "Errors",
     color: "hsl(var(--chart-3))"
   },
@@ -45,33 +45,40 @@ const month = (today.getMonth()+1).toString();
 const date = today.getDate().toString();
 
 type ResultProp = {
-  trackBySecond: TrackRecord[]; 
+  trackBySecond: TrackRecord[];
 };
 
+type ErrorDotProps = { cx?: number; cy?: number; payload?: { errors: number } };
+
+// A red cross on each second with mistakes; seconds without any show nothing.
+function ErrorDot({ cx, cy, payload }: ErrorDotProps) {
+  if (!payload?.errors || cx === undefined || cy === undefined) return <g />;
+  const size = 4;
+  return (
+    <path
+      d={`M${cx - size},${cy - size}L${cx + size},${cy + size}M${cx + size},${cy - size}L${cx - size},${cy + size}`}
+      stroke="var(--color-error)"
+      strokeWidth={2.5}
+      strokeLinecap="round"
+    />
+  );
+}
 
 export default function ResultChart({trackBySecond}:ResultProp) {
-  const latest = trackBySecond[trackBySecond.length - 1];
-
-  const averageRaw =
-  trackBySecond.length > 0
-    ? (
-        trackBySecond.reduce((sum, entry) => sum + (entry.raw ?? 0), 0) /
-        trackBySecond.length
-      ).toFixed(1)
-    : "0.0";
+  const errors = errorsPerSecond(trackBySecond);
+  const data = trackBySecond.map((record, i) => ({ ...record, errors: errors[i] }));
 
   return (
-    
-      <Card className="h-full bg-transparent border-none shadow-none text-base-content">
+
+      <Card className="h-full bg-transparent border-none shadow-none text-base-content gap-2 py-0">
         <CardHeader>
           <CardTitle>Test Results</CardTitle>
           <CardDescription>{`${month}/${date}`}</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig} className="h-[32vh] w-full">
-            <AreaChart
-              // accessibilityLayer
-              data={trackBySecond}
+            <ComposedChart
+              data={data}
               margin={{
                 left: 12,
                 right: 12,
@@ -90,54 +97,46 @@ export default function ResultChart({trackBySecond}:ResultProp) {
                 label={ {value: "Time (seconds)", position: "bottom", offset: 20, fill:"var(--color-base-content)"} }
               />
               <YAxis
-                  label={ {value: "Words Per Minute", position:"insideLeft", dx:-10, dy: 20, angle:-90, fill:"var(--color-base-content"} }
-                  tick={{fill: "var(--color-base-content"}}
-                 
+                  yAxisId="speed"
+                  label={ {value: "Words Per Minute", position:"insideLeft", dx:-10, dy: 20, angle:-90, fill:"var(--color-base-content)"} }
+                  tick={{fill: "var(--color-base-content)"}}
+              />
+              <YAxis
+                  yAxisId="errors"
+                  orientation="right"
+                  allowDecimals={false}
+                  domain={[0, (max: number) => Math.max(max, 3)]}
+                  label={ {value: "Errors", position:"insideRight", dx:10, angle:90, fill:"var(--color-base-content)"} }
+                  tick={{fill: "var(--color-base-content)"}}
               />
               <ChartTooltip cursor={false} content={<ChartTooltipContent className="bg-base-200 text-base-content"/>} />
               <Area
+                  yAxisId="speed"
                   dataKey="raw"
                   type="monotone"
-                  fill="var(--color-accent)"   
+                  fill="var(--color-accent)"
                   stroke="var(--color-accent)"
                   strokeWidth={2}
               />
 
               <Area
+                  yAxisId="speed"
                   dataKey="wpm"
                   type="monotone"
                   fill="var(--color-info)"
                   stroke="var(--color-info)"
                   strokeWidth={2}
               />
-              <Area
-                  dataKey="mistakes"
-                  type="monotone"
-                  fill="var(--color-warning)"
-                  stroke="var(--color-warning)"
-
-                  strokeWidth={2}
+              <Scatter
+                  yAxisId="errors"
+                  dataKey="errors"
+                  fill="var(--color-error)"
+                  shape={<ErrorDot />}
               />
-              
-            </AreaChart>
+
+            </ComposedChart>
           </ChartContainer>
         </CardContent>
-        <CardFooter>
-          <div className="flex w-full justify-evenly text-center align-center text-l">
-            <div>
-              <div>Raw</div>
-              <div>{averageRaw}</div>
-            </div>
-            <div>
-              <div>Characters</div>
-              <div>{`${latest.keyCount}/${latest.mistakes}`}</div>
-            </div>
-            <div>
-              <div>Time</div>
-              <div>{latest.elapsedSeconds}s</div>
-            </div>
-          </div>
-        </CardFooter>
       </Card>
 
   )

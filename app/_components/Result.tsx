@@ -1,20 +1,38 @@
 "use client"
 import ResultChart from "./ResultChart"
-import { useGameContext } from "../_lib/gameContext";
+import KeyHints from "./KeyHints";
+import { GameMode, useGameContext } from "../_lib/gameContext";
+import { useUser } from "../_lib/userContext";
+import { computeConsistency } from "../_lib/typing/stats";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ReactNode, useEffect, useState } from "react";
 import html2canvas from 'html2canvas-pro';
 import { MdOutlineRestartAlt } from "react-icons/md";
 import { MdSimCardDownload } from "react-icons/md";
+import { IoMdReturnLeft } from "react-icons/io";
+import { FaCrown } from "react-icons/fa";
 
+function testLength(gameMode: GameMode): string {
+    if (gameMode.mode === "Rocket Run") return `${gameMode.time}s`;
+    if (gameMode.mode === "Star Count") return `${gameMode.count} words`;
+    return "";
+}
 
-
-
+function Stat({ label, title, children }: { label: string, title?: string, children: ReactNode }) {
+    return (
+        <div className="flex flex-col items-center" title={title}>
+            <div className="text-secondary">{label}</div>
+            <div className="text-xl sm:text-2xl text-base-content">{children}</div>
+        </div>
+    );
+}
 
 export default function Result() {
     const router = useRouter();
 
-    const { trackBySecond, gameMode } = useGameContext();
+    const { trackBySecond, gameMode, testDetails } = useGameContext();
+    const { user } = useUser();
 
     const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
@@ -41,25 +59,49 @@ export default function Result() {
       }
     }, [trackBySecond, router]);
 
-    if (trackBySecond.length === 0) {
-        return null;
-    }
-
-    
-    let accuracy = "0.0";
-    const latest = trackBySecond[trackBySecond.length - 1];
-    if (latest && latest.keyCount > 0) {
-      const correct = latest.keyCount - latest.mistakes;
-      accuracy = ((correct / latest.keyCount) * 100).toFixed(1); 
-    }
-
-    
-
     // The app page clears the old records when the new test starts. Clearing
     // them here would trigger the redirect above and drop ?autostart=1.
     function reStartGame() {
         router.push("/app?autostart=1")
     }
+
+    function goBack() {
+        router.push("/app");
+    }
+
+    // Tab or Enter starts the next test, Esc goes back to the settings.
+    useEffect(() => {
+        function handleKeyDown(e: KeyboardEvent) {
+            if (e.key === "Tab" || e.key === "Enter") {
+                e.preventDefault();
+                router.push("/app?autostart=1");
+            } else if (e.key === "Escape") {
+                e.preventDefault();
+                router.push("/app");
+            }
+        }
+        document.addEventListener("keydown", handleKeyDown);
+        return () => document.removeEventListener("keydown", handleKeyDown);
+    }, [router]);
+
+    if (trackBySecond.length === 0) {
+        return null;
+    }
+
+
+    let accuracy = "0.0";
+    const latest = trackBySecond[trackBySecond.length - 1];
+    if (latest && latest.keyCount > 0) {
+      const correct = latest.keyCount - latest.mistakes;
+      accuracy = ((correct / latest.keyCount) * 100).toFixed(1);
+    }
+
+    const averageRaw = Math.round(
+        trackBySecond.reduce((sum, entry) => sum + entry.raw, 0) / trackBySecond.length
+    );
+    const consistency = computeConsistency(trackBySecond);
+    const characters = testDetails?.characters;
+    const personalBest = testDetails?.personalBest;
 
     return (
         <>
@@ -74,43 +116,78 @@ export default function Result() {
                 </div>
               </div>
             )}
-            <div className="bg-transparent w-[90%] flex flex-col lg:flex-row h-1/2 lg:mt-10">
-                <div className="bg-transparent lg:w-1/7 w-full h-full flex lg:flex-col text-center justify-center items-center text-base-content gap-1">
-                    <div className="flex lg:gap-4 sm:flex-row md:flex-row flex-col lg:flex-col gap-4 sm:gap-0">
-                        <div className="flex flex-row lg:flex-col lg:gap-0 gap-20">
-                            <div className="flex flex-col">
-                                <div className="sm:text-2xl text-secondary text-2xl">WPM</div>
-                                <div className="sm:text-5xl text-base-content text-3xl">{latest.wpm}</div>
-                            </div>
-                            <div className="flex flex-col">
-                                <div className="sm:text-2xl text-secondary text-2xl">Accuracy</div>
-                                <div className="sm:text-5xl text-base-content text-3xl">{`${accuracy}%`}</div>
-                            </div>
+            <div className="w-[90%] max-w-7xl flex flex-col gap-8 lg:mt-10 text-base-content animate-[test-in_300ms_ease-out]">
+                <div className="flex flex-col lg:flex-row gap-6">
+                    {/* Headline numbers */}
+                    <div className="flex lg:flex-col justify-center gap-16 lg:gap-8 lg:w-56 shrink-0 text-center lg:text-left">
+                        <div className="flex flex-col">
+                            <div className="text-2xl text-secondary">WPM</div>
+                            <div className="text-5xl sm:text-6xl">{latest.wpm}</div>
+                            {personalBest?.isNew && (
+                                <div className="badge badge-primary gap-1.5 mt-2 animate-[test-in_500ms_ease-out]">
+                                    <FaCrown /> New best!
+                                </div>
+                            )}
+                            {personalBest && !personalBest.isNew && personalBest.previous !== null && (
+                                <div className="text-sm text-base-content/50 mt-1">best {personalBest.previous}</div>
+                            )}
+                            {!user && (
+                                <Link href="/user" className="text-sm text-base-content/50 hover:text-base-content underline mt-1">
+                                    Log in to track your best
+                                </Link>
+                            )}
                         </div>
-                        <div className="flex lg:flex-col flex-row sm:flex-col lg:ml-0 ml-0 sm:ml-20 sm:gap-0 gap-2 w-full items-center justify-center">
-                            <div className="sm:text-xl text-secondary">test type</div>
-                            <div className="text-base-content">{gameMode.mode}</div>
-                            <div className="text-base-content">{gameMode.words}</div>
+                        <div className="flex flex-col">
+                            <div className="text-2xl text-secondary">Accuracy</div>
+                            <div className="text-5xl sm:text-6xl">{`${accuracy}%`}</div>
                         </div>
                     </div>
-                </div>
-                <div className="bg-transparent h-full w-full">
-                    <ResultChart trackBySecond={trackBySecond}/>
-                </div>
-            </div>
-            <div className="bg-transparent w-11/13 h-1/8 flex mt-10 justify-center items-center gap-20 md:gap-40 text-base-content">
-                {/* <svg width="40px" height="40px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="12" r="10" stroke="#1C274C" strokeWidth="1.5"/>
-                    <path d="M8 12C12.6863 12 11.3137 12 16 12M16 12L13 9M16 12L13 15" stroke="#1C274C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg> */}
-                <div onClick={reStartGame} className="tooltip tooltip-bottom" data-tip="Restart Game">
-                    <MdOutlineRestartAlt className="w-10 h-10 md:w-12 md:h-12 fill-base-content"/>
-                </div>
-                
-                <div onClick={screenshotAndCopy} className="tooltip tooltip-bottom" data-tip="Copy screenshot to clipboard">
-                    <MdSimCardDownload className="w-10 h-10 md:w-12 md:h-12 fill-base-content"/>
+                    <div className="flex-1 min-w-0">
+                        <ResultChart trackBySecond={trackBySecond}/>
+                    </div>
                 </div>
 
+                {/* Details */}
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-6">
+                    <Stat label="test type">
+                        <div className="text-base sm:text-lg leading-tight">
+                            {gameMode.mode}
+                            <div className="text-base-content/60">{[testLength(gameMode), gameMode.words].filter(Boolean).join(" · ")}</div>
+                        </div>
+                    </Stat>
+                    <Stat label="raw" title="Speed counting every keystroke, including mistakes">{averageRaw}</Stat>
+                    <Stat
+                        label="characters"
+                        title="correct / incorrect / extra / missed letters at the end of the test"
+                    >
+                        {characters
+                            ? `${characters.correct}/${characters.incorrect}/${characters.extra}/${characters.missed}`
+                            : "–"}
+                    </Stat>
+                    <Stat label="consistency" title="How steady your speed was from second to second">{`${consistency}%`}</Stat>
+                    <Stat label="time">{`${latest.elapsedSeconds}s`}</Stat>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                    <div className="flex justify-center items-center gap-16 md:gap-28">
+                        <div className="tooltip tooltip-bottom" data-tip="Next test (Tab)">
+                            <button type="button" aria-label="Next test" onClick={reStartGame} className="btn btn-ghost btn-circle btn-lg">
+                                <MdOutlineRestartAlt className="w-10 h-10 fill-base-content"/>
+                            </button>
+                        </div>
+                        <div className="tooltip tooltip-bottom" data-tip="Back to settings (Esc)">
+                            <button type="button" aria-label="Back to settings" onClick={goBack} className="btn btn-ghost btn-circle btn-lg">
+                                <IoMdReturnLeft className="w-9 h-9 fill-base-content"/>
+                            </button>
+                        </div>
+                        <div className="tooltip tooltip-left" data-tip="Copy screenshot to clipboard">
+                            <button type="button" aria-label="Copy screenshot to clipboard" onClick={screenshotAndCopy} className="btn btn-ghost btn-circle btn-lg">
+                                <MdSimCardDownload className="w-10 h-10 fill-base-content"/>
+                            </button>
+                        </div>
+                    </div>
+                    <KeyHints hints={[{ keys: ["tab", "enter"], action: "next test" }, { keys: ["esc"], action: "settings" }]} />
+                </div>
             </div>
         </>
     )

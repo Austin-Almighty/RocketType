@@ -1,5 +1,6 @@
 "use client"
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import type { CharacterStats } from "./typing/engine";
 
 export type GameMode = {
     start: boolean,
@@ -15,6 +16,13 @@ export type TrackRecord = {
   raw: number;
   mistakes: number;
   elapsedSeconds: number;
+};
+
+// Extra details about the last test, shown on the result page.
+export type TestDetails = {
+  characters: CharacterStats;
+  // null when the player isn't logged in or the lookup failed
+  personalBest: { previous: number | null; isNew: boolean } | null;
 };
 
 export const MODE_OPTIONS = ["Rocket Run", "Star Count", "Zen"] as const;
@@ -60,6 +68,8 @@ type GameContextType = {
     settingsLoaded: boolean;
     trackBySecond: TrackRecord[];
     setTrackBySecond: React.Dispatch<React.SetStateAction<TrackRecord[]>>;
+    testDetails: TestDetails | null;
+    setTestDetails: React.Dispatch<React.SetStateAction<TestDetails | null>>;
     resetGame: ()=>void;
 };
 
@@ -75,6 +85,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const [settingsLoaded, setSettingsLoaded] = useState(false);
 
     const [trackBySecond, setTrackBySecond] = useState<TrackRecord[]>([]);
+    const [testDetails, setTestDetails] = useState<TestDetails | null>(null);
 
     // On mount, restore the last settings from localStorage if present
     useEffect(() => {
@@ -105,7 +116,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setTrackBySecond([]);
     }
     return (
-        <GameContext.Provider value={{ gameMode, setGameMode, settingsLoaded, trackBySecond, setTrackBySecond, resetGame }}>
+        <GameContext.Provider value={{ gameMode, setGameMode, settingsLoaded, trackBySecond, setTrackBySecond, testDetails, setTestDetails, resetGame }}>
             {children}
         </GameContext.Provider>
     );
