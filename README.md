@@ -118,25 +118,115 @@ Practice is labeled and excluded from standard personal bests and rankings.
 Leaderboard periods use UTC; ties use accuracy, then earliest completion, then
 result ID. Each player occupies one position per selected configuration.
 
-### Result saving and Firestore indexes
+### Durable result recovery
 
-Completed tests use a stable document ID and completion timestamp so a retry
-cannot create duplicate history entries. Failed results remain available for
-retry across navigation within the current app session and can only be retried
-with the original account. Refreshing or closing the tab clears this retry state.
-Production Firestore rules must permit the result owner to retry an identical
-write to their result document; rules are managed outside this repository.
+Completed tests use a stable result ID. Failed saves reappear after navigation,
+refresh, or reopening the site; use “Retry saving” with the original account.
+Clearing browser data removes pending results. If storage is unavailable, keep
+the tab open and retry. With verified tests enabled, recovery also stores the
+scored test’s typing events until acknowledgement; Zen text is never saved.
 
-`firestore.indexes.json` defines the history and current-scoring leaderboard
-indexes. Before deploying this application, review these definitions against the
-existing project indexes and merge any additional deployed indexes. With the
-Firebase CLI authenticated to the intended project, deploy only the indexes:
+Account forms await completion and preserve input after errors. Browser resets
+wait for active saves and cancel old retries across tabs using Web Locks (HTTPS
+or localhost). IME text commits once. Zen respects live reduced-motion changes.
+
+### Current production configuration
+
+Project: `typing-app-566de`. Billing is currently disabled. `firebase.json`
+deploys `firestore.compat.rules`: result owners can create bounded unverified
+scores, retry an identical write, and delete their own results. Score edits,
+other-account writes/deletes, fabricated verification, and access to backend
+collections are denied. Existing public score reads remain available during
+this compatibility stage. These rules do not make client-submitted scores
+trustworthy. The index file preserves previously deployed indexes and adds the
+history and filtered leaderboard queries, including verified-score queries.
 
 ```sh
-firebase deploy --only firestore:indexes --project YOUR_PROJECT_ID
+npx firebase deploy --only firestore:rules,firestore:indexes --project typing-app-566de
 ```
 
-Wait for the indexes to finish building before checking live leaderboards.
-See the [Firebase index documentation](https://firebase.google.com/docs/reference/firestore/indexes).
-Scores are submitted by the client; authoritative anti-cheat validation requires
-server infrastructure beyond this update.
+The production indexes and compatibility rules have been deployed. All-time,
+daily, and verified leaderboard queries were checked read-only against the live
+project. No production accounts or results were created or deleted for tests.
+
+### Server verification and account cleanup
+
+`functions/` contains authenticated callable functions and an Auth deletion
+trigger. Functions use Node.js 22. Their build copies the app’s pure scoring
+engine and word dictionaries so browser and server use the same scoring rules.
+
+For verified tests, the server issues the word list and starts its clock on the
+first input request. Submission replays bounded, ordered input events and ignores
+client scores and ownership claims. Result IDs match server-issued test IDs;
+identical retries return the existing result, while changed replays are rejected.
+Timed results use the configured duration; word-count and practice results use
+server-observed elapsed time, which can include network delay. The result page
+shows the confirmed metrics after saving. Supported limits are 20,000 events,
+500 WPM and 1,500 raw WPM. This verifies scoring and session ownership; it does
+not prove that a human typed the input or prevent bots.
+
+Only verified standard timed scores qualify for public rankings after cutover.
+Older pending results can be imported as unverified private history. Previous
+results retain their history labels; they are not retroactively verified.
+
+Server reset advances an account generation before cleanup, rejecting older
+sessions across devices. Cleanup deletes owned results and sessions in batches
+of 400 and is retryable. Auth deletion triggers the same cleanup independently
+of the browser and leaves a tombstone to block old sessions. Never use bulk
+Admin `deleteUsers` for this workflow: Firebase does not emit those deletion
+triggers. Expired test sessions use a seven-day TTL after server deployment.
+
+### Backend rollout (billing required)
+
+Cloud Functions deployment requires the Firebase Blaze plan. Billing has not
+been enabled or changed. Keep `NEXT_PUBLIC_VERIFIED_RESULTS` unset until the
+backend is deployed and the frontend rollout is ready. Existing account deletion
+removes sign-in only until the cleanup function is live.
+
+1. Enable Blaze for the intended project in the Firebase console and review
+   billing alerts. Functions have zero minimum instances and bounded maximum
+   instances; those limits are not a spending cap.
+2. Install the backend dependencies and deploy only this codebase and indexes:
+
+   ```sh
+   npm ci --prefix functions
+   npx firebase deploy --config firebase.server.json --only functions:rockettype,firestore:indexes --project typing-app-566de
+   ```
+
+3. Set `NEXT_PUBLIC_VERIFIED_RESULTS=true` in the frontend deployment environment
+   and rebuild/redeploy the frontend. It must use the same Firebase project.
+4. Deploy the strict server-only rules after the updated frontend is available:
+
+   ```sh
+   npx firebase deploy --config firebase.server.json --only firestore:rules --project typing-app-566de
+   ```
+
+5. Check a signed-in test, retry, private history, public verified leaderboard,
+   reset, and deletion using a disposable test account. Cached older clients
+   need a refresh once strict rules are active. Do not roll back to compatibility
+   rules after verified data is live without reviewing the access consequences.
+
+`firestore.rules` permits owners to read their history and guests to read verified
+standard timed results, and denies every direct client mutation. Session and
+account-state collections are server-only. No production data migration or
+existing-account cleanup is run automatically during deployment.
+
+### Firebase emulator tests
+
+Use Java 21 or later, then run:
+
+```sh
+npm ci
+npm ci --prefix functions
+npm run test:firebase
+```
+
+The suite uses the isolated `demo-rockettype` project with Auth, Firestore, and
+Functions emulators. It checks both rule sets, real callable Auth enforcement,
+server scoring, retry idempotency, reset cancellation, multi-batch cleanup, and
+the Auth deletion trigger. Production credentials and data are not used.
+
+References: [callable functions](https://firebase.google.com/docs/functions/callable),
+[deployment requirements](https://firebase.google.com/docs/functions/get-started#deploy_functions_to_a_production_environment),
+[Auth deletion triggers](https://firebase.google.com/docs/functions/auth-events#trigger_a_function_on_user_deletion),
+[Firestore rules tests](https://firebase.google.com/docs/rules/unit-tests).

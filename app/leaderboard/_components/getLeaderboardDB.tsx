@@ -1,6 +1,7 @@
 import { collection, query, where, getDocs, orderBy, Timestamp } from "firebase/firestore";
 import { db } from "@/app/_lib/Firebase";
 import { rankResults, rankingPeriod, type LeaderboardRange, type ResultDoc } from "@/app/_lib/results";
+import { verifiedBackendEnabled } from "@/app/_lib/verifiedTests";
 import { SCORING_VERSION } from "@/app/_lib/typing/stats";
 import type { WordSet } from "@/app/_lib/typing/words";
 
@@ -12,6 +13,7 @@ export async function getLeaderboardResults(range: LeaderboardRange, time: numbe
     where("words", "==", words), where("scoringVersion", "==", SCORING_VERSION),
     where("testKind", "==", "standard"),
   ];
+  if (verifiedBackendEnabled) constraints.push(where("verified", "==", true));
   if (range !== "All-time") constraints.push(
     where("createdAt", ">=", Timestamp.fromMillis(start)),
     where("createdAt", "<", Timestamp.fromMillis(end)),

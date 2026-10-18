@@ -22,7 +22,7 @@ export default function Table({ results }: { results: ResultDoc[] }) {
             <td>{result.raw}</td>
             <td>{result.accuracy}%</td>
             <td>{result.testKind === "practice" ? "Practice" : result.gameMode} · {result.gameMode === "Rocket Run" && result.testKind !== "practice" ? result.time + "s" : (result.testKind === "practice" ? "missed words" : result.count + " words")} · {result.words}</td>
-            <td>{result.scoringVersion === SCORING_VERSION ? "Current" : "Legacy"}</td>
+            <td>{result.scoringVersion !== SCORING_VERSION ? "Legacy" : result.verified ? "Verified" : "Unverified"}</td>
             <td className="whitespace-nowrap">{result.createdAt?.toDate().toLocaleString() ?? "Pending date"}</td>
           </tr>)}</tbody>
         </table>

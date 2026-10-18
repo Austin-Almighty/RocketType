@@ -1,3 +1,4 @@
+import type { TestProof } from "./verifiedTests";
 import type { Timestamp } from "firebase/firestore";
 import type { GameMode } from "./gameContext";
 import type { CharacterStats } from "./typing/engine";
@@ -18,6 +19,7 @@ export type ResultDoc = {
   userUID?: string;
   userDisplayName?: string | null;
   scoringVersion?: number;
+  verified?: boolean;
   elapsedSeconds?: number;
   testKind?: "standard" | "practice";
   characters?: CharacterStats;
@@ -26,6 +28,7 @@ export type ResultDoc = {
 export type CompletedResult = Omit<ResultDoc, "createdAt"> & {
   userUID: string;
   completedAt: number;
+  proof?: TestProof;
 };
 
 export function isCurrentStandard(result: ResultDoc): boolean {

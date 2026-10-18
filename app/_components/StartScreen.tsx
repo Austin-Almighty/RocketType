@@ -4,8 +4,8 @@ import { isInteractiveTarget } from "../_lib/keyboard";
 import SpaceShuttle from "@/components/svgs/SpaceShuttle";
 
 export default function StartScreen({ onStart }: { onStart: () => void }) {
-  const { gameMode, settingsLoaded } = useGameContext();
-  const ready = settingsLoaded && settingsReady(gameMode);
+  const { gameMode, settingsLoaded, resettingResults } = useGameContext();
+  const ready = settingsLoaded && !resettingResults && settingsReady(gameMode);
 
   useEffect(() => {
     if (!ready) return;
@@ -27,11 +27,11 @@ export default function StartScreen({ onStart }: { onStart: () => void }) {
         </div>
       </div>
       <h1 className="text-2xl sm:text-3xl">Ready for launch?</h1>
-      <p className="text-base-content/70 max-w-sm px-4">Choose your settings, then start. {gameMode.mode === "Zen" ? "Enjoy a quiet space to write." : "The clock begins with your first letter."}</p>
+      <p className="text-base-content/90 max-w-sm px-4">Choose your settings, then start. {gameMode.mode === "Zen" ? "Enjoy a quiet space to write." : "The clock begins with your first letter."}</p>
       <button type="button" className="btn btn-primary btn-lg rounded-2xl" disabled={!ready} onClick={onStart}>
-        {ready ? "Start typing" : "Loading settings…"}
+        {resettingResults ? "Updating account data…" : ready ? "Start typing" : "Loading settings…"}
       </button>
-      <p className="text-sm text-base-content/60 hidden sm:block">or press Space</p>
+      <p className="text-sm text-base-content/90 hidden sm:block">or press Space</p>
     </section>
   );
 }

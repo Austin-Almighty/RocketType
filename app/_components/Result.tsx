@@ -21,7 +21,7 @@ function testLength(gameMode: GameMode): string {
 function Stat({ label, title, children }: { label: string, title?: string, children: ReactNode }) {
     return (
         <div className="flex flex-col items-center" title={title}>
-            <div className="text-base-content/70">{label}</div>
+            <div className="text-base-content/90">{label}</div>
             <div className="text-xl sm:text-2xl text-base-content">{children}</div>
         </div>
     );
@@ -33,7 +33,8 @@ export default function Result() {
     const { trackBySecond, gameMode: currentSettings, testDetails, setPracticeWords, savedResults } = useGameContext();
     const gameMode = testDetails?.settings ?? currentSettings;
     const isPractice = testDetails?.testKind === "practice";
-    const saveStatus = savedResults.find((entry) => entry.result.id === testDetails?.resultID)?.status;
+    const saved = savedResults.find((entry) => entry.result.id === testDetails?.resultID);
+    const saveStatus = saved?.status;
     const { user } = useUser();
 
     const [alertMessage, setAlertMessage] = useState<string | null>(null);
@@ -89,7 +90,10 @@ export default function Result() {
 
 
     let accuracy = "0.0";
-    const latest = trackBySecond[trackBySecond.length - 1];
+    const local = trackBySecond[trackBySecond.length - 1];
+    const canonical = saveStatus === "saved" && saved?.result.verified ? saved.result : null;
+    const latest = canonical ? { ...local, wpm: canonical.wpm, keyCount: canonical.keyCount,
+      mistakes: canonical.errors, elapsedSeconds: canonical.elapsedSeconds! } : local;
     if (latest && latest.keyCount > 0) {
       const correct = latest.keyCount - latest.mistakes;
       accuracy = ((correct / latest.keyCount) * 100).toFixed(1);
@@ -98,7 +102,8 @@ export default function Result() {
     const averageRaw = computeRaw(latest.keyCount, latest.elapsedSeconds);
     const consistency = computeConsistency(trackBySecond);
     const characters = testDetails?.characters;
-    const personalBest = testDetails?.personalBest;
+    const previousBest = testDetails?.personalBest;
+    const personalBest = canonical && previousBest ? { ...previousBest, isNew: previousBest.previous === null || canonical.wpm > previousBest.previous } : previousBest;
 
     return (
         <>
@@ -119,7 +124,7 @@ export default function Result() {
                     {/* Headline numbers */}
                     <div className="flex lg:flex-col justify-center gap-8 sm:gap-16 lg:gap-8 lg:w-56 shrink-0 text-center lg:text-left">
                         <div className="flex flex-col">
-                            <div className="text-xl text-base-content/70" title="Correct letters retained, plus separators after correct words, divided by five and elapsed minutes">WPM</div>
+                            <div className="text-xl text-base-content/90" title="Correct letters retained, plus separators after correct words, divided by five and elapsed minutes">WPM</div>
                             <div className="text-4xl sm:text-6xl">{latest.wpm}</div>
                             {personalBest?.isNew && (
                                 <div className="badge badge-primary gap-1.5 mt-2 animate-[test-in_500ms_ease-out]">
@@ -127,16 +132,16 @@ export default function Result() {
                                 </div>
                             )}
                             {personalBest && !personalBest.isNew && personalBest.previous !== null && (
-                                <div className="text-sm text-base-content/70 mt-1">best {personalBest.previous}</div>
+                                <div className="text-sm text-base-content/90 mt-1">best {personalBest.previous}</div>
                             )}
                             {!user && (
-                                <Link href="/user" className="text-sm text-base-content/70 hover:text-base-content underline mt-1">
+                                <Link href="/user" className="text-sm text-base-content/90 hover:text-base-content underline mt-1">
                                     Log in to track your best
                                 </Link>
                             )}
                         </div>
                         <div className="flex flex-col">
-                            <div className="text-2xl text-base-content/70">Accuracy</div>
+                            <div className="text-2xl text-base-content/90">Accuracy</div>
                             <div className="text-4xl sm:text-6xl">{`${accuracy}%`}</div>
                         </div>
                     </div>
@@ -150,14 +155,14 @@ export default function Result() {
                     <Stat label="test type">
                         <div className="text-base sm:text-lg leading-tight">
                             {isPractice ? "Missed-word practice" : gameMode.mode}
-                            <div className="text-base-content/70">{isPractice ? "Unranked" : [testLength(gameMode), gameMode.words].filter(Boolean).join(" · ")}</div>
+                            <div className="text-base-content/90">{isPractice ? "Unranked" : [testLength(gameMode), gameMode.words].filter(Boolean).join(" · ")}</div>
                         </div>
                     </Stat>
                     <Stat label="raw" title="Speed counting every keystroke, including mistakes">{averageRaw}</Stat>
                     <Stat label="characters">
                         <dl className="grid grid-cols-2 gap-x-3 gap-y-1 text-sm text-left">
                           {(["correct", "incorrect", "extra", "missed"] as const).map((label) => (
-                            <div key={label}><dt className="text-base-content/70">{label}</dt><dd className="tabular-nums">{characters?.[label] ?? "–"}</dd></div>
+                            <div key={label}><dt className="text-base-content/90">{label}</dt><dd className="tabular-nums">{characters?.[label] ?? "–"}</dd></div>
                           ))}
                         </dl>
                     </Stat>
@@ -166,8 +171,8 @@ export default function Result() {
                 </div>
 
                 <div className="flex flex-col gap-4">
-                    <p role="status" className="text-sm text-center text-base-content/70">
-                      {saveStatus === "saving" ? "Saving…" : saveStatus === "saved" ? "Saved to your history" : saveStatus === "error" ? "Couldn’t save. Use Retry saving below." : "This result is available for this session."}
+                    <p role="status" className="text-sm text-center text-base-content/90">
+                      {saveStatus === "saving" ? "Saving…" : saveStatus === "saved" ? (canonical ? "Verified by the server and saved" : "Saved to your history · Unverified") : saveStatus === "error" ? "Couldn’t save. Use Retry saving below." : "This result is available for this session."}
                     </p>
                     {testDetails && testDetails.missedWords.length > 0 && (
                       <button type="button" className="btn btn-primary self-center" onClick={() => {

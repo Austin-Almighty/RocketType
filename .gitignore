@@ -42,3 +42,9 @@ next-env.d.ts
 
 # learning notes (vibe-wise)
 /.vibe-wise/
+
+# Firebase tooling and generated function code
+.firebase/
+*-debug.log
+functions/node_modules/
+functions/lib/

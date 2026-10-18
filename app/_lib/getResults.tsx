@@ -2,6 +2,7 @@ import { collection, query, where, getDocs, orderBy, deleteDoc, doc } from "fire
 import { db, auth} from "./Firebase";
 import type { GameMode } from "./gameContext";
 
+import { verifiedBackendEnabled, callBackend } from "./verifiedTests";
 import { matchingResults, isCurrentStandard, type ResultDoc } from "./results";
 export type { ResultDoc } from "./results";
 
@@ -34,13 +35,15 @@ export async function getPersonalBest(userID: string, gameMode: GameMode): Promi
 }
 
 export async function deleteData() {
+    if (verifiedBackendEnabled) { await callBackend("resetResults", {}); return; }
     const userData = await getResults();
     if (!userData) return;
-    await Promise.all(
-        userData.map(result =>
-            deleteDoc(doc(db, "results", result.id))
-        )
+    // Keep retries blocked until even the slower deletion requests have settled.
+    const outcomes = await Promise.allSettled(
+        userData.map(result => deleteDoc(doc(db, "results", result.id)))
     );
+    const failed = outcomes.find((outcome) => outcome.status === "rejected");
+    if (failed) throw failed.reason;
 }
 
 export async function getHighestWPM() {

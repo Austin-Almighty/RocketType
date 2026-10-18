@@ -146,6 +146,7 @@ test('saving retries overwrite the same document and preserve completion time', 
   const auth = { currentUser: { uid: 'alice' } };
   let fail = true;
   Module._load = function (name, ...args) {
+    if (name === './verifiedTests') return { verifiedBackendEnabled: false };
     if (name === './Firebase') return { auth, db: {} };
     if (name === 'firebase/firestore') return {
       doc: (_, collection, id) => collection + '/' + id,

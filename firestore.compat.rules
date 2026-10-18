@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /results/{id} {
+      function owner() {
+        return request.auth != null && resource.data.userUID == request.auth.uid;
+      }
+      function validResult() {
+        let data = request.resource.data;
+        return request.auth != null && data.userUID == request.auth.uid &&
+          data.keys().hasOnly(['userUID', 'userDisplayName', 'wpm', 'raw', 'accuracy',
+            'gameMode', 'time', 'count', 'words', 'keyCount', 'errors', 'createdAt',
+            'scoringVersion', 'elapsedSeconds', 'testKind', 'characters', 'verified']) &&
+          data.wpm is number && data.wpm >= 0 && data.wpm <= 500 &&
+          data.raw is number && data.raw >= data.wpm && data.raw <= 1500 &&
+          data.accuracy is number && data.accuracy >= 0 && data.accuracy <= 100 &&
+          data.keyCount is int && data.keyCount >= 0 && data.keyCount <= 20000 &&
+          data.errors is int && data.errors >= 0 && data.errors <= data.keyCount &&
+          data.gameMode in ['Rocket Run', 'Star Count'] && data.words in ['1k', '5k'] &&
+          data.time in [15, 30, 60, null] && data.count in [20, 50, 100, null] &&
+          (data.gameMode != 'Rocket Run' || data.time in [15, 30, 60]) &&
+          (data.gameMode != 'Star Count' || data.count in [20, 50, 100]) &&
+          (data.userDisplayName == null || (data.userDisplayName is string && data.userDisplayName.size() <= 100)) &&
+          data.get('verified', false) == false &&
+          data.get('scoringVersion', 1) in [1, 2] && data.get('testKind', 'standard') in ['standard', 'practice'] &&
+          data.get('elapsedSeconds', 1) is number && data.get('elapsedSeconds', 1) > 0 &&
+          data.createdAt is timestamp && data.createdAt <= request.time &&
+          data.createdAt >= request.time - duration.value(7, 'd');
+      }
+      // Preserve the existing public score reads until the verified frontend rolls out.
+      allow read: if true;
+      allow create: if validResult();
+      allow update: if owner() && request.resource.data == resource.data;
+      allow delete: if owner();
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

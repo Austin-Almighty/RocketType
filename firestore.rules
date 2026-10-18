@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /results/{id} {
+      function owner() {
+        return request.auth != null && resource.data.userUID == request.auth.uid;
+      }
+      function ranked() {
+        return resource.data.verified == true && resource.data.scoringVersion == 2 &&
+          resource.data.gameMode == 'Rocket Run' && resource.data.testKind == 'standard';
+      }
+      allow read: if owner() || ranked();
+      // Authenticated functions own all mutations, including reset cancellation.
+      allow write: if false;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
