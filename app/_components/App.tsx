@@ -27,7 +27,7 @@ export default function App({ reStart, goHome }: { reStart: () => void, goHome: 
   }, [reStart, goHome, gameMode.mode, practiceWords]);
 
   return (
-    <div className="w-[85%] sm:w-3/4 mx-auto mt-8 sm:mt-[10vh] mb-10 text-primary-content animate-[test-in_300ms_ease-out]">
+    <div className="w-[85%] sm:w-3/4 mx-auto mt-8 sm:mt-[10vh] mb-10 text-base-content animate-[test-in_300ms_ease-out]">
       {gameMode.mode === "Zen" && !practiceWords ? <ZenMode /> : <TypingTest />}
 
       <div className="flex justify-center gap-20 mt-10 text-base-content relative z-10">

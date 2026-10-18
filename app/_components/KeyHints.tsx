@@ -6,7 +6,7 @@ type KeyHint = { keys: string[]; action: string };
 // Hidden on small screens, which usually have no physical keyboard.
 export default function KeyHints({ hints }: { hints: KeyHint[] }) {
   return (
-    <p className="hidden md:flex justify-center gap-6 text-sm text-base-content/50">
+    <p className="hidden md:flex justify-center gap-6 text-sm text-base-content/90">
       {hints.map((hint) => (
         <span key={hint.action} className="flex items-center gap-1.5">
           {hint.keys.map((key, i) => (

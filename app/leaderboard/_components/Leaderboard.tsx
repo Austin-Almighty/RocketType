@@ -40,7 +40,7 @@ export default function Leaderboard({ range, time, words }: Props) {
   const ownRank = results.findIndex((result) => result.userUID === user?.uid);
   return (
     <section className="space-y-4">
-      {ownRank >= 0 && <p className="text-primary">Your rank: {ownRank + 1} of {results.length}</p>}
+      {ownRank >= 0 && <p className="text-base-content">Your rank: {ownRank + 1} of {results.length}</p>}
       <div className="overflow-x-auto">
         <table className="table tabular-nums">
           <caption className="sr-only">One best result per player. Ties use accuracy, then earliest completion.</caption>
@@ -68,7 +68,7 @@ export default function Leaderboard({ range, time, words }: Props) {
         <span aria-live="polite">Page {page} of {pages}</span>
         <button className="btn btn-sm" disabled={page >= pages} onClick={() => setPage(page + 1)}>Next</button>
       </nav>
-      <p className="text-sm text-base-content/60">Current scoring rules only. Ties use accuracy, then earliest completion.</p>
+      <p className="text-sm text-base-content/90">Current scoring rules only. Ties use accuracy, then earliest completion.</p>
     </section>
   );
 }

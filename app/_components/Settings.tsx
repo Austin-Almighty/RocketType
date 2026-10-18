@@ -166,7 +166,7 @@ function SettingsPanel({ visible }: { visible: boolean }) {
         </LayoutGroup>
 
         {/* What the selected mode is, since the names alone don't say. */}
-        <div className="hidden md:block h-5 text-sm text-base-content/70">
+        <div className="hidden md:block h-5 text-sm text-base-content/90">
           <AnimatePresence initial={false} mode="wait">
             {gameMode.mode && (
               <motion.p
@@ -203,10 +203,10 @@ function SettingsPanel({ visible }: { visible: boolean }) {
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
                   >
-                    <p className="mb-1 ml-2 text-xs text-base-content/70">{group.label}</p>
+                    <p className="mb-1 ml-2 text-xs text-base-content/90">{group.label}</p>
                     <div className="mb-3 bg-base-300 rounded-2xl p-1 text-sm">{group.render(true)}</div>
                     {group.key === "mode" && gameMode.mode && (
-                      <p className="-mt-1 mb-3 mx-2 text-xs text-base-content/60">{MODE_DESCRIPTIONS[gameMode.mode]}</p>
+                      <p className="-mt-1 mb-3 mx-2 text-xs text-base-content/90">{MODE_DESCRIPTIONS[gameMode.mode]}</p>
                     )}
                   </motion.div>
                 ))}

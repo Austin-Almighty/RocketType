@@ -99,10 +99,11 @@ export default function ZenSky({ ref }: { ref?: Ref<ZenSkyHandle> }) {
 
   // Parallax drift; typing adds speed that decays back to a slow cruise.
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
     const offsets = STAR_LAYERS.map(() => 0);
     let last = performance.now();
-    let frame = requestAnimationFrame(function tick(now) {
+    let frame: number | undefined;
+    function tick(now: number) {
       const dt = Math.min(now - last, 100) / 1000;
       last = now;
       speedRef.current *= Math.pow(0.35, dt);
@@ -113,12 +114,29 @@ export default function ZenSky({ ref }: { ref?: Ref<ZenSkyHandle> }) {
         layersRef.current[i]?.setAttribute("transform", `translate(${-shift} 0)`);
       });
       frame = requestAnimationFrame(tick);
-    });
-    return () => cancelAnimationFrame(frame);
+    }
+    function stop() {
+      if (frame !== undefined) cancelAnimationFrame(frame);
+      effectsRef.current?.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
+      effectsRef.current?.replaceChildren();
+      bodiesRef.current = 0;
+      speedRef.current = 0;
+    }
+    function syncPreference() {
+      stop();
+      if (!preference.matches) {
+        last = performance.now();
+        frame = requestAnimationFrame(tick);
+      }
+    }
+    syncPreference();
+    preference.addEventListener("change", syncPreference);
+    return () => { stop(); preference.removeEventListener("change", syncPreference); };
   }, []);
 
   useImperativeHandle(ref, () => ({
     keystroke() {
+      if (prefersReducedMotion()) return;
       speedRef.current = Math.min(speedRef.current + 0.6, 12);
       const effects = effectsRef.current;
       if (!effects || effects.childElementCount >= MAX_SPARKLES) return;
@@ -136,7 +154,7 @@ export default function ZenSky({ ref }: { ref?: Ref<ZenSkyHandle> }) {
           { transform: "scale(1) rotate(45deg)", opacity: 1, offset: 0.25 },
           { transform: "scale(0.2) rotate(90deg)", opacity: 0 },
         ],
-        { duration: prefersReducedMotion() ? 600 : 1100, easing: "ease-out" }
+        { duration: 1100, easing: "ease-out" }
       );
       anim.onfinish = () => holder.remove();
     },

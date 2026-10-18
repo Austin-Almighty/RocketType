@@ -45,7 +45,7 @@ export default function LoginRegister() {
   return (
     <section className="w-[92vw] max-w-3xl mx-auto mb-10 text-base-content">
       <h1 className="text-3xl mb-3">Track your typing journey</h1>
-      <p className="text-base-content/70 mb-6">Sign in to save results and follow your progress.</p>
+      <p className="text-base-content/90 mb-6">Sign in to save results and follow your progress.</p>
       {message && <p role="alert" className="alert alert-error mb-5">{message}</p>}
       <div className="grid md:grid-cols-2 gap-6 items-start">
         <div className="bg-base-200 rounded-2xl p-5">

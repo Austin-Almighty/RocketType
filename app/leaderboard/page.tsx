@@ -22,7 +22,7 @@ function Rankings() {
   return (
     <div className="w-[92%] max-w-6xl mx-auto my-6 space-y-5 text-base-content">
       <h1 className="text-3xl">Leaderboard</h1>
-      <p className="text-base-content/70">Your best standard timed test for each set of settings. Daily and monthly periods use UTC.</p>
+      <p className="text-base-content/90">Your best standard timed test for each set of settings. Daily and monthly periods use UTC.</p>
       <LeaderboardFilter range={range} time={time} words={words} onChange={change} />
       <Leaderboard key={range + time + words} range={range} time={time} words={words} />
     </div>

@@ -11,7 +11,7 @@ export default function Summary({ results }: { results: ResultDoc[] }) {
           key={label}
           className="bg-base-200 p-4 rounded-2xl"
         >
-          <dt className="text-sm text-base-content/70">{label}</dt>
+          <dt className="text-sm text-base-content/90">{label}</dt>
           <dd className="text-2xl mt-2">{value}</dd>
         </div>
       ))}

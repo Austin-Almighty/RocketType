@@ -59,7 +59,7 @@ html {
 }
 
 .typing-letter-pending {
-  color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
+  color: color-mix(in oklab, var(--color-base-content) 65%, transparent);
 }
 
 .typing-letter-correct {
@@ -88,7 +88,7 @@ html {
   left: -1px;
   width: 3px;
   border-radius: 2px;
-  background: var(--color-primary);
+  background: var(--color-base-content);
   transition: transform 90ms ease-out;
   pointer-events: none;
 }
@@ -125,7 +125,7 @@ html {
   padding-block: 0.25lh;
   margin-left: 1px;
   vertical-align: top;
-  background: var(--color-primary);
+  background: var(--color-base-content);
   background-clip: content-box;
   animation: caret-blink 1s ease-in-out infinite;
 }
@@ -209,7 +209,7 @@ html {
 } */
 /* Keyboard focus remains visible across all themes. */
 :where(button, a, input, select, textarea, summary):focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-base-content);
   outline-offset: 3px;
 }
 button, a { touch-action: manipulation; }

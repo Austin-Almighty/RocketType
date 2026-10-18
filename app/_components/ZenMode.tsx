@@ -16,10 +16,10 @@ export default function ZenMode() {
   const [userInput, setUserInput] = useState("");
   const [offset, setOffset] = useState(0);
 
-  const completeWords = userInput.split(/\s+/).filter((w) => /^[a-zA-Z]+$/.test(w)).length;
+  const completeWords = userInput.split(/\s+/u).filter((word) => /[\p{L}\p{N}]/u.test(word)).length;
 
   useEffect(() => {
-    textRef.current?.focus({ preventScroll: true });
+    if (window.matchMedia("(pointer: fine)").matches) textRef.current?.focus({ preventScroll: true });
     function focusOnInput(e: KeyboardEvent) {
       if (e.metaKey || e.ctrlKey || e.altKey || e.key.length !== 1 || isInteractiveTarget(e.target) || document.querySelector("dialog[open]")) return;
       textRef.current?.focus({ preventScroll: true });
@@ -32,9 +32,16 @@ export default function ZenMode() {
   useLayoutEffect(() => {
     const caret = caretRef.current;
     if (!caret) return;
-    const lineHeight = caret.offsetHeight;
-    const line = Math.round(caret.offsetTop / lineHeight);
-    setOffset(Math.max(0, line - 2) * lineHeight);
+    function measure() {
+      const lineHeight = caret!.offsetHeight;
+      if (!lineHeight) return;
+      const line = Math.round(caret!.offsetTop / lineHeight);
+      setOffset(Math.max(0, line - 2) * lineHeight);
+    }
+    measure();
+    const observer = new ResizeObserver(measure);
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => observer.disconnect();
   }, [userInput]);
 
   function handleChange(value: string) {
@@ -52,7 +59,7 @@ export default function ZenMode() {
     <>
       <ZenSky ref={skyRef} />
       <div className="relative z-10 w-full text-base-content">
-        <div className="flex items-baseline gap-6 mb-4 h-12 font-mono text-3xl sm:text-4xl text-primary">
+        <div className="flex items-baseline gap-6 mb-4 h-12 font-mono text-3xl sm:text-4xl text-base-content">
           <WordCounter complete={completeWords} />
         </div>
         <div

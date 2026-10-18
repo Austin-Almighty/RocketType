@@ -104,7 +104,7 @@ function StatsPage() {
             <option value="5k">5,000 common words</option>
           </select></label>
         </div>
-        <p className="text-sm text-base-content/70">Comparisons use standard tests with these settings and the current scoring rules. Legacy results and practice stay in your history below.</p>
+        <p className="text-sm text-base-content/90">Comparisons use standard tests with these settings and the current scoring rules. Legacy results and practice stay in your history below.</p>
         {comparable.length ? <><Summary results={comparable} /><ProgressChart results={comparable} /></> : <p className="bg-base-200 rounded-2xl p-6">No comparable tests yet. <Link
           className="link"
           href="/app"

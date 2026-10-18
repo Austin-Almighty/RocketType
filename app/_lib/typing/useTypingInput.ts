@@ -43,6 +43,8 @@ export function useTypingInput(
     }
 
     function handleBeforeInput(e: InputEvent) {
+      // IME owns intermediate text and deletion until compositionend commits it.
+      if (isComposing || e.isComposing) return;
       switch (e.inputType) {
         case "insertText":
         case "insertReplacementText":

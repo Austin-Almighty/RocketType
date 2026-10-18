@@ -10,16 +10,16 @@ export default function Profile({ results }: { results: ResultDoc[] }) {
     <section className="flex flex-wrap items-center justify-between gap-6 bg-base-200 rounded-2xl p-5">
       <div className="min-w-0">
         <h2 className="text-xl break-words">{user?.displayName || "Your typing journey"}</h2>
-        {user?.metadata.creationTime && <p className="text-sm text-base-content/70">Joined {new Date(user.metadata.creationTime).toLocaleDateString()}</p>}
+        {user?.metadata.creationTime && <p className="text-sm text-base-content/90">Joined {new Date(user.metadata.creationTime).toLocaleDateString()}</p>}
       </div>
       <dl className="flex flex-wrap gap-8 text-sm tabular-nums">
         <div>
-          <dt className="text-base-content/70">Lifetime tests</dt>
+          <dt className="text-base-content/90">Lifetime tests</dt>
           <dd className="text-lg">{results.length}</dd>
         </div>
         <div>
-          <dt className="text-base-content/70">Recorded typing time</dt>
-          <dd className="text-lg">{Math.floor(seconds / 3600)}h {Math.floor(seconds % 3600 / 60)}m {seconds % 60}s</dd>{incomplete && <p className="text-xs text-base-content/60">Legacy durations unavailable</p>}
+          <dt className="text-base-content/90">Recorded typing time</dt>
+          <dd className="text-lg">{Math.floor(seconds / 3600)}h {Math.floor(seconds % 3600 / 60)}m {seconds % 60}s</dd>{incomplete && <p className="text-xs text-base-content/90">Legacy durations unavailable</p>}
         </div>
       </dl>
     </section>
