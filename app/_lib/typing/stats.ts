@@ -1,10 +1,15 @@
 import type { TrackRecord } from "../gameContext";
+import { correctCharacters, type TypingState } from "./engine";
 
-// Same formulas the app has always stored, so new results stay
-// comparable with existing leaderboard entries.
-export function computeWpm(keyCount: number, mistakes: number, seconds: number): number {
+export const SCORING_VERSION = 2;
+
+export function elapsedTestSeconds(startedAt: number, now: number, limit: number | null): number {
+  return Math.min(Math.max(0, (now - startedAt) / 1000), limit ?? Infinity);
+}
+
+export function computeWpm(correct: number, seconds: number): number {
   if (seconds <= 0) return 0;
-  return Math.max(0, Math.floor((keyCount - mistakes) / 5 / (seconds / 60)));
+  return Math.max(0, Math.floor(correct / 5 / (seconds / 60)));
 }
 
 export function computeRaw(keystrokes: number, seconds: number): number {
@@ -32,18 +37,18 @@ export function errorsPerSecond(records: TrackRecord[]): number[] {
 }
 
 export function buildRecord(
-  keyCount: number,
-  mistakes: number,
+  state: TypingState,
   elapsedSeconds: number,
   previous: TrackRecord | undefined
 ): TrackRecord {
+  const { keyCount, mistakes } = state;
   const prevKeys = previous?.keyCount ?? 0;
   const prevSeconds = previous?.elapsedSeconds ?? 0;
   return {
     keyCount,
     mistakes,
     elapsedSeconds,
-    wpm: computeWpm(keyCount, mistakes, elapsedSeconds),
+    wpm: computeWpm(correctCharacters(state), elapsedSeconds),
     raw: computeRaw(keyCount - prevKeys, elapsedSeconds - prevSeconds),
   };
 }

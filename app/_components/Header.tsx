@@ -34,7 +34,7 @@ export default function Header({
   function handleUser() {
     if (!user.user) {
       return (
-        <Link href="/user">
+        <Link href="/user" aria-label="Sign in">
           <div className="tooltip text-base-content tooltip-bottom md:tooltip-top hover:scale-110" data-tip="User">
             <svg
               viewBox="0 0 24 24"
@@ -60,7 +60,7 @@ export default function Header({
       return (
         <div className="tooltip text-base-content tooltip-bottom md:tooltip-top hover:scale-110">
                 <div className="dropdown dropdown-end dropdown-hover z-1000">
-                  <div tabIndex={0} role="button">
+                  <button type="button" aria-label="Account menu" className="btn btn-ghost btn-circle">
                     <svg
                       viewBox="0 0 24 24"
                       fill="none"
@@ -90,7 +90,7 @@ export default function Header({
                         strokeLinejoin="round"
                       />
                     </svg>
-                  </div>
+                  </button>
                   <ul
                     tabIndex={0}
                     className="dropdown-content menu bg-base-300 rounded-box w-34 sm:w-34 md:w-43 p-2 shadow-sm !mt-0 z-1000"
@@ -108,11 +108,11 @@ export default function Header({
                       </Link>
                     </li>
                    
-                    <li className="text-base-content flex text-xs md:text-base" onClick={handleSignOut}>
-                      <a>
+                    <li className="text-base-content flex text-xs md:text-base">
+                      <button type="button" onClick={handleSignOut}>
                         <PiSignOutBold className="md:w-6 md:h-6 w-4 h-4 fill-base-content"/>
                         Sign Out
-                      </a>
+                      </button>
                     </li>
                   </ul>
                 </div>
@@ -126,6 +126,7 @@ export default function Header({
         <div className="flex-1 flex gap-2 sm:gap-4 md:gap-6 ">
           <Link
             href="/app"
+            aria-label="RocketType home"
             className=""
             onClick={() => {
               // setGameMode((prev)=>({
@@ -138,7 +139,7 @@ export default function Header({
             <AppLogo className={"w-[132px] lg:w-[220px] md:h-8 md:w-[176px] sm:w-[132px] sm:h-6 h-6"}/>
           </Link>
           <Link
-            href="/about"
+            href="/about" aria-label="About RocketType"
           >
             <div className="tooltip hover:scale-110 tooltip-bottom md:tooltip-top" data-tip="About">
               <FaInfoCircle className="fill-base-content  md:h-8 md:w-8 w-6 h-6"/>
@@ -149,7 +150,7 @@ export default function Header({
         <div className="flex-none">
           <ul className="menu menu-horizontal bg-base-100 rounded-box text-base-content">
             <li>
-              <Link href="/leaderboard" className="tooltip hover:scale-110 tooltip-bottom md:tooltip-top" data-tip="Leaderboard">
+              <Link href="/leaderboard" aria-label="Leaderboard" className="tooltip hover:scale-110 tooltip-bottom md:tooltip-top" data-tip="Leaderboard">
                 <svg className="md:h-8 md:w-8 w-6 h-6" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M22 22H2"

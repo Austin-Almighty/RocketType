@@ -1,4 +1,5 @@
 'use client';
+import { flushSync } from "react-dom";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import StartScreen from "../_components/StartScreen";
@@ -8,36 +9,51 @@ import { settingsReady, useGameContext } from "../_lib/gameContext";
 
 function Home() {
   const [appInstance, setAppInstance] = useState<number | null>(null);
-  const { gameMode, setGameMode, setTrackBySecond } = useGameContext();
+  const { gameMode, setGameMode, setTrackBySecond, settingsLoaded, practiceWords, setPracticeWords, setTestDetails } = useGameContext();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const practice = searchParams.get("practice") === "1";
   const autostart = searchParams.get("autostart") === "1";
 
   // "Restart" on the result page lands here with ?autostart=1 and goes
   // straight into a new test with the same settings.
   useEffect(() => {
-    if (!autostart) return;
+    if (!autostart || !settingsLoaded) return;
     router.replace("/app");
-    if (!settingsReady(gameMode)) return;
+    if (!settingsReady(gameMode) || (practice && !practiceWords?.length)) return;
+    if (!practice) setPracticeWords(null);
     setGameMode((prev) => ({ ...prev, start: true }));
     setTrackBySecond([]);
     setAppInstance((prev) => (prev === null ? 1 : prev + 1));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autostart]);
+  }, [autostart, settingsLoaded]);
 
   function handleStart() {
-    setTrackBySecond([]);
-    setAppInstance((prev) => (prev === null ? 1 : prev + 1));
+    flushSync(() => {
+      setPracticeWords(null);
+      setTestDetails(null);
+      setTrackBySecond([]);
+      setGameMode((prev) => ({ ...prev, start: true }));
+      setAppInstance((prev) => (prev === null ? 1 : prev + 1));
+    });
+    // Mount and focus in the tap gesture so mobile keyboards can open.
+    document.querySelector<HTMLTextAreaElement>("[data-typing-input]")?.focus({ preventScroll: true });
   }
 
   function handleRestart() {
-    setTrackBySecond([]);
-    setAppInstance((prev) => (prev === null ? 1 : prev + 1));
+    flushSync(() => {
+      setTrackBySecond([]);
+      setTestDetails(null);
+      setAppInstance((prev) => (prev === null ? 1 : prev + 1));
+    });
+    document.querySelector<HTMLTextAreaElement>("[data-typing-input]")?.focus({ preventScroll: true });
   }
 
   function handleHomePage() {
     setTrackBySecond([]);
+    setPracticeWords(null);
     setAppInstance(null);
+    setGameMode((prev) => ({ ...prev, start: false }));
   }
 
   function renderContent() {
@@ -54,7 +70,7 @@ function Home() {
   }
 
   return (
-    <div className="bg-base-100 flex flex-col items-center w-screen">
+    <div className="bg-base-100 flex flex-col items-center w-full pt-4">
       {renderContent()}
     </div>
   );

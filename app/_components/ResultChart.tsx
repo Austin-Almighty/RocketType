@@ -40,12 +40,10 @@ const chartConfig = {
 
 } satisfies ChartConfig
 
-const today = new Date();
-const month = (today.getMonth()+1).toString();
-const date = today.getDate().toString();
 
 type ResultProp = {
   trackBySecond: TrackRecord[];
+  completedAt?: number;
 };
 
 type ErrorDotProps = { cx?: number; cy?: number; payload?: { errors: number } };
@@ -64,7 +62,7 @@ function ErrorDot({ cx, cy, payload }: ErrorDotProps) {
   );
 }
 
-export default function ResultChart({trackBySecond}:ResultProp) {
+export default function ResultChart({trackBySecond, completedAt}:ResultProp) {
   const errors = errorsPerSecond(trackBySecond);
   const data = trackBySecond.map((record, i) => ({ ...record, errors: errors[i] }));
 
@@ -73,10 +71,15 @@ export default function ResultChart({trackBySecond}:ResultProp) {
       <Card className="h-full bg-transparent border-none shadow-none text-base-content gap-2 py-0">
         <CardHeader>
           <CardTitle>Test Results</CardTitle>
-          <CardDescription>{`${month}/${date}`}</CardDescription>
+          <CardDescription>{completedAt ? new Date(completedAt).toLocaleDateString() : "Speed and errors over time"}</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[32vh] w-full">
+          <p aria-label="Chart legend" className="flex flex-wrap gap-4 text-xs text-base-content mb-3">
+            <span className="inline-flex items-center gap-1.5"><span aria-hidden className="w-2 h-2 rounded-full bg-info" />WPM</span>
+            <span className="inline-flex items-center gap-1.5"><span aria-hidden className="w-2 h-2 rounded-full bg-accent" />Raw</span>
+            <span className="inline-flex items-center gap-1.5"><span aria-hidden className="w-2 h-2 rounded-full bg-error" />Errors</span>
+          </p>
+          <ChartContainer config={chartConfig} className="h-64 sm:h-80 w-full">
             <ComposedChart
               data={data}
               margin={{
@@ -86,13 +89,15 @@ export default function ResultChart({trackBySecond}:ResultProp) {
                 bottom: 30
               }}
             >
-              <CartesianGrid vertical={true} />
+              <CartesianGrid vertical={false} />
               <XAxis
                 dataKey="elapsedSeconds"
                 tickLine={false}
                 axisLine={false}
                 tickMargin={10}
-                tickFormatter={(value) => value }
+                type="number"
+                domain={[0, "dataMax"]}
+                tickFormatter={(value: number) => Number(value.toPrecision(3)).toString()}
                 tick={{fill: "var(--color-base-content)"}}
                 label={ {value: "Time (seconds)", position: "bottom", offset: 20, fill:"var(--color-base-content)"} }
               />
@@ -109,11 +114,13 @@ export default function ResultChart({trackBySecond}:ResultProp) {
                   label={ {value: "Errors", position:"insideRight", dx:10, angle:90, fill:"var(--color-base-content)"} }
                   tick={{fill: "var(--color-base-content)"}}
               />
-              <ChartTooltip cursor={false} content={<ChartTooltipContent className="bg-base-200 text-base-content"/>} />
+              <ChartTooltip cursor={false} content={<ChartTooltipContent className="bg-base-200 text-base-content" labelFormatter={(value) => Number(Number(value).toPrecision(3)) + " s"}/>} />
               <Area
                   yAxisId="speed"
                   dataKey="raw"
+                  isAnimationActive={false}
                   type="monotone"
+                  fillOpacity={0.08}
                   fill="var(--color-accent)"
                   stroke="var(--color-accent)"
                   strokeWidth={2}
@@ -122,7 +129,9 @@ export default function ResultChart({trackBySecond}:ResultProp) {
               <Area
                   yAxisId="speed"
                   dataKey="wpm"
+                  isAnimationActive={false}
                   type="monotone"
+                  fillOpacity={0.15}
                   fill="var(--color-info)"
                   stroke="var(--color-info)"
                   strokeWidth={2}
@@ -130,6 +139,7 @@ export default function ResultChart({trackBySecond}:ResultProp) {
               <Scatter
                   yAxisId="errors"
                   dataKey="errors"
+                  isAnimationActive={false}
                   fill="var(--color-error)"
                   shape={<ErrorDot />}
               />

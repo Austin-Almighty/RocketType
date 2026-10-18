@@ -90,3 +90,53 @@ To keep the caret (the current input position) always in the middle of the viewp
 - My name is Austin Liao (廖祥廷). I am a front-end developer based in Taiwan. You can reach me via one of the methods below. Come and say hi!
 - [E-mail](austin.ht.liao@gmail.com)
 - [LinkedIn](https://www.linkedin.com/in/hsiang-ting-liao/)
+
+
+## Development and verification
+
+Run `npm run dev` for development, `npm test` for the focused domain tests,
+`npm run lint` for ESLint, and `npm run build` for the production build.
+The tests use Node’s built-in test runner and the installed TypeScript compiler;
+no additional test package is required.
+
+### Scoring and history
+
+Scoring version 2 calculates WPM from correct letters still present in the text,
+plus separators after fully correct submitted words. Deleted and retyped letters
+do not earn additional WPM. Accuracy retains all attempted mistakes; overall raw
+speed uses total character/space keystrokes divided by the actual test duration.
+Timers use the elapsed clock and reject input after the deadline.
+
+New results store `scoringVersion`, `elapsedSeconds`, `testKind`, and character
+counts. Old results remain visible as “Legacy” in history. They are excluded from
+current personal bests, progress comparisons, and rankings because their saved
+counters cannot reconstruct the new score or actual word-count-test duration.
+Recorded lifetime typing time excludes unknown legacy durations.
+
+Missed-word practice includes corrected mistakes and runs with a fixed word list.
+Practice is labeled and excluded from standard personal bests and rankings.
+Leaderboard periods use UTC; ties use accuracy, then earliest completion, then
+result ID. Each player occupies one position per selected configuration.
+
+### Result saving and Firestore indexes
+
+Completed tests use a stable document ID and completion timestamp so a retry
+cannot create duplicate history entries. Failed results remain available for
+retry across navigation within the current app session and can only be retried
+with the original account. Refreshing or closing the tab clears this retry state.
+Production Firestore rules must permit the result owner to retry an identical
+write to their result document; rules are managed outside this repository.
+
+`firestore.indexes.json` defines the history and current-scoring leaderboard
+indexes. Before deploying this application, review these definitions against the
+existing project indexes and merge any additional deployed indexes. With the
+Firebase CLI authenticated to the intended project, deploy only the indexes:
+
+```sh
+firebase deploy --only firestore:indexes --project YOUR_PROJECT_ID
+```
+
+Wait for the indexes to finish building before checking live leaderboards.
+See the [Firebase index documentation](https://firebase.google.com/docs/reference/firestore/indexes).
+Scores are submitted by the client; authoritative anti-cheat validation requires
+server infrastructure beyond this update.

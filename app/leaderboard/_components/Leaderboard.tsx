@@ -1,117 +1,74 @@
-'use client';
+"use client";
+import { useEffect, useState } from "react";
 import { getLeaderboardResults } from "./getLeaderboardDB";
-import { useState, useEffect } from "react";
-import { unstable_ViewTransition as ViewTransition } from "react";
-import type { DocumentData } from "firebase/firestore";
+import { useUser } from "@/app/_lib/userContext";
+import type { LeaderboardRange, ResultDoc } from "@/app/_lib/results";
+import type { WordSet } from "@/app/_lib/typing/words";
 
-export default function Leaderboard({
-  range,
-  time,
-}: {
-  range: string;
-  time: string;
-}) {
+type Props = { range: LeaderboardRange; time: number; words: WordSet };
 
-    const [docs, setDocs] = useState<DocumentData[] | null>(null);  
-    const [loading, setLoading] = useState(true); 
-    const [currentPage, setCurrentPage] = useState(1);
-    const pageSize = 10;
-
-    useEffect(() => {
-      setCurrentPage(1);
-    }, [docs]);
-
-    useEffect(() => {
-        setLoading(true);
-        const minDelay = 1000;
-        const start = Date.now();
-
-       
-        async function fetchResults() {
-            const res = await getLeaderboardResults(range, time);
-            setDocs(res);
-            const elapsed = Date.now() - start;
-            const wait = minDelay - elapsed;
-            if (wait > 0) {
-                setTimeout(()=> setLoading(false), wait);
-            } else {
-                setLoading(false);
-            }
-        }
-        fetchResults();
-    }, [range, time]);
-
-
-  function renderLeaderBoard() {
-    if (!docs || docs.length === 0) {
-      return (
-        <tr>
-          <td colSpan={6}>No Records</td>
-        </tr>
-      );
-    } else {
-      const startIndex = (currentPage - 1) * pageSize;
-      const currentDocs = docs.slice(startIndex, startIndex + pageSize);
-      return currentDocs.map((doc, i) => (
-        <tr key={startIndex + i} className="odd:text-base-content even:text-primary w-full">
-          <th>{startIndex + i + 1}</th>
-          <th>{doc.userDisplayName}</th>
-          <th>{doc.wpm}</th>
-          <th>{doc.accuracy}%</th>
-          <th>{doc.raw}</th>
-          <th>{doc.createdAt.toDate().toLocaleString()}</th>
-        </tr>
-      ));
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center gap-2 w-full py-8 text-center align-middle">
-        <span className="loading loading-infinity loading-xl text-warning"></span>
-        <div>Loading...</div>
-      </div>
-    );
-  }
-
-  const totalPages = docs ? Math.ceil(docs.length / pageSize) : 1;
-
+export default function Leaderboard({ range, time, words }: Props) {
+  const { user } = useUser();
+  const [results, setResults] = useState<ResultDoc[] | null>(null);
+  const [error, setError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const [page, setPage] = useState(1);
+  useEffect(() => {
+    let cancelled = false;
+    setError(false);
+    getLeaderboardResults(range, time, words).then((data) => {
+      if (!cancelled) setResults(data);
+    }).catch((error) => {
+      console.error("Failed to load leaderboard", error);
+      if (!cancelled) setError(true);
+    });
+    return () => { cancelled = true; };
+  }, [range, time, words, attempt]);
+  if (error) return <div
+    role="alert"
+    className="bg-base-200 p-6 rounded-2xl"
+  >
+    <p>Couldn’t load the leaderboard.</p>
+    <button
+      className="btn mt-3"
+      onClick={() => setAttempt((value) => value + 1)}
+    >Try again</button>
+  </div>;
+  if (!results) return <p role="status" className="p-6">Loading leaderboard…</p>;
+  if (!results.length) return <p className="bg-base-200 p-6 rounded-2xl">No qualifying results yet. Finish a timed test with these settings to join the leaderboard.</p>;
+  const pages = Math.max(1, Math.ceil(results.length / 10));
+  const ownRank = results.findIndex((result) => result.userUID === user?.uid);
   return (
-    <div className="overflow-x-auto w-full">
-      <table className="table table-zebra">
-        <thead className="text-base-content">
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>WPM</th>
-            <th>Accuracy</th>
-            <th>raw</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <ViewTransition>
-         <tbody className="rounded-2x1">{renderLeaderBoard()}</tbody>
-        </ViewTransition>
-      </table>
-      <div className="join flex justify-center items-center gap-4 mt-4">
-        <button
-          className="btn join-item"
-          onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          «
-        </button>
-        <button className="join-item btn">
-          Page {currentPage} of {totalPages}
-        </button>
-        <button
-          className="btn"
-          onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-          disabled={currentPage === totalPages}
-        >
-          »
-        </button>
+    <section className="space-y-4">
+      {ownRank >= 0 && <p className="text-primary">Your rank: {ownRank + 1} of {results.length}</p>}
+      <div className="overflow-x-auto">
+        <table className="table tabular-nums">
+          <caption className="sr-only">One best result per player. Ties use accuracy, then earliest completion.</caption>
+          <thead>
+            <tr>{["Rank", "Player", "WPM", "Accuracy", "Raw", "Completed"].map((label) => <th
+              key={label}
+              scope="col"
+            >{label}</th>)}</tr>
+          </thead>
+          <tbody>{results.slice((page - 1) * 10, page * 10).map((result, index) => <tr
+            key={result.id}
+            className={result.userUID === user?.uid ? "bg-primary/10" : ""}
+          >
+            <td>{(page - 1) * 10 + index + 1}</td>
+            <td className="max-w-64 break-words">{result.userDisplayName || "Anonymous typist"}{result.userUID === user?.uid && " (you)"}</td>
+            <td>{result.wpm}</td>
+            <td>{result.accuracy}%</td>
+            <td>{result.raw}</td>
+            <td className="whitespace-nowrap">{result.createdAt?.toDate().toLocaleString()}</td>
+          </tr>)}</tbody>
+        </table>
       </div>
-    </div>
+      <nav aria-label="Leaderboard pages" className="flex flex-wrap justify-center items-center gap-4">
+        <button className="btn btn-sm" disabled={page === 1} onClick={() => setPage(page - 1)}>Previous</button>
+        <span aria-live="polite">Page {page} of {pages}</span>
+        <button className="btn btn-sm" disabled={page >= pages} onClick={() => setPage(page + 1)}>Next</button>
+      </nav>
+      <p className="text-sm text-base-content/60">Current scoring rules only. Ties use accuracy, then earliest completion.</p>
+    </section>
   );
 }

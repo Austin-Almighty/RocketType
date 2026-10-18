@@ -10,6 +10,7 @@ export type TypingState = {
   wordIndex: number;
   keyCount: number; // character + space keystrokes; backspace is not counted
   mistakes: number; // wrong keystrokes, kept even after they are corrected
+  missedWords: string[]; // includes mistakes that were later corrected
   started: boolean;
   finished: boolean;
 };
@@ -28,6 +29,7 @@ export function createTypingState(words: string[]): TypingState {
     wordIndex: 0,
     keyCount: 0,
     mistakes: 0,
+    missedWords: [],
     started: false,
     finished: false,
   };
@@ -73,6 +75,8 @@ export function typingReducer(state: TypingState, action: TypingAction): TypingS
         typed: withCurrentTyped(state, nextTyped),
         keyCount: state.keyCount + 1,
         mistakes: state.mistakes + (isMistake ? 1 : 0),
+        missedWords: isMistake && !state.missedWords.includes(target)
+          ? [...state.missedWords, target] : state.missedWords,
         started: true,
         // The last word ends the test as soon as it is typed correctly.
         finished: isLastWord(state) && nextTyped === target,
@@ -85,6 +89,8 @@ export function typingReducer(state: TypingState, action: TypingAction): TypingS
         ...state,
         keyCount: state.keyCount + 1,
         mistakes: state.mistakes + (skippedLetters ? 1 : 0),
+        missedWords: current !== target && !state.missedWords.includes(target)
+          ? [...state.missedWords, target] : state.missedWords,
         started: true,
       };
       if (isLastWord(state)) return { ...base, finished: true };
@@ -103,6 +109,16 @@ export function typingReducer(state: TypingState, action: TypingAction): TypingS
       return { ...state, typed: withCurrentTyped(state, "") };
     }
   }
+}
+
+// Count retained correct letters and separators after fully correct words.
+// Retyping deleted letters and skipping words cannot earn extra credit.
+export function correctCharacters(state: TypingState): number {
+  let count = characterStats(state).correct;
+  for (let i = 0; i < state.wordIndex; i++) {
+    if (state.typed[i] === state.words[i]) count += 1;
+  }
+  return count;
 }
 
 // Number of words fully passed (space pressed, or the final word completed).

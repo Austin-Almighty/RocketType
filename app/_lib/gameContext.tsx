@@ -1,5 +1,8 @@
 "use client"
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useRef, ReactNode } from "react";
+import { useUser } from "./userContext";
+import resultToDB from "./resultToFirebase";
+import type { CompletedResult } from "./results";
 import type { CharacterStats } from "./typing/engine";
 
 export type GameMode = {
@@ -21,6 +24,11 @@ export type TrackRecord = {
 // Extra details about the last test, shown on the result page.
 export type TestDetails = {
   characters: CharacterStats;
+  settings: GameMode;
+  resultID: string;
+  testKind: "standard" | "practice";
+  missedWords: string[];
+  completedAt: number;
   // null when the player isn't logged in or the lookup failed
   personalBest: { previous: number | null; isNew: boolean } | null;
 };
@@ -62,7 +70,13 @@ function parseSavedSettings(raw: string): SavedSettings {
     };
 }
 
+type SaveEntry = { result: CompletedResult; status: "saving" | "saved" | "error" };
+
 type GameContextType = {
+    practiceWords: string[] | null;
+    setPracticeWords: React.Dispatch<React.SetStateAction<string[] | null>>;
+    savedResults: SaveEntry[];
+    saveResult: (result: CompletedResult) => Promise<void>;
     gameMode: GameMode;
     setGameMode: React.Dispatch<React.SetStateAction<GameMode>>;
     settingsLoaded: boolean;
@@ -86,6 +100,29 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
     const [trackBySecond, setTrackBySecond] = useState<TrackRecord[]>([]);
     const [testDetails, setTestDetails] = useState<TestDetails | null>(null);
+
+    const [practiceWords, setPracticeWords] = useState<string[] | null>(null);
+    const [savedResults, setSavedResults] = useState<SaveEntry[]>([]);
+    const inFlight = useRef(new Set<string>());
+    const { user } = useUser();
+
+    const saveResult = useCallback(async (result: CompletedResult) => {
+        if (inFlight.current.has(result.id)) return;
+        inFlight.current.add(result.id);
+        setSavedResults((prev) => [
+            ...prev.filter((entry) => entry.result.id !== result.id && entry.status !== "saved"),
+            { result, status: "saving" },
+        ]);
+        try {
+            await resultToDB(result);
+            setSavedResults((prev) => prev.map((entry) => entry.result.id === result.id ? { ...entry, status: "saved" } : entry));
+        } catch (error) {
+            console.error("Failed to save result", error);
+            setSavedResults((prev) => prev.map((entry) => entry.result.id === result.id ? { ...entry, status: "error" } : entry));
+        } finally {
+            inFlight.current.delete(result.id);
+        }
+    }, []);
 
     // On mount, restore the last settings from localStorage if present
     useEffect(() => {
@@ -116,8 +153,16 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setTrackBySecond([]);
     }
     return (
-        <GameContext.Provider value={{ gameMode, setGameMode, settingsLoaded, trackBySecond, setTrackBySecond, testDetails, setTestDetails, resetGame }}>
+        <GameContext.Provider value={{ practiceWords, setPracticeWords, savedResults, saveResult, gameMode, setGameMode, settingsLoaded, trackBySecond, setTrackBySecond, testDetails, setTestDetails, resetGame }}>
             {children}
+            {savedResults.filter((entry) => entry.status === "error").map((entry) => (
+              <aside key={entry.result.id} role="status" className="bg-base-200 text-base-content border-t border-warning p-3 text-center">
+                <span>A result from {new Date(entry.result.completedAt).toLocaleTimeString()} couldn’t be saved. </span>
+                {user?.uid === entry.result.userUID
+                  ? <button type="button" className="btn btn-sm btn-warning" onClick={() => void saveResult(entry.result)}>Retry saving</button>
+                  : <span>Sign in to the original account to retry.</span>}
+              </aside>
+            ))}
         </GameContext.Provider>
     );
 }

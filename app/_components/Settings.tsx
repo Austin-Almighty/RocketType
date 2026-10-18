@@ -84,6 +84,7 @@ function SettingsPanel({ visible }: { visible: boolean }) {
           compact={compact}
           icon={<FaKeyboard />}
           options={MODE_OPTIONS}
+          format={(mode) => mode === "Rocket Run" ? "Timed · Rocket Run" : mode === "Star Count" ? "Words · Star Count" : "Zen"}
           value={gameMode.mode}
           onChange={(mode) => update({ mode })}
         />
@@ -129,6 +130,7 @@ function SettingsPanel({ visible }: { visible: boolean }) {
           compact={compact}
           icon={<TiSortAlphabetically />}
           options={WORD_OPTIONS}
+          format={(words) => words === "1k" ? "1,000 common words" : "5,000 common words"}
           value={gameMode.words}
           onChange={(words) => update({ words })}
         />
@@ -146,11 +148,11 @@ function SettingsPanel({ visible }: { visible: boolean }) {
       >
         <LayoutGroup id="settings-bar">
           <motion.div
-            className="hidden md:block bg-base-300 rounded-2xl overflow-hidden"
+            className="hidden md:block max-w-full bg-base-300 rounded-2xl overflow-hidden"
             initial={false}
             animate={{ width: contentWidth ?? "auto" }}
           >
-            <div ref={contentRef} className="relative flex items-center w-max p-2 lg:text-lg">
+            <div ref={contentRef} className="relative flex flex-wrap justify-center items-center w-max max-w-[95vw] p-2 text-sm lg:text-base">
               <AnimatePresence initial={false} mode="popLayout">
                 {visibleGroups.map((group, i) => (
                   <motion.div key={group.key} layout="position" className="flex items-center" {...FADE}>
@@ -164,7 +166,7 @@ function SettingsPanel({ visible }: { visible: boolean }) {
         </LayoutGroup>
 
         {/* What the selected mode is, since the names alone don't say. */}
-        <div className="hidden md:block h-5 text-sm text-base-content/50">
+        <div className="hidden md:block h-5 text-sm text-base-content/70">
           <AnimatePresence initial={false} mode="wait">
             {gameMode.mode && (
               <motion.p
@@ -182,7 +184,7 @@ function SettingsPanel({ visible }: { visible: boolean }) {
 
         <button
           type="button"
-          className="md:hidden flex items-center gap-2 bg-base-300 rounded-2xl text-base-content px-4 py-3 z-1 cursor-pointer hover:bg-info hover:text-info-content absolute top-35"
+          className="md:hidden flex items-center gap-2 bg-base-300 rounded-2xl text-base-content px-4 py-3 z-1 cursor-pointer hover:bg-info hover:text-info-content "
           onClick={() => dialogRef.current?.showModal()}
         >
           <IoIosSettings className="w-6 h-6 shrink-0" />
@@ -201,7 +203,7 @@ function SettingsPanel({ visible }: { visible: boolean }) {
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
                   >
-                    <p className="mb-1 ml-2 text-xs text-base-content/50">{group.label}</p>
+                    <p className="mb-1 ml-2 text-xs text-base-content/70">{group.label}</p>
                     <div className="mb-3 bg-base-300 rounded-2xl p-1 text-sm">{group.render(true)}</div>
                     {group.key === "mode" && gameMode.mode && (
                       <p className="-mt-1 mb-3 mx-2 text-xs text-base-content/60">{MODE_DESCRIPTIONS[gameMode.mode]}</p>

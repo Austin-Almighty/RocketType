@@ -59,7 +59,7 @@ html {
 }
 
 .typing-letter-pending {
-  color: color-mix(in oklab, var(--color-base-content) 35%, transparent);
+  color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
 }
 
 .typing-letter-correct {
@@ -67,15 +67,19 @@ html {
 }
 
 .typing-letter-incorrect {
-  color: var(--color-error);
+  color: color-mix(in oklab, var(--color-error) 65%, var(--color-base-content));
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
 .typing-letter-missed {
-  color: color-mix(in oklab, var(--color-error) 45%, transparent);
+  color: color-mix(in oklab, var(--color-error) 55%, var(--color-base-content));
 }
 
 .typing-letter-extra {
-  color: color-mix(in oklab, var(--color-error) 60%, transparent);
+  color: color-mix(in oklab, var(--color-error) 65%, var(--color-base-content));
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
 .typing-caret {
@@ -203,3 +207,28 @@ html {
   50%  { filter: brightness(1.20) }
   100% { filter: brightness(1.07) }
 } */
+/* Keyboard focus remains visible across all themes. */
+:where(button, a, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+button, a { touch-action: manipulation; }
+dialog { overscroll-behavior: contain; }
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 9999;
+  padding: 0.75rem;
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+  transform: translateY(-200%);
+}
+.skip-link:focus { transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

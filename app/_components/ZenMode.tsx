@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { isInteractiveTarget } from "../_lib/keyboard";
 import WordCounter from "./WordCounter";
 import ZenSky, { ZenSkyHandle } from "./zen/ZenSky";
 
@@ -20,7 +21,7 @@ export default function ZenMode() {
   useEffect(() => {
     textRef.current?.focus({ preventScroll: true });
     function focusOnInput(e: KeyboardEvent) {
-      if (e.metaKey || e.ctrlKey || e.altKey || e.key === "Tab") return;
+      if (e.metaKey || e.ctrlKey || e.altKey || e.key.length !== 1 || isInteractiveTarget(e.target) || document.querySelector("dialog[open]")) return;
       textRef.current?.focus({ preventScroll: true });
     }
     document.addEventListener("keydown", focusOnInput);
@@ -69,6 +70,7 @@ export default function ZenMode() {
         </div>
         <textarea
           ref={textRef}
+          data-typing-input
           aria-label="Zen typing input"
           value={userInput}
           onChange={(e) => handleChange(e.target.value)}

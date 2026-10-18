@@ -1,207 +1,178 @@
 "use client";
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import WordsDisplay from "./WordsDisplay";
 import { Clock } from "../Clock";
 import WordCounter from "../WordCounter";
-import { useGameContext, TrackRecord } from "../../_lib/gameContext";
+import { useGameContext, type TrackRecord } from "../../_lib/gameContext";
 import { useUser } from "../../_lib/userContext";
-import resultToDB from "../../_lib/resultToFirebase";
 import { getPersonalBest } from "../../_lib/getResults";
-import { characterStats, completedWords, createTypingState, typingReducer } from "../../_lib/typing/engine";
+import { characterStats, completedWords, createTypingState, typingReducer, type TypingAction } from "../../_lib/typing/engine";
 import { getRandomWords, wordListFor } from "../../_lib/typing/words";
-import { buildRecord, computeWpm } from "../../_lib/typing/stats";
+import { buildRecord, computeRaw, elapsedTestSeconds, SCORING_VERSION } from "../../_lib/typing/stats";
 import { useTypingInput } from "../../_lib/typing/useTypingInput";
+import { isInteractiveTarget } from "../../_lib/keyboard";
+import { matchingResults } from "../../_lib/results";
 
-// Rocket Run keeps topping up words so fast typists never run out.
 const TIMED_BATCH = 100;
 const TIMED_REFILL_AT = 40;
 
-type TypingTestProps = {
-  onFocusChange?: (focused: boolean) => void;
-};
-
-export default function TypingTest({ onFocusChange }: TypingTestProps) {
-  const { gameMode, setGameMode, setTrackBySecond, setTestDetails } = useGameContext();
+export default function TypingTest() {
+  const { gameMode, setGameMode, setTrackBySecond, setTestDetails, practiceWords, saveResult, savedResults } = useGameContext();
   const { user } = useUser();
+  const [player] = useState(user);
+  const [settings] = useState(() => ({ ...gameMode }));
+  const [practice] = useState(practiceWords);
+  const [sessionResults] = useState(() => savedResults
+    .filter((entry) => entry.result.userUID === player?.uid)
+    .map((entry) => ({ ...entry.result, createdAt: null })));
+  const isTimed = !practice && settings.mode === "Rocket Run";
+  const timeLimit = isTimed ? settings.time : null;
   const router = useRouter();
-  const isTimed = gameMode.mode === "Rocket Run";
-
-  const [state, dispatch] = useReducer(typingReducer, undefined, () =>
-    createTypingState(
-      getRandomWords(wordListFor(gameMode.words), isTimed ? TIMED_BATCH : gameMode.count ?? 30)
-    )
-  );
+  const [state, setState] = useState(() => createTypingState(practice ??
+    getRandomWords(wordListFor(settings.words), isTimed ? TIMED_BATCH : settings.count ?? 50)));
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [liveWpm, setLiveWpm] = useState<number | null>(null);
-  const [focused, setFocused] = useState(true);
-
+  const [focused, setFocused] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const stateRef = useRef(state);
   const recordsRef = useRef<TrackRecord[]>([]);
   const startedAtRef = useRef<number | null>(null);
   const endedRef = useRef(false);
-  // Best WPM before this test: undefined until loaded (or if the lookup
-  // fails), null if this is the first result with these settings.
   const previousBestRef = useRef<number | null | undefined>(undefined);
 
   useEffect(() => {
-    stateRef.current = state;
-  }, [state]);
-
-  // Look up the previous best now, so the result page can compare without
-  // racing the save of this test's result.
-  const userID = user?.uid;
-  useEffect(() => {
-    previousBestRef.current = undefined;
-    if (!userID) return;
+    if (!player || practice) return;
     let cancelled = false;
-    getPersonalBest(userID, gameMode)
+    getPersonalBest(player.uid, settings)
       .then((best) => {
-        if (!cancelled) previousBestRef.current = best;
+        if (cancelled) return;
+        // A previous test may still be saving when the next one starts.
+        const earlier = matchingResults(sessionResults, settings);
+        previousBestRef.current = earlier.length
+          ? Math.max(best ?? 0, ...earlier.map((result) => result.wpm)) : best;
       })
-      .catch((e) => console.error("Failed to load personal best", e));
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userID, gameMode.mode, gameMode.time, gameMode.count, gameMode.words]);
+      .catch((error) => console.error("Failed to load personal best", error));
+    return () => { cancelled = true; };
+  }, [player, practice, sessionResults, settings]);
 
-  // Ends the test exactly once, using the records collected so far plus
-  // a final record for the partial last second.
   const endTest = useCallback(() => {
     if (endedRef.current || startedAtRef.current === null) return;
     endedRef.current = true;
-
-    const { keyCount, mistakes } = stateRef.current;
+    const current = stateRef.current;
+    const exactSeconds = elapsedTestSeconds(startedAtRef.current, performance.now(), timeLimit);
+    const finalSeconds = timeLimit ?? Math.max(0.001, exactSeconds);
     const records = [...recordsRef.current];
     const previous = records[records.length - 1];
-    const exactSeconds = (performance.now() - startedAtRef.current) / 1000;
-    const finalSeconds = isTimed
-      ? gameMode.time ?? exactSeconds
-      : Math.round(exactSeconds * 100) / 100;
-    if (!previous || finalSeconds > previous.elapsedSeconds) {
-      records.push(buildRecord(keyCount, mistakes, finalSeconds, previous));
-    }
+    const final = buildRecord(current, finalSeconds, previous);
+    if (previous?.elapsedSeconds === finalSeconds) records[records.length - 1] = final;
+    else records.push(final);
 
-    const wpm = records[records.length - 1].wpm;
+    const characters = characterStats(current);
     const previousBest = previousBestRef.current;
+    const resultID = crypto.randomUUID();
+    const completedAt = Date.now();
+    const testKind = practice ? "practice" : "standard";
     setTestDetails({
-      characters: characterStats(stateRef.current),
-      personalBest:
-        user && previousBest !== undefined
-          ? { previous: previousBest, isNew: previousBest === null || wpm > previousBest }
-          : null,
+      settings, resultID, completedAt, testKind, characters, missedWords: current.missedWords,
+      personalBest: player && !practice && previousBest !== undefined
+        ? { previous: previousBest, isNew: previousBest === null || final.wpm > previousBest } : null,
     });
     setTrackBySecond(records);
     setGameMode((prev) => ({ ...prev, start: false }));
-    if (user) resultToDB({ trackBySecond: records, gameMode, user });
+    if (player) void saveResult({
+      id: resultID, completedAt, userUID: player.uid, userDisplayName: player.displayName,
+      gameMode: settings.mode!, time: settings.time, count: settings.count, words: settings.words,
+      testKind, scoringVersion: SCORING_VERSION, elapsedSeconds: finalSeconds, characters,
+      keyCount: current.keyCount, errors: current.mistakes, wpm: final.wpm,
+      raw: computeRaw(current.keyCount, finalSeconds),
+      accuracy: current.keyCount ? Math.round((current.keyCount - current.mistakes) / current.keyCount * 1000) / 10 : 0,
+    });
     router.push("/result");
-  }, [gameMode, isTimed, router, setGameMode, setTestDetails, setTrackBySecond, user]);
+  }, [player, practice, router, saveResult, setGameMode, setTestDetails, setTrackBySecond, settings, timeLimit]);
 
-  const endTestRef = useRef(endTest);
-  useEffect(() => {
-    endTestRef.current = endTest;
-  }, [endTest]);
-
-  // One clock for everything: started on the first keystroke, it records
-  // stats each second and ends Rocket Run when time is up. It depends only
-  // on `state.started` so nothing else can restart or cancel it mid-test.
-  const timeLimit = isTimed ? gameMode.time : null;
   useEffect(() => {
     if (!state.started) return;
-    startedAtRef.current = performance.now();
-
-    let second = 0;
     const timer = setInterval(() => {
-      second += 1;
-      if (timeLimit && second >= timeLimit) {
-        clearInterval(timer);
-        endTestRef.current();
-        return;
-      }
-      const { keyCount, mistakes } = stateRef.current;
+      if (endedRef.current || startedAtRef.current === null) return;
+      const seconds = elapsedTestSeconds(startedAtRef.current, performance.now(), timeLimit);
+      if (timeLimit !== null && seconds >= timeLimit) { endTest(); return; }
+      setElapsedSeconds(Math.floor(seconds));
       const previous = recordsRef.current[recordsRef.current.length - 1];
-      recordsRef.current = [...recordsRef.current, buildRecord(keyCount, mistakes, second, previous)];
-      setElapsedSeconds(second);
-      setLiveWpm(computeWpm(keyCount, mistakes, second));
-    }, 1000);
+      if (Math.floor(seconds) < 1 || Math.floor(seconds) <= Math.floor(previous?.elapsedSeconds ?? 0)) return;
+      const record = buildRecord(stateRef.current, seconds, previous);
+      recordsRef.current.push(record);
+      setLiveWpm(record.wpm);
+    }, 100);
     return () => clearInterval(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.started]);
+  }, [state.started, endTest, timeLimit]);
 
-  // Star Count ends when the final word is done.
-  useEffect(() => {
-    if (state.finished) endTest();
-  }, [state.finished, endTest]);
-
-  useEffect(() => {
-    if (!isTimed) return;
-    if (state.words.length - state.wordIndex < TIMED_REFILL_AT) {
-      dispatch({ type: "appendWords", words: getRandomWords(wordListFor(gameMode.words), TIMED_BATCH) });
+  function apply(action: TypingAction) {
+    if (endedRef.current) return;
+    const now = performance.now();
+    if (startedAtRef.current !== null && timeLimit !== null && elapsedTestSeconds(startedAtRef.current, now, timeLimit) >= timeLimit) {
+      endTest();
+      return;
     }
-  }, [isTimed, state.wordIndex, state.words.length, gameMode.words]);
+    let next = typingReducer(stateRef.current, action);
+    if (next === stateRef.current) return;
+    if (next.started && startedAtRef.current === null) startedAtRef.current = now;
+    if (isTimed && next.words.length - next.wordIndex < TIMED_REFILL_AT) {
+      next = typingReducer(next, { type: "appendWords", words: getRandomWords(wordListFor(settings.words), TIMED_BATCH) });
+    }
+    // Input events may batch several letters before React commits.
+    stateRef.current = next;
+    setState(next);
+    if (next.finished) endTest();
+  }
 
   useTypingInput(inputRef, {
-    onChar: (char) => dispatch({ type: "char", char }),
-    onSpace: () => dispatch({ type: "space" }),
-    onBackspace: () => dispatch({ type: "backspace" }),
-    onDeleteWord: () => dispatch({ type: "deleteWord" }),
+    onChar: (char) => apply({ type: "char", char }),
+    onSpace: () => apply({ type: "space" }),
+    onBackspace: () => apply({ type: "backspace" }),
+    onDeleteWord: () => apply({ type: "deleteWord" }),
   });
 
-  // Typing anywhere refocuses the hidden input.
   useEffect(() => {
-    inputRef.current?.focus({ preventScroll: true });
+    if (window.matchMedia("(pointer: fine)").matches) inputRef.current?.focus({ preventScroll: true });
     function refocus(e: KeyboardEvent) {
-      if (e.metaKey || e.ctrlKey || e.altKey || e.key === "Tab") return;
+      if (e.metaKey || e.ctrlKey || e.altKey || e.key.length !== 1 ||
+        isInteractiveTarget(e.target) || document.querySelector("dialog[open]")) return;
       inputRef.current?.focus({ preventScroll: true });
     }
     document.addEventListener("keydown", refocus);
     return () => document.removeEventListener("keydown", refocus);
   }, []);
 
-  function handleFocus(next: boolean) {
-    setFocused(next);
-    onFocusChange?.(next);
-  }
-
-  const remaining = isTimed && gameMode.time ? gameMode.time - elapsedSeconds : null;
-
   return (
     <div className="relative w-full text-base-content">
-      <div className="flex items-baseline gap-6 mb-4 h-12 font-mono text-3xl sm:text-4xl text-primary">
-        {isTimed ? (
-          <Clock seconds={remaining} />
-        ) : (
-          <WordCounter complete={completedWords(state)} />
-        )}
-        <span
-          className={`text-xl sm:text-2xl text-base-content/50 transition-opacity duration-300 ${
-            liveWpm === null ? "opacity-0" : "opacity-100"
-          }`}
-        >
-          {liveWpm ?? 0} wpm
-        </span>
+      {practice && <p className="mb-3 text-sm text-primary">Missed-word practice · Unranked · {completedWords(state)}/{state.words.length} words</p>}
+      <div className="flex items-baseline gap-6 mb-4 h-12 font-mono tabular-nums text-3xl sm:text-4xl text-primary">
+        {isTimed ? <Clock seconds={Math.max(0, (timeLimit ?? 0) - elapsedSeconds)} />
+          : practice ? <span>{completedWords(state)}/{state.words.length}</span>
+            : <WordCounter complete={completedWords(state)} />}
+        <span className="text-xl sm:text-2xl text-base-content/60">{liveWpm !== null ? liveWpm + " wpm" : ""}</span>
       </div>
-
       <div className="relative cursor-text" onClick={() => inputRef.current?.focus({ preventScroll: true })}>
         <WordsDisplay state={state} focused={focused} />
-        {!focused && (
-          <div className="absolute inset-0 flex items-center justify-center text-lg sm:text-xl text-base-content">
-            Click or press any key to focus
-          </div>
-        )}
+        {!focused && <button
+          type="button"
+          className="absolute inset-0 w-full flex items-center justify-center text-lg text-base-content"
+          onClick={() => inputRef.current?.focus({ preventScroll: true })}
+        >Tap or click to type</button>}
       </div>
-
       <textarea
         ref={inputRef}
+        data-typing-input
         aria-label="Typing input"
         autoCapitalize="off"
         autoComplete="off"
+
         autoCorrect="off"
         spellCheck={false}
-        onFocus={() => handleFocus(true)}
-        onBlur={() => handleFocus(false)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+
         className="absolute opacity-0 pointer-events-none w-px h-px top-0 left-0 resize-none"
       />
     </div>

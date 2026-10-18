@@ -1,5 +1,5 @@
 "use client";
-import { motion, useAnimate } from "motion/react";
+import { motion, useAnimate, useReducedMotion } from "motion/react";
 import { useEffect } from "react";
 
 type ShuttleExhaustProps = {
@@ -8,8 +8,10 @@ type ShuttleExhaustProps = {
 
 export default function ShuttleExhaust({ thrust = false }: ShuttleExhaustProps) {
   const [flameRef, animate] = useAnimate();
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
+    if (reducedMotion) return;
     let isMounted = true;
 
     function flicker() {
@@ -49,7 +51,7 @@ export default function ShuttleExhaust({ thrust = false }: ShuttleExhaustProps) 
     return () => {
       isMounted = false;
     };
-  }, [animate, flameRef, thrust]);
+  }, [animate, flameRef, thrust, reducedMotion]);
 
   return (
     <motion.svg

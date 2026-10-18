@@ -68,8 +68,9 @@ export default function RootLayout({
         <ViewTransition name="page">
           <UserProvider>
             <GameProvider>
+              <a href="#main-content" className="skip-link">Skip to content</a>
               <Header></Header>
-              <main className="flex-1 flex flex-col bg-base-100">{children}</main>
+              <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col bg-base-100">{children}</main>
               <Footer></Footer>
             </GameProvider>
           </UserProvider>

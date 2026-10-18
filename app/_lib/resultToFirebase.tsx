@@ -1,42 +1,18 @@
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { User } from "firebase/auth";
-import { db } from "./Firebase";
-import type { GameMode, TrackRecord } from "./gameContext";
+import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { auth, db } from "./Firebase";
+import type { CompletedResult } from "./results";
 
-export default async function resultToDB({trackBySecond, gameMode, user}: {trackBySecond: TrackRecord[], gameMode: GameMode, user: User}) {
-    if (!user) return;
-    const latest = trackBySecond[trackBySecond.length - 1];
-    if (!latest) {
-        console.error("Test result not found; nothing saved");
-        return;
-    }
-
-    const averageRaw = (
-        trackBySecond.reduce((sum, entry) => sum + (entry.raw ?? 0), 0) / trackBySecond.length
-    ).toFixed(1);
-
-    let accuracy = "0.0";
-    if (latest.keyCount > 0) {
-      const correct = latest.keyCount - latest.mistakes;
-      accuracy = ((correct / latest.keyCount) * 100).toFixed(1);
-    }
-
-    try {
-        await addDoc(collection(db, "results"), {
-            userDisplayName: user.displayName,
-            userUID: user.uid,
-            gameMode: gameMode.mode,
-            time: gameMode.time,
-            count: gameMode.count,
-            words: gameMode.words,
-            keyCount: latest.keyCount,
-            errors: latest.mistakes,
-            wpm: latest.wpm,
-            raw: Number(averageRaw),
-            accuracy: Number(accuracy),
-            createdAt: serverTimestamp()
-        })
-    } catch(e) {
-        console.error("Failed to record the results", e)
-    }
+export default async function resultToDB(result: CompletedResult) {
+  if (auth.currentUser?.uid !== result.userUID) {
+    throw new Error("Sign in to the original account to save this result.");
+  }
+  if (!result.id || !Number.isFinite(result.elapsedSeconds) || result.elapsedSeconds! <= 0) {
+    throw new Error("This result has no valid duration.");
+  }
+  const { id, completedAt, ...data } = result;
+  // Stable ID and completion time make a retry safe after a lost acknowledgement.
+  await setDoc(doc(db, "results", id), {
+    ...data,
+    createdAt: Timestamp.fromMillis(completedAt),
+  });
 }

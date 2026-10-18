@@ -22,8 +22,13 @@ export default function WelcomePage() {
 
   // Typewriter effect
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setDisplayed(text);
+      setShowShuttle(true);
+      return;
+    }
     const obj = { progress: 0 };
-    gsap.to(obj, {
+    const animation = gsap.to(obj, {
       progress: text.length,
       duration: 1.2,
       ease: "none",
@@ -35,15 +40,18 @@ export default function WelcomePage() {
         setShowShuttle(true);
       },
     });
+    return () => { animation.kill(); };
   }, [text]);
   
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (showShuttle && shuttleRef.current) {
-      gsap.fromTo(
+      const animation = gsap.fromTo(
         shuttleRef.current,
         { y: 60, opacity: 0, scale: 0.7 },
         { y: 0, opacity: 1, scale: 1, duration: 0.7, ease: "power3.out" }
       );
+      return () => { animation.kill(); };
     }
   }, [showShuttle]);
    
@@ -80,6 +88,7 @@ export default function WelcomePage() {
           <ViewTransition
             name="shuttle"
             onUpdate={(instance) => {
+              if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
               instance.old.animate(
                 { transform: ["scale(1)", "scale(0)"], opacity: [1, 0] },
                 { duration: 700 }

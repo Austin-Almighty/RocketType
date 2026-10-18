@@ -1,20 +1,9 @@
-import { collection, query, where, getDocs, orderBy, deleteDoc, doc, Timestamp } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy, deleteDoc, doc } from "firebase/firestore";
 import { db, auth} from "./Firebase";
 import type { GameMode } from "./gameContext";
 
-export type ResultDoc = {
-  id: string;
-  wpm: number;
-  raw: number;
-  accuracy: number;
-  time: number;
-  count: number | null;
-  words: string | null;
-  keyCount: number;
-  errors: number;
-  gameMode: string;
-  createdAt: Timestamp;
-};
+import { matchingResults, isCurrentStandard, type ResultDoc } from "./results";
+export type { ResultDoc } from "./results";
 
 export async function getResults(): Promise<ResultDoc[]> {
 
@@ -38,14 +27,10 @@ export async function getPersonalBest(userID: string, gameMode: GameMode): Promi
     const resultsQuery = query(collection(db, "results"), where("userUID", "==", userID));
     const querySnapshot = await getDocs(resultsQuery);
     const sameSettings = querySnapshot.docs
-        .map(doc => doc.data() as ResultDoc)
-        .filter(result =>
-            result.gameMode === gameMode.mode &&
-            result.words === gameMode.words &&
-            (gameMode.mode === "Rocket Run" ? result.time === gameMode.time : result.count === gameMode.count)
-        );
-    if (sameSettings.length === 0) return null;
-    return Math.max(...sameSettings.map(result => result.wpm));
+        .map(doc => doc.data() as ResultDoc);
+    const comparable = matchingResults(sameSettings, gameMode);
+    if (comparable.length === 0) return null;
+    return Math.max(...comparable.map(result => result.wpm));
 }
 
 export async function deleteData() {
@@ -71,7 +56,7 @@ export async function getAverageWPM() {
 }
 
 export async function getSummaryStats() {
-    const results = await getResults();
+    const results = (await getResults()).filter(isCurrentStandard);
     if (!results || results.length === 0) return null;
     const user = auth.currentUser;
     if (!user) {
@@ -92,7 +77,7 @@ export async function getSummaryStats() {
     const averageWPM = Math.round(results.reduce((sum, doc) => sum + doc.wpm, 0) / results.length);
     const averageWPMLast10 = Math.round(latest10.reduce((sum, doc) => sum + doc.wpm, 0) / latest10.length);
     const completed = results.length;
-    const timeTyping = results.reduce((sum, doc) => sum + doc.time, 0);
+    const timeTyping = results.reduce((sum, doc) => sum + (doc.elapsedSeconds ?? 0), 0);
     const highestRAW = results.reduce((max, doc) => doc.raw > max ? doc.raw: max, 0);
     const averageRAW = Math.round(results.reduce((sum, doc) => sum + doc.raw, 0) / results.length);
     const averageRAWLast10 = Math.round(latest10.reduce((sum, doc) => sum + doc.raw, 0) / latest10.length)

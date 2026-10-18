@@ -1,39 +1,37 @@
 "use client";
-import React from "react";
-import { IoEarthSharp, IoToday, IoTimer } from "react-icons/io5";
-import { FaCalendarWeek } from "react-icons/fa";
+import { TIME_OPTIONS } from "@/app/_lib/gameContext";
+import { LEADERBOARD_RANGES, type LeaderboardRange } from "@/app/_lib/results";
+import type { WordSet } from "@/app/_lib/typing/words";
 
-type LeaderboardFilterProps = {
-  range: string;
-  setRange: (value: string) => void;
-  time: string;
-  setTime: (value: string) => void;
+type Props = {
+  range: LeaderboardRange; time: number; words: WordSet;
+  onChange: (key: string, value: string) => void;
 };
 
-export default function LeaderboardFilter({range, setRange, time, setTime}: LeaderboardFilterProps) {
-    
-
-    const rangeSelectedClass = "btn join-item justify-start bg-secondary-content text-secondary rounded-2xl"
-    const timeSelectedClass = "btn join-item justify-start bg-accent-content text-accent rounded-2xl"
-
+export default function LeaderboardFilter({ range, time, words, onChange }: Props) {
   return (
-    <>
-      <div className="join join-horizontal lg:join-vertical bg-base-300 justify-center rounded-2xl p-4 lg:max-w-56 w-fit">
-        <div className="lg:w-full lg:block flex flex-col">
-          <div className="flex flex-row lg:flex-col">
-            <button className={`${range === "All-time" ? rangeSelectedClass: "btn join-item justify-start bg-secondary text-secondary-content rounded-2xl"}`}
-            onClick={()=>setRange("All-time")}><IoEarthSharp/>all-time English</button>
-            <button className={`${range === "Monthly" ? rangeSelectedClass: "btn join-item justify-start bg-secondary text-secondary-content rounded-2xl"}`} onClick={()=>setRange("Monthly")}><FaCalendarWeek/>Monthly</button>
-            <button className={`${range === "Daily" ? rangeSelectedClass: "btn join-item justify-start bg-secondary text-secondary-content rounded-2xl"}`}  onClick={()=>setRange("Daily")}><IoToday/>daily</button>
-          </div>
-          <div className="divider divider-neutral"></div>
-          <div className="flex flex-row lg:flex-col w-full justify-center">
-            <button className={`${time === "15" ? timeSelectedClass: "btn join-item justify-start bg-accent text-accent-content rounded-2xl"}`} onClick={()=>setTime("15")}><IoTimer/>Time 15</button>
-            <button className={`${time === "30" ? timeSelectedClass: "btn join-item justify-start bg-accent text-accent-content rounded-2xl"}`} onClick={()=>setTime("30")}><IoTimer/>Time 30</button>
-            <button className={`${time === "60" ? timeSelectedClass: "btn join-item justify-start bg-accent text-accent-content rounded-2xl"}`} onClick={()=>setTime("60")}><IoTimer/>Time 60</button>
-          </div>   
-        </div>   
-      </div>
-    </>
+    <div className="flex flex-wrap gap-4 bg-base-200 rounded-2xl p-4">
+      <label className="flex flex-col gap-1">Period<select
+        className="select bg-base-100"
+        value={range}
+        onChange={(e) => onChange("range", e.target.value)}
+      >{LEADERBOARD_RANGES.map((value) => <option key={value}>{value}</option>)}</select></label>
+      <label className="flex flex-col gap-1">Duration<select
+        className="select bg-base-100"
+        value={time}
+        onChange={(e) => onChange("time", e.target.value)}
+      >{TIME_OPTIONS.map((value) => <option
+        key={value}
+        value={value}
+      >{value} seconds</option>)}</select></label>
+      <label className="flex flex-col gap-1">Word set<select
+        className="select bg-base-100"
+        value={words}
+        onChange={(e) => onChange("words", e.target.value)}
+      >
+        <option value="1k">1,000 common words</option>
+        <option value="5k">5,000 common words</option>
+      </select></label>
+    </div>
   );
 }

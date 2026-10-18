@@ -40,7 +40,7 @@ export default function OptionGroup<T extends string | number>({
             aria-pressed={selected}
             onClick={() => onChange(option)}
             className={`relative py-1.5 rounded-xl ${compact ? "flex-1 px-2" : "px-3"} whitespace-nowrap cursor-pointer transition-colors duration-200 ${
-              selected ? "text-base-content" : "text-base-content/50 hover:text-base-content"
+              selected ? "text-base-content" : "text-base-content/70 hover:text-base-content"
             }`}
           >
             {selected && (

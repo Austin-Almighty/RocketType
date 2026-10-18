@@ -1,4 +1,4 @@
-export default function ThemeSelector({setTheme}: {setTheme: (theme: string) => void}) {
+export default function ThemeSelector({ setTheme, theme: selectedTheme }: { setTheme: (theme: string) => void; theme: string }) {
   const themes = [
     "light",
     "dark",
@@ -37,25 +37,38 @@ export default function ThemeSelector({setTheme}: {setTheme: (theme: string) => 
     "silk"
   ];
 
+  const featured = ["light", "dark", "night", "nord", "sunset"];
+  function choices(items: string[]) {
+    return <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">{items.map((theme) => (
+      <button
+        type="button"
+        key={theme}
+        aria-pressed={theme === selectedTheme}
+        data-theme={theme}
+
+        className="rounded-xl border border-base-content/30 bg-base-100 text-base-content p-3 text-left"
+
+        onClick={() => setTheme(theme)}
+      >
+        <span className="block capitalize">{theme}{theme === selectedTheme ? " ✓" : ""}</span>
+        <span
+          aria-hidden
+          className="flex gap-1 mt-2"
+        >
+          <span className="bg-primary rounded-full w-4 h-4" />
+          <span className="bg-secondary rounded-full w-4 h-4" />
+          <span className="bg-accent rounded-full w-4 h-4" />
+        </span>
+      </button>
+    ))}</div>;
+  }
   return (
-    <>
-      <div className="join join-vertical w-full">
-        {themes.map(theme => (
-          <input
-            key={theme}
-            type="radio"
-            name="theme-buttons"
-            className="btn theme-controller join-item"
-            aria-label={theme.charAt(0).toUpperCase() + theme.slice(1)}
-            value={theme}
-            onClick={e => setTheme(e.currentTarget.value)}
-          />
-        ))}
-      </div>
-    </>
+    <section aria-label="Color themes">
+      <h2 className="text-xl mb-4">Choose a theme</h2>
+      {choices(featured)}
+      <details className="mt-4">
+        <summary className="cursor-pointer py-2">More themes</summary>{choices(themes.filter((theme) => !featured.includes(theme)))}
+      </details>
+    </section>
   );
 }
-
-
-
-
